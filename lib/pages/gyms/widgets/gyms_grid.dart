@@ -49,10 +49,19 @@ class GymsGrid extends StatelessWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
-              // Image(image: AssetImage('images/gym-template.jpg')),
+              // CachedNetworkImage(
+              //   imageUrl:
+              //       "https://cdn.i-scmp.com/sites/default/files/d8/images/methode/2021/01/28/f1dcd6ba-6043-11eb-9099-aaa38b7b3943_image_hires_104555.jpg",
+              //   fit: BoxFit.fill,
+              //   placeholder: (context, url) => CircularProgressIndicator(
+              //     color: active,
+              //   ),
+              //   errorWidget: (context, url, error) =>
+              //       Image(image: AssetImage('images/gym-template.jpg')),
+              // ),
               CachedNetworkImage(
                 imageUrl:
-                    "https://cdn.i-scmp.com/sites/default/files/d8/images/methode/2021/01/28/f1dcd6ba-6043-11eb-9099-aaa38b7b3943_image_hires_104555.jpg",
+                    "https://perfectbeta.s3.eu-north-1.amazonaws.com/photos/logo.png",
                 fit: BoxFit.fill,
                 placeholder: (context, url) => CircularProgressIndicator(
                   color: active,

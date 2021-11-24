@@ -77,7 +77,7 @@ class AuthenticationPage extends StatelessWidget {
                   Row(
                     children: [
                       Checkbox(value: true, onChanged: (value){}),
-                      CustomText(text: "Remeber Me",),
+                      CustomText(text: "Remember Me",),
                     ],
                   ),
 
@@ -113,7 +113,7 @@ class AuthenticationPage extends StatelessWidget {
 
               RichText(text: TextSpan(
                 children: [
-                  TextSpan(text: "Do not have admin credentials? "),
+                  TextSpan(text: "Do not have admin credentials? ", style: TextStyle(color: lightGrey)),
                   TextSpan(text: "Request Credentials! ", style: TextStyle(color: active))
                 ]
               ))

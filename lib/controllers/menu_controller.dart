@@ -29,6 +29,8 @@ class MenuController extends GetxController {
         return _customIcon(Icons.fitness_center, itemName);
       case myRoutesPageDisplayName:
         return _customIcon(Icons.alt_route, itemName);
+      case addRoutePageDisplayName:
+        return _customIcon(Icons.add_box_outlined, itemName);
       case authenticationPageDisplayName:
         return _customIcon(Icons.exit_to_app, itemName);
       default:
