@@ -1,8 +1,8 @@
 import 'dart:ui';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_web_dashboard/constants/style.dart';
-import 'package:flutter_web_dashboard/helpers/reponsiveness.dart';
+import 'package:perfectBeta/constants/style.dart';
+import 'package:perfectBeta/helpers/reponsiveness.dart';
 
 class StepProgressView extends StatelessWidget {
   //height of the container

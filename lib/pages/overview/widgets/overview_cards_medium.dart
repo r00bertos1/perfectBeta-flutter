@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_web_dashboard/pages/overview/widgets/info_card.dart';
+import 'package:perfectBeta/pages/overview/widgets/info_card.dart';
 
 
 class OverviewCardsMediumScreen extends StatelessWidget {

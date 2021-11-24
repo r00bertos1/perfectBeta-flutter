@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_web_dashboard/pages/my_routes/my_routes.dart';
-import 'package:flutter_web_dashboard/pages/gyms/gyms.dart';
-import 'package:flutter_web_dashboard/pages/overview/overview.dart';
-import 'package:flutter_web_dashboard/pages/add_route/add_route.dart';
-import 'package:flutter_web_dashboard/routing/routes.dart';
+import 'package:perfectBeta/pages/my_routes/my_routes.dart';
+import 'package:perfectBeta/pages/gyms/gyms.dart';
+import 'package:perfectBeta/pages/overview/overview.dart';
+import 'package:perfectBeta/pages/add_route/add_route.dart';
+import 'package:perfectBeta/routing/routes.dart';
 
 Route<dynamic> generateRoute(RouteSettings settings){
   switch (settings.name) {

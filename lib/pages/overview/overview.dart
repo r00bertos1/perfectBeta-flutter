@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_web_dashboard/helpers/reponsiveness.dart';
-import 'package:flutter_web_dashboard/constants/controllers.dart';
-import 'package:flutter_web_dashboard/pages/overview/widgets/available_drivers_table.dart';
-import 'package:flutter_web_dashboard/pages/overview/widgets/overview_cards_large.dart';
-import 'package:flutter_web_dashboard/pages/overview/widgets/overview_cards_medium.dart';
-import 'package:flutter_web_dashboard/pages/overview/widgets/overview_cards_small.dart';
-import 'package:flutter_web_dashboard/pages/overview/widgets/revenue_section_large.dart';
-import 'package:flutter_web_dashboard/widgets/custom_text.dart';
+import 'package:perfectBeta/helpers/reponsiveness.dart';
+import 'package:perfectBeta/constants/controllers.dart';
+import 'package:perfectBeta/pages/overview/widgets/available_drivers_table.dart';
+import 'package:perfectBeta/pages/overview/widgets/overview_cards_large.dart';
+import 'package:perfectBeta/pages/overview/widgets/overview_cards_medium.dart';
+import 'package:perfectBeta/pages/overview/widgets/overview_cards_small.dart';
+import 'package:perfectBeta/pages/overview/widgets/revenue_section_large.dart';
+import 'package:perfectBeta/widgets/custom_text.dart';
 import 'package:get/get.dart';
 
 import 'widgets/revenue_section_small.dart';

@@ -1,11 +1,11 @@
 {
-    "name": "flutter_web_dashboard",
-    "short_name": "flutter_web_dashboard",
+    "name": "perfectBeta",
+    "short_name": "perfectBeta",
     "start_url": ".",
     "display": "standalone",
-    "background_color": "#0175C2",
-    "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "background_color": "#26A69A",
+    "theme_color": "#26A69A",
+    "description": "Application for climbers.",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [

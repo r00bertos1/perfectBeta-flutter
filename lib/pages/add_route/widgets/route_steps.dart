@@ -1,12 +1,12 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_web_dashboard/constants/style.dart';
-import 'package:flutter_web_dashboard/helpers/reponsiveness.dart';
+import 'package:perfectBeta/constants/style.dart';
+import 'package:perfectBeta/helpers/reponsiveness.dart';
 import 'package:get/get_connect/http/src/response/response.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import 'image_from_gallery_ex.dart';
-import 'package:flutter_web_dashboard/pages/add_route/widgets/step_progress_view.dart';
+import 'package:perfectBeta/pages/add_route/widgets/step_progress_view.dart';
 import 'package:http/http.dart' as http;
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';

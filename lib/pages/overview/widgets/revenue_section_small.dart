@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_web_dashboard/constants/style.dart';
-import 'package:flutter_web_dashboard/pages/overview/widgets/bar_chart.dart';
-import 'package:flutter_web_dashboard/pages/overview/widgets/revenue_info.dart';
-import 'package:flutter_web_dashboard/widgets/custom_text.dart';
+import 'package:perfectBeta/constants/style.dart';
+import 'package:perfectBeta/pages/overview/widgets/bar_chart.dart';
+import 'package:perfectBeta/pages/overview/widgets/revenue_info.dart';
+import 'package:perfectBeta/widgets/custom_text.dart';
 
 class RevenueSectionSmall extends StatelessWidget {
 

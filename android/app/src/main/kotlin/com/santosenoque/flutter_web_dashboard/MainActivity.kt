@@ -1,4 +1,4 @@
-package com.santosenoque.flutter_web_dashboard
+package com.pl.ftims.ias.perfectbeta
 
 import io.flutter.embedding.android.FlutterActivity
 
