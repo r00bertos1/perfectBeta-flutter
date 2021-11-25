@@ -66,9 +66,10 @@ class StepProgressView extends StatelessWidget {
       var lineColor = _curStep > i + 1 ? _activeColor : _inactiveColor;
 
       wids.add(CircleAvatar(
-        radius: _dotRadius,
-        backgroundColor: circleColor,
-      ));
+          radius: _dotRadius,
+          backgroundColor: circleColor,
+        ),
+      );
 
       //add a line separator
       //0-------0--------0

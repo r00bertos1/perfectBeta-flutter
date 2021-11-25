@@ -1,15 +1,13 @@
+import 'package:data_table_2/data_table_2.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:perfectBeta/constants/style.dart';
 import 'package:perfectBeta/helpers/reponsiveness.dart';
-import 'package:get/get_connect/http/src/response/response.dart';
 import 'package:image_picker/image_picker.dart';
+//import 'package:image_picker_web/image_picker_web.dart';
 import 'dart:io';
-import 'image_from_gallery_ex.dart';
 import 'package:perfectBeta/pages/add_route/widgets/step_progress_view.dart';
-import 'package:http/http.dart' as http;
-import 'package:path/path.dart';
-import 'package:path_provider/path_provider.dart';
+import 'package:perfectBeta/widgets/custom_text.dart';
 
 enum ImageSourceType { gallery, camera }
 
@@ -32,6 +30,7 @@ class _AddImagePage extends State<AddImagePage> {
   Size _safeAreaSize;
   int _curPage = 1;
   bool _submitted = false;
+  bool _edited = false;
 
   //Image picker variables
   final ImagePicker _picker = ImagePicker();
@@ -79,194 +78,18 @@ class _AddImagePage extends State<AddImagePage> {
             child: _getStepProgress()),
         Expanded(
           child: PageView(
+            physics: NeverScrollableScrollPhysics(),
             controller: stepController,
             onPageChanged: (i) {
               setState(() {
                 _curPage = i + 1;
+                print('Value' + stepController.page.toString());
+                print('Type' + stepController.page.runtimeType.toString());
               });
             },
             children: <Widget>[
-              Container(
-                  constraints: const BoxConstraints.expand(),
-                  child: Container(
-                      //color: active,
-                      alignment: Alignment.center,
-                      child: ValueListenableBuilder(
-                          valueListenable: routeNameController,
-                          builder: (context, TextEditingValue value, __) {
-                            return ListView(
-                                //shrinkWrap: true,
-                                padding: const EdgeInsets.all(0.0),
-                                children: [
-                                  Card(
-                                    child: Column(
-                                      children: <Widget>[
-                                        _image != null
-                                            ? Column(
-                                                children: <Widget>[
-                                                  GestureDetector(
-                                                    onTap: () {
-                                                      _showPicker(context);
-                                                    },
-                                                    child: kIsWeb
-                                                        ? Image.network(_imagePath,
-                                                            width: ResponsiveWidget.isSmallScreen(context)
-                                                                ? _safeAreaSize
-                                                                    .width
-                                                                : _safeAreaSize
-                                                                    .width,
-                                                            height: ResponsiveWidget.isSmallScreen(context)
-                                                                ? _safeAreaSize
-                                                                        .height -
-                                                                    500
-                                                                : 600,
-                                                            fit: BoxFit.cover)
-                                                        : Image.file(_image,
-                                                            width: ResponsiveWidget.isSmallScreen(context)
-                                                                ? _safeAreaSize
-                                                                    .width
-                                                                : _safeAreaSize
-                                                                    .width,
-                                                            height: ResponsiveWidget
-                                                                    .isSmallScreen(
-                                                                        context)
-                                                                ? _safeAreaSize.height - 500
-                                                                : 600,
-                                                            fit: BoxFit.cover),
-                                                  ),
-                                                  Padding(
-                                                    padding:
-                                                        EdgeInsets.symmetric(
-                                                            horizontal: 8,
-                                                            vertical: 16),
-                                                    child: TextField(
-                                                      controller:
-                                                          routeNameController,
-                                                      cursorColor: active,
-                                                      decoration:
-                                                          InputDecoration(
-                                                        border:
-                                                            OutlineInputBorder(),
-                                                        hintText:
-                                                            'Put your route name',
-                                                        errorText: _submitted
-                                                            ? _errorText
-                                                            : null,
-                                                        focusedBorder:
-                                                            OutlineInputBorder(
-                                                          borderSide:
-                                                              BorderSide(
-                                                                  color: active,
-                                                                  width: 2.0),
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ],
-                                              )
-                                            : GestureDetector(
-                                                onTap: () {
-                                                  _showPicker(context);
-                                                },
-                                                child: Column(
-                                                  children: <Widget>[
-                                                    Container(
-                                                      decoration: BoxDecoration(
-                                                          color: lightGrey),
-                                                      width: ResponsiveWidget
-                                                              .isSmallScreen(
-                                                                  context)
-                                                          ? _safeAreaSize.width
-                                                          : _safeAreaSize.width,
-                                                      height: ResponsiveWidget
-                                                              .isSmallScreen(
-                                                                  context)
-                                                          ? _safeAreaSize
-                                                                  .height -
-                                                              500
-                                                          : 600,
-                                                      child: Icon(
-                                                        Icons.camera_alt,
-                                                        color: dark,
-                                                      ),
-                                                    ),
-                                                    const Padding(
-                                                      padding:
-                                                          EdgeInsets.symmetric(
-                                                              horizontal: 8,
-                                                              vertical: 16),
-                                                      child: Text(
-                                                          'Take a photo or choose from gallery'),
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
-                                      ],
-                                    ),
-                                  ),
-                                  Container(
-                                    margin: const EdgeInsets.only(top: 20.0),
-                                    child: ElevatedButton(
-                                      style: _buttonStyle,
-                                      onPressed: _image != null &&
-                                              routeNameController
-                                                  .value.text.isNotEmpty &&
-                                              routeNameController
-                                                      .value.text.length >=
-                                                  4
-                                          ? _submit
-                                          : null,
-                                      child: Text('Continue'),
-                                    ),
-                                  ),
-                                ]);
-                          }))),
-              Container(
-                constraints: const BoxConstraints.expand(),
-                child: Container(
-                    color: active,
-                    alignment: Alignment.center,
-                    child: Column(
-                      children: [
-                        GestureDetector(
-                          onTap: () {
-                            _showPicker(context);
-                          },
-                          child: Card(
-                              child: Column(
-                            children: <Widget>[
-                              _image != null
-                                  ? Image.file(
-                                      _image,
-                                      width: ResponsiveWidget.isSmallScreen(
-                                              context)
-                                          ? _safeAreaSize.width
-                                          : _safeAreaSize.width,
-                                      height: ResponsiveWidget.isSmallScreen(
-                                              context)
-                                          ? _safeAreaSize.height - 500
-                                          : 600,
-                                      fit: BoxFit.cover,
-                                    )
-                                  : Container(
-                                      decoration:
-                                          BoxDecoration(color: lightGrey),
-                                      width: ResponsiveWidget.isSmallScreen(
-                                              context)
-                                          ? _safeAreaSize.width
-                                          : _safeAreaSize.width,
-                                      height: 300,
-                                      child: Icon(
-                                        Icons.camera_alt,
-                                        color: dark,
-                                      ),
-                                    ),
-                            ],
-                          )),
-                        ),
-                      ],
-                    )),
-              ),
+              stepOne(context, _safeAreaSize),
+              stepTwo(context, _safeAreaSize),
               Container(
                 color: lightGrey,
               ),
@@ -297,42 +120,42 @@ class _AddImagePage extends State<AddImagePage> {
   //       MaterialPageRoute(builder: (context) => ImageFromGalleryEx(type)));
   // }
 
-  Future<File> _fileFromImageUrl(String url) async {
-    final response = await http.get(Uri.parse(url));
-
-    //NOT WORKING IN WEB
-    final documentDirectory = await getApplicationDocumentsDirectory();
-
-    final file = File(join(documentDirectory.path, 'imagetest.png'));
-
-    file.writeAsBytesSync(response.bodyBytes);
-
-    return file;
-  }
-
   Future _imgFromSource(type) async {
     try {
-      var source = type == ImageSourceType.camera
-          ? ImageSource.camera
-          : ImageSource.gallery;
-      XFile image = await _picker.pickImage(
-          source: source,
-          imageQuality: 100,
-          preferredCameraDevice: CameraDevice.front);
-      setState(() {
-        // if (kIsWeb) {
-        //   //File file = Image.network(image.path) as File;
-        //   //File file = html.File(image.path.codeUnits, image.path) as File;
-        //   //_image = File(Image.network(image.path));
-        //   File file = await _fileFromImageUrl(image.path);
-        //   _image = file;
-        // } else {
+      if (kIsWeb) {
+        var source = type == ImageSourceType.camera
+            ? ImageSource.camera
+            : ImageSource.gallery;
+        XFile image = await _picker.pickImage(
+            source: source,
+            imageQuality: 100,
+            preferredCameraDevice: CameraDevice.front);
+        setState(() {
+          _image = Image.network(image.path);
+        });
+        //Solution 2
+        // final image =
+        //     (await ImagePickerWeb.getImage(outputType: ImageType.widget))
+        //         as Image;
+        //
+        // if (image != null) {
+        //   setState(() {
+        //     _image = image;
+        //     print(_image.toString());
+        //   });
+        // };
+      } else {
+        var source = type == ImageSourceType.camera
+            ? ImageSource.camera
+            : ImageSource.gallery;
+        XFile image = await _picker.pickImage(
+            source: source,
+            imageQuality: 100,
+            preferredCameraDevice: CameraDevice.front);
+        setState(() {
           _image = File(image.path);
-       // }
-        // File file = File(image.path);
-        // _image = file;
-        //_image = html.File(image.path.codeUnits, image.path);
-      });
+        });
+      }
     } catch (e) {
       setState(() {
         _pickImageError = e;
@@ -351,12 +174,11 @@ class _AddImagePage extends State<AddImagePage> {
                         children: <Widget>[
                           ListTile(
                               leading: new Icon(Icons.photo_library),
-                              title: new Text('Web link'),
+                              title: new Text('File system'),
                               onTap: () {
-                                _imagePath = 'https://picsum.photos/250?image=9';
-                                _image = _imagePath;
+                                _imgFromSource(ImageSourceType.gallery);
                                 Navigator.of(context).pop();
-                              }),
+                              })
                         ],
                       )
                     : Wrap(
@@ -396,17 +218,266 @@ class _AddImagePage extends State<AddImagePage> {
     return null;
   }
 
-  void _submit() {
+  void _submit(pageNumber) {
     setState(() => _submitted = true);
     if (_errorText == null) {
       // notify the parent widget via the onSubmit callback
       widget.onSubmit(routeNameController.value.text);
       _routeName = routeNameController.value.text;
       stepController.animateToPage(
-        1,
-        duration: Duration(milliseconds: 300),
-        curve: Curves.easeIn,
+        pageNumber.round() + 1,
+        duration: Duration(milliseconds: 500),
+        curve: Curves.linear,
       );
     }
+  }
+
+  void _back(pageNumber) {
+    _routeName = routeNameController.value.text;
+    stepController.animateToPage(
+      pageNumber.round() - 1,
+      duration: Duration(milliseconds: 500),
+      curve: Curves.linear,
+    );
+  }
+
+  Widget stepOne(BuildContext context, _safeAreaSize) {
+    return Container(
+        alignment: Alignment.center,
+        constraints: const BoxConstraints.expand(),
+        child: Container(
+            child: ValueListenableBuilder(
+                valueListenable: routeNameController,
+                builder: (context, TextEditingValue value, __) {
+                  return ListView(
+                      //shrinkWrap: true,
+                      padding: const EdgeInsets.all(0.0),
+                      children: [
+                        Container(
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            border: Border.all(
+                                color: active.withOpacity(.4), width: .5),
+                            boxShadow: [
+                              BoxShadow(
+                                  offset: Offset(0, 6),
+                                  color: lightGrey.withOpacity(.1),
+                                  blurRadius: 12)
+                            ],
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          padding: const EdgeInsets.all(16),
+                          margin: EdgeInsets.only(bottom: 30),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: <Widget>[
+                              Padding(
+                                padding: EdgeInsets.only(bottom: 16, top: 8),
+                                child: CustomText(
+                                  text: 'Add your climbing wall photo',
+                                  color: lightGrey,
+                                  weight: FontWeight.bold,
+                                ),
+                              ),
+                              _image != null
+                                  ? Column(
+                                      children: <Widget>[
+                                        GestureDetector(
+                                          onTap: () {
+                                            _showPicker(context);
+                                          },
+                                          child: kIsWeb
+                                              ? Container(
+                                                  child: _image,
+                                                  width: ResponsiveWidget
+                                                          .isSmallScreen(
+                                                              context)
+                                                      ? _safeAreaSize.width
+                                                      : _safeAreaSize.width,
+                                                  height: ResponsiveWidget
+                                                          .isSmallScreen(
+                                                              context)
+                                                      ? _safeAreaSize.height -
+                                                          500
+                                                      : 600,
+                                                )
+                                              : Image.file(_image,
+                                                  width: ResponsiveWidget
+                                                          .isSmallScreen(
+                                                              context)
+                                                      ? _safeAreaSize.width
+                                                      : _safeAreaSize.width,
+                                                  height: ResponsiveWidget
+                                                          .isSmallScreen(
+                                                              context)
+                                                      ? _safeAreaSize.height -
+                                                          500
+                                                      : 600,
+                                                  fit: BoxFit.cover),
+                                        ),
+                                        Padding(
+                                          padding: EdgeInsets.only(
+                                              bottom: 8, top: 16),
+                                          child: TextField(
+                                            controller: routeNameController,
+                                            cursorColor: active,
+                                            decoration: InputDecoration(
+                                              border: OutlineInputBorder(),
+                                              hintText: 'Put your route name',
+                                              errorText: _submitted
+                                                  ? _errorText
+                                                  : null,
+                                              focusedBorder: OutlineInputBorder(
+                                                borderSide: BorderSide(
+                                                    color: active, width: 2.0),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    )
+                                  : GestureDetector(
+                                      onTap: () {
+                                        _showPicker(context);
+                                      },
+                                      child: Column(
+                                        children: <Widget>[
+                                          Container(
+                                            decoration:
+                                                BoxDecoration(color: lightGrey),
+                                            width:
+                                                ResponsiveWidget.isSmallScreen(
+                                                        context)
+                                                    ? _safeAreaSize.width
+                                                    : _safeAreaSize.width,
+                                            height:
+                                                ResponsiveWidget.isSmallScreen(
+                                                        context)
+                                                    ? _safeAreaSize.height - 500
+                                                    : 600,
+                                            child: Icon(
+                                              Icons.camera_alt,
+                                              color: dark,
+                                            ),
+                                          ),
+                                          const Padding(
+                                            padding: EdgeInsets.only(top: 16),
+                                            child: Text(
+                                              kIsWeb
+                                                  ? 'Select photo form filesystem'
+                                                  : 'Take a photo or choose from gallery',
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                            ],
+                          ),
+                        ),
+                        Container(
+                          margin: ResponsiveWidget
+                              .isSmallScreen(
+                              context)
+                              ? const EdgeInsets.only(top: 0.0)
+                              : const EdgeInsets.only(top: 20.0),
+                          child: ElevatedButton(
+                            style: _buttonStyle,
+                            onPressed: _image != null
+                                ? () => _submit(stepController.page)
+                                : null,
+                            child: Text('Continue'),
+                          ),
+                        ),
+                      ]);
+                })));
+  }
+
+  Widget stepTwo(BuildContext context, _safeAreaSize) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        border: Border.all(color: active.withOpacity(.4), width: .5),
+        boxShadow: [
+          BoxShadow(
+              offset: Offset(0, 6),
+              color: lightGrey.withOpacity(.1),
+              blurRadius: 12)
+        ],
+        borderRadius: BorderRadius.circular(8),
+      ),
+      padding: const EdgeInsets.all(16),
+      margin: EdgeInsets.only(bottom: 30),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Row(
+            children: [
+              SizedBox(
+                width: 10,
+              ),
+              CustomText(
+                text: "Available Drivers",
+                color: lightGrey,
+                weight: FontWeight.bold,
+              ),
+            ],
+          ),
+          DataTable2(
+              columnSpacing: 12,
+              horizontalMargin: 12,
+              minWidth: 600,
+              columns: [
+                DataColumn2(
+                  label: Text("Name"),
+                  size: ColumnSize.L,
+                ),
+                DataColumn(
+                  label: Text('Location'),
+                ),
+                DataColumn(
+                  label: Text('Rating'),
+                ),
+                DataColumn(
+                  label: Text('Action'),
+                ),
+              ],
+              rows: List<DataRow>.generate(
+                  7,
+                  (index) => DataRow(cells: [
+                        DataCell(CustomText(text: "Adam Nowak")),
+                        DataCell(CustomText(text: "łódź")),
+                        DataCell(Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              Icons.star,
+                              color: Colors.deepOrange,
+                              size: 18,
+                            ),
+                            SizedBox(
+                              width: 5,
+                            ),
+                            CustomText(
+                              text: "4.5",
+                            )
+                          ],
+                        )),
+                        DataCell(Container(
+                            decoration: BoxDecoration(
+                              color: light,
+                              borderRadius: BorderRadius.circular(20),
+                              border: Border.all(color: active, width: .5),
+                            ),
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 12, vertical: 6),
+                            child: CustomText(
+                              text: "Assign Delivery",
+                              color: active.withOpacity(.7),
+                              weight: FontWeight.bold,
+                            ))),
+                      ]))),
+        ],
+      ),
+    );
   }
 }
