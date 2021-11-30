@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:perfectBeta/constants/style.dart';
 import 'package:perfectBeta/controllers/menu_controller.dart';
@@ -7,10 +9,12 @@ import 'package:perfectBeta/pages/404/error.dart';
 import 'package:perfectBeta/pages/authentication/authentication.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:perfectBeta/routing/http_overwrites.dart';
 
 import 'routing/routes.dart';
 
 void main() {
+  HttpOverrides.global = MyHttpOverrides();
   Get.put(MenuController());
   Get.put(NavigationController());
   runApp(MyApp());
