@@ -40,13 +40,26 @@ class MyApp extends StatelessWidget {
         textTheme: GoogleFonts.mulishTextTheme(Theme.of(context).textTheme).apply(
           bodyColor: Colors.black
         ),
-            pageTransitionsTheme: PageTransitionsTheme(
+        textButtonTheme: TextButtonThemeData(
+            style: TextButton.styleFrom(
+          textStyle: const TextStyle(fontSize: 20),
+        )),
+        elevatedButtonTheme: ElevatedButtonThemeData(
+            style: ElevatedButton.styleFrom(
+              textStyle: const TextStyle(fontSize: 20),
+              primary: active,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20),
+              ),
+              padding: EdgeInsets.symmetric(vertical: 16),
+        )),
+        pageTransitionsTheme: PageTransitionsTheme(
       builders: {
         TargetPlatform.iOS: FadeUpwardsPageTransitionsBuilder(),
         TargetPlatform.android: FadeUpwardsPageTransitionsBuilder(),
       }
     ),
-        primarySwatch: Colors.blue,
+        primarySwatch: Colors.teal,
       ),
       // home: AuthenticationPage(),
     );

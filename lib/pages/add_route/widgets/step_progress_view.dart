@@ -53,8 +53,8 @@ class StepProgressView extends StatelessWidget {
         _headerStyle = headerStyle,
         _stepStyle = stepsStyle,
         assert(curStep > 0 == true && curStep <= stepsText.length),
-        assert(width > 0),
-        assert(height >= 2 * dotRadius),
+        assert(width > 0.0),
+        assert(height >= 2.0 * dotRadius),
         assert(width >= dotRadius * 2 * stepsText.length);
 
   List<Widget> _buildDots() {
@@ -142,7 +142,7 @@ class StepProgressView extends StatelessWidget {
             children: _buildDots(),
           ),
           SizedBox(
-            height: 10,
+            height: 10.0,
           ),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,

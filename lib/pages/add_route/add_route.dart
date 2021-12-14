@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:perfectBeta/constants/controllers.dart';
 import 'package:perfectBeta/constants/style.dart';
 import 'package:perfectBeta/helpers/reponsiveness.dart';
+import 'package:perfectBeta/pages/add_route/widgets/add_steps.dart';
 import 'package:perfectBeta/pages/add_route/widgets/route_steps.dart';
 import 'package:perfectBeta/widgets/custom_text.dart';
 import 'package:get/get.dart';
@@ -32,7 +33,8 @@ class AddRoutePage extends StatelessWidget {
             ),
           ),
           Expanded(
-              child: AddImagePage(onSubmit: (String value) {  },)
+              child: AddSteps(),
+              //child: AddImagePage(onSubmit: (String value) {  },)
               ),
         ],
       ),
