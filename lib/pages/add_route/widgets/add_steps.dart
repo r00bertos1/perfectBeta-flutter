@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:perfectBeta/constants/enums.dart';
 import 'package:perfectBeta/constants/style.dart';
 import 'package:perfectBeta/helpers/reponsiveness.dart';
 import 'package:flutter/foundation.dart';
@@ -16,7 +17,6 @@ import 'package:perfectBeta/pages/add_route/util/steps_params.dart';
 import 'package:perfectBeta/pages/add_route/widgets/step_progress_view.dart';
 import 'package:http/http.dart' as http;
 
-enum ImageSourceType { gallery, camera }
 final uploadImageURL =
     'https://perfectbeta-python-tls-pyclimb.apps.okd.cti.p.lodz.pl/upload';
 
@@ -31,6 +31,7 @@ class _AddStepsState extends State<AddSteps> {
   Size safeAreaSize;
   int currentStep = 0;
   bool complete = false;
+  bool received = false;
 
   var _image;
   var imageFile;
@@ -38,6 +39,7 @@ class _AddStepsState extends State<AddSteps> {
   bool _submitted = false;
   final ImagePicker _picker = ImagePicker();
   String _imagePath = '';
+  String imagePathTest = '/data/user/0/com.pl.ftims.ias.perfectbeta/cache/image_picker1161768634626818162.jpg';
   var _pickedImage;
   dynamic _pickImageError;
 
@@ -65,6 +67,11 @@ class _AddStepsState extends State<AddSteps> {
     setState(() => currentStep = step);
   }
 
+  Future<List<ConvertedImage>> _future;
+  @override
+  void initState() {
+    _future = convertImage(imagePathTest);
+  }
   @override
   Widget build(BuildContext context) {
     var mediaQD = MediaQuery.of(context);
@@ -350,10 +357,8 @@ class _AddStepsState extends State<AddSteps> {
                       alignment: Alignment.center,
                       padding: const EdgeInsets.all(8.0),
                       child:
-                      // Container(),
-                      _image == null
-                          ? Text('dupa')
-                          : buildFutureBuilder(_imagePath),
+                      //Container(),
+                      buildFutureBuilder(_imagePath),
                     )
                   ],
                 ),
@@ -549,12 +554,12 @@ class _AddStepsState extends State<AddSteps> {
       });
     })
     .catchError((err) => print('error : ' + err.toString()))
-    .whenComplete(() {});
+    .whenComplete(() {received = true;});
   }
 
   FutureBuilder<List<ConvertedImage>> buildFutureBuilder(imagePath) {
     return FutureBuilder<List<ConvertedImage>>(
-        future: convertImage(imagePath),
+        future: _future,
         builder: (context, snapshot) {
           // if (snapshot.connectionState != ConnectionState.done) {
           //   // return: show loading widget
@@ -562,17 +567,26 @@ class _AddStepsState extends State<AddSteps> {
           print(snapshot.connectionState);
           if (snapshot.connectionState == ConnectionState.waiting) {
             return CircularProgressIndicator();
-          } else if (snapshot.connectionState == ConnectionState.done) {
-            if (snapshot.hasError) {
-              return const Text('Error');
-            } else if (snapshot.hasData) {
-              return Text('DUPA');
-            } else {
-              return const Text('Empty data');
-            }
-          } else {
-            return Text('State: ${snapshot.connectionState}');
           }
+          if (snapshot.hasError) {
+              return const Text('Error');
+          }
+          if (!snapshot.hasData) {
+              return const Text('Error');
+          }
+          var dataToShow = snapshot.data;
+
+          return ListView.builder(
+              itemCount: dataToShow == null ? 0 : dataToShow.length,
+              itemBuilder: (context, index) {
+                final item = dataToShow[index];
+                return Card(
+                  child: ListTile(
+                    title: Text(dataToShow[index].x1.toString()),
+                    subtitle: Text(dataToShow[index].x2.toString()),
+                  ),
+                );
+              });
           // switch (snapshot.connectionState) {
           //   case ConnectionState.waiting:
           //     return Text('Loading....');
@@ -582,9 +596,9 @@ class _AddStepsState extends State<AddSteps> {
           //     else
           //       return Text('Result: ${snapshot.data}');
           // }
-          if (snapshot.hasData) {
-            List<ConvertedImage> holdsData = snapshot.data ?? [];
-            return Text(holdsData.toString());
+          // if (snapshot.hasData) {
+          //   List<ConvertedImage> holdsData = snapshot.data ?? [];
+          //   return Text(holdsData.toString());
             // return ListView.builder(
             // itemCount: users.length,
             // itemBuilder: (context, index) {
@@ -601,12 +615,12 @@ class _AddStepsState extends State<AddSteps> {
             // },
             // );
             // });
-          } else if (snapshot.hasError) {
-            return Text("${snapshot.error}");
-          }
-
-          // By default, show a loading spinner.
-          return CircularProgressIndicator();
+          // } else if (snapshot.hasError) {
+          //   return Text("${snapshot.error}");
+          // }
+          //
+          // // By default, show a loading spinner.
+          // return CircularProgressIndicator();
         });
   }
 }

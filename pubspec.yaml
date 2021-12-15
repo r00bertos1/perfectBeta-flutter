@@ -40,6 +40,8 @@ dependencies:
   flutter_rating_bar: ^4.0.0
   image_picker: ^0.8.4+4
   image_picker_web: any
+  firebase_core: ^1.10.5
+  time_machine: ^0.9.16
 
 dev_dependencies:
   flutter_test:
