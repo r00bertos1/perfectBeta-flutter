@@ -15,6 +15,6 @@ class ClimbingGymWithDetailsDTO extends ClimbingGymDTO {
         ownerId: json['ownerId'],
         gymName: json['gymName'],
         status: json['status'],
-        gymDetailsDTO: json['gymDetailsDTO']);
+        gymDetailsDTO: GymDetailsDTO.fromJson(json['gymDetailsDTO']));
   }
 }
