@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:perfectBeta/pages/my_routes/my_routes.dart';
-import 'package:perfectBeta/pages/gyms/gyms.dart';
+import 'package:perfectBeta/pages/my_routes/my_routes_page.dart';
+import 'package:perfectBeta/pages/gyms/gyms_page.dart';
 import 'package:perfectBeta/pages/overview/overview.dart';
 import 'package:perfectBeta/pages/add_route/add_route.dart';
 import 'package:perfectBeta/routing/routes.dart';
