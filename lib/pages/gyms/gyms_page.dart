@@ -31,10 +31,8 @@ class GymsPage extends StatelessWidget {
             ),
           ),
           Expanded(
-              child: GridView.count(
-            crossAxisCount: 1,
-            children: [GymsGrid()],
-          )),
+              child: GymsGrid(),
+          ),
         ],
       ),
     );
