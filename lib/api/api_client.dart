@@ -5,13 +5,14 @@ import 'package:perfectBeta/constants/controllers.dart';
 import 'package:perfectBeta/dto/auth/token_dto.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class Client{
+class ApiClient{
   Dio init() {
     Dio _dio = new Dio();
     //  dio instance to request token
     Dio _tokenDio = new Dio();
     String token;
-    _dio.options.baseUrl = "https://perfectbeta-spring-boot-tls-pyclimb.apps.okd.cti.p.lodz.pl/api";
+    _dio.options.baseUrl = 'https://perfectbeta-spring-boot-tls-pyclimb.apps.okd.cti.p.lodz.pl/api';
+    _dio.options.headers['Content-Type'] = 'application/json';
     _tokenDio.options = _dio.options;
     _dio.interceptors.add(ApiInterceptors());
     //TODO: Interceptor for token authentication
@@ -48,28 +49,32 @@ class ApiInterceptors extends Interceptor {
 
     print('REQUEST[${options.method}] => PATH: ${options.path}');
 
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    var token = prefs.get("token");
-    if (token != null) options.headers.addAll({"Authorization": 'Bearer ${token}'});
+    // SharedPreferences prefs = await SharedPreferences.getInstance();
+    // var token = prefs.get("token");
+    // if (token != null) options.headers.addAll({"Authorization": 'Bearer ${token}'});
 
     return super.onRequest(options, handler);
   }
 
   @override
   FutureOr<dynamic> onResponse(Response response, ResponseInterceptorHandler handler) async {
-    if (response.headers.value("verifyToken") != null) {
-      //if the header is present, then compare it with the Shared Prefs key
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-      var verifyToken = prefs.get("VerifyToken");
 
-      // if the value is the same as the header, continue with the request
-      if (response.headers.value("verifyToken") == verifyToken) {
-        //return response;
-        return super.onResponse(response, handler);
-      }
-    }
+    print('RESPONSE[${response.statusCode}] => PATH: ${response.requestOptions.path}');
 
-    return DioError(requestOptions: response.data, error: "User is no longer active");
+    // if (response.headers.value("verifyToken") != null) {
+    //   //if the header is present, then compare it with the Shared Prefs key
+    //   SharedPreferences prefs = await SharedPreferences.getInstance();
+    //   var verifyToken = prefs.get("VerifyToken");
+    //
+    //   // if the value is the same as the header, continue with the request
+    //   if (response.headers.value("verifyToken") == verifyToken) {
+    //     //return response;
+    //     return super.onResponse(response, handler);
+    //   }
+    // }
+    //
+    // return DioError(requestOptions: response.data, error: "User is no longer active");
+    return super.onResponse(response, handler);
   }
 
   @override
