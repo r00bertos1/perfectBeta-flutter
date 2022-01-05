@@ -22,7 +22,7 @@ class OverviewPage extends StatelessWidget {
               children: [
                 Container(
                     margin: EdgeInsets.only(
-                        top: ResponsiveWidget.isSmallScreen(context) ? 80 : 10,
+                        top: ResponsiveWidget.isSmallScreen(context) ? 100 : 10,
                         bottom:
                         ResponsiveWidget.isSmallScreen(context) ? 20 : 20),
                     child: CustomText(

@@ -1,7 +1,7 @@
 import 'package:data_table_2/data_table_2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:perfectBeta/dto/gyms/pages/gym_page_dto.dart';
+import 'package:perfectBeta/dto/pages/page_dto.dart';
 import 'package:perfectBeta/pages/my_routes/my_routes_page.dart';
 import 'package:perfectBeta/service.dart';
 import 'package:perfectBeta/constants/style.dart';
@@ -112,11 +112,11 @@ class GymsGrid extends StatelessWidget {
   //       });
   // }
 
-  void _onTileClicked(int index, context){
+  void _onTileClicked(int index, int gymId, String gymName, context){
     Navigator.push(
       context,
       //MaterialPageRoute(builder: (context) => GymDetails(index)),
-      MaterialPageRoute(builder: (context) => GymDetailsPage()),
+      MaterialPageRoute(builder: (context) => GymDetailsPage(gymId: gymId, gymName: gymName)),
     );
   }
 
@@ -135,7 +135,7 @@ class GymsGrid extends StatelessWidget {
         //margin: EdgeInsets.only(bottom: 30),
         child: GridTile(
           child: GestureDetector(
-            onTap: () => _onTileClicked(index, context),
+            onTap: () => _onTileClicked(index, snapshot.data.content[index].id, snapshot.data.content[index].gymName, context),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
