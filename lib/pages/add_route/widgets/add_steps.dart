@@ -34,13 +34,17 @@ class _AddStepsState extends State<AddSteps> {
   bool received = false;
 
   var _image;
+  var _imageFile;
+  String _imagePath = '';
+
   var imageFile;
   String _routeName;
   bool _submitted = false;
   final ImagePicker _picker = ImagePicker();
-  String _imagePath = '';
-  String imagePathTest = '/data/user/0/com.pl.ftims.ias.perfectbeta/cache/image_picker1161768634626818162.jpg';
-  var _pickedImage;
+
+  String imagePathTest =
+      '/data/user/0/com.pl.ftims.ias.perfectbeta/cache/image_picker1161768634626818162.jpg';
+
   dynamic _pickImageError;
 
   //Textfield controller
@@ -68,10 +72,10 @@ class _AddStepsState extends State<AddSteps> {
   }
 
   Future<List<ConvertedImage>> _future;
-  @override
-  void initState() {
-    _future = convertImage(imagePathTest);
-  }
+  // @override
+  // void initState() {
+  //   _future = convertImage(imagePathTest);
+  // }
   @override
   Widget build(BuildContext context) {
     var mediaQD = MediaQuery.of(context);
@@ -354,12 +358,89 @@ class _AddStepsState extends State<AddSteps> {
                       ],
                     ),
                     Container(
-                      alignment: Alignment.center,
-                      padding: const EdgeInsets.all(8.0),
-                      child:
-                      //Container(),
-                      buildFutureBuilder(_imagePath),
-                    )
+                        alignment: Alignment.center,
+                        padding: const EdgeInsets.all(8.0),
+                        child: (_future == null) ? buildColumn() : buildFutureBuilder(),
+
+                        // FutureBuilder<void>(
+                        //   future: retriveLostData(),
+                        //   builder: (BuildContext context,
+                        //       AsyncSnapshot<void> snapshot) {
+                        //     switch (snapshot.connectionState) {
+                        //       case ConnectionState.none:
+                        //       case ConnectionState.waiting:
+                        //         return const Text('Picked an image');
+                        //       case ConnectionState.done:
+                        //         return _buildHoldsTable();
+                        //       default:
+                        //         return const Text('Picked an image');
+                        //     }
+                        //   },
+                          // builder: (context, snapshot) {
+                          //   // if (snapshot.connectionState != ConnectionState.done) {
+                          //   //   // return: show loading widget
+                          //   // }
+                          //   print(snapshot.connectionState);
+                          //
+                          //   if (snapshot.connectionState == ConnectionState.waiting) {
+                          //     return CircularProgressIndicator();
+                          //   }
+                          //   if (snapshot.hasError) {
+                          //     return const Text('Error');
+                          //   }
+                          //   if (!snapshot.hasData) {
+                          //     return const Text('Error');
+                          //   }
+                          //   var dataToShow = snapshot.data;
+                          //
+                          //   return ListView.builder(
+                          //       itemCount: dataToShow == null ? 0 : dataToShow.length,
+                          //       itemBuilder: (context, index) {
+                          //         final item = dataToShow[index];
+                          //         return Card(
+                          //           child: ListTile(
+                          //             title: Text(dataToShow[index].x1.toString()),
+                          //             subtitle: Text(dataToShow[index].x2.toString()),
+                          //           ),
+                          //         );
+                          //       });
+                          // }
+
+                          // switch (snapshot.connectionState) {
+                          //   case ConnectionState.waiting:
+                          //     return Text('Loading....');
+                          //   default:
+                          //     if (snapshot.hasError)
+                          //       return Text('Error: ${snapshot.error}');
+                          //     else
+                          //       return Text('Result: ${snapshot.data}');
+                          // }
+                          // if (snapshot.hasData) {
+                          //   List<ConvertedImage> holdsData = snapshot.data ?? [];
+                          //   return Text(holdsData.toString());
+                          // return ListView.builder(
+                          // itemCount: users.length,
+                          // itemBuilder: (context, index) {
+                          // User user = users[index];
+                          // return new ListTile(
+                          // leading: CircleAvatar(
+                          // backgroundImage: AssetImage(user.profilePicture),
+                          // ),
+                          // trailing: user.icon,
+                          // title: new Text(user.name),
+                          // onTap: () {
+                          // Navigator.push(context,
+                          // new MaterialPageRoute(builder: (context) => new Home()));
+                          // },
+                          // );
+                          // });
+                          // } else if (snapshot.hasError) {
+                          //   return Text("${snapshot.error}");
+                          // }
+                          //
+                          // // By default, show a loading spinner.
+                          // return CircularProgressIndicator();
+                        )
                   ],
                 ),
               ),
@@ -370,6 +451,22 @@ class _AddStepsState extends State<AddSteps> {
             title: Text(currentStep == 2 ? "Complete" : ""),
             content: Container()),
       ];
+
+  Column buildColumn() {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: <Widget>[
+        ElevatedButton(
+          onPressed: () {
+            setState(() {
+              _future = convertImage(_imagePath);
+            });
+          },
+          child: const Text('Create Data'),
+        ),
+      ],
+    );
+  }
 
   void _showPicker(context) {
     showModalBottomSheet(
@@ -481,20 +578,8 @@ class _AddStepsState extends State<AddSteps> {
         setState(() {
           _image = Image.network(image.path);
           _imagePath = image.path;
-          //_pickedImage = File(image.path);
-          //var bytes = image.readAsBytes();
+          _imageFile = image;
         });
-        //Solution 2
-        // final image =
-        //     (await ImagePickerWeb.getImage(outputType: ImageType.widget))
-        //         as Image;
-        //
-        // if (image != null) {
-        //   setState(() {
-        //     _image = image;
-        //     print(_image.toString());
-        //   });
-        // };
       } else {
         var source = type == ImageSourceType.camera
             ? ImageSource.camera
@@ -506,7 +591,7 @@ class _AddStepsState extends State<AddSteps> {
         setState(() {
           _image = File(image.path);
           _imagePath = image.path;
-          print(_imagePath);
+          _imageFile = image;
         });
       }
     } catch (e) {
@@ -516,48 +601,113 @@ class _AddStepsState extends State<AddSteps> {
     }
   }
 
+  //Future functions
+
   Future<List<ConvertedImage>> convertImage(imagePath) async {
     var uri = Uri.parse(uploadImageURL);
-    Map<String, String> headers = {
-      "Access-Control-Allow-Origin": "*", // Required for CORS support to work
-      "Access-Control-Allow-Credentials":
-          "true", // Required for cookies, authorization headers with HTTPS
-    };
-    var request = new http.MultipartRequest("POST", uri);
-    request.headers.addAll(headers);
-    //Constructor
-    // var multipartFile = new http.MultipartFile('image',
-    //     File(imagePath).readAsBytes().asStream(), File(imagePath).lengthSync());
-    // request.files.add(multipartFile);
-    //Path
-    request.files.add(await http.MultipartFile.fromPath('image', imagePath));
-    print('Sending');
-    //Bytes
-    // request.files.add(http.MultipartFile.fromBytes(
-    //     'image', File(imagePath).readAsBytesSync(),));
-    request.send().then((result) async {
-      http.Response.fromStream(result).then((response) {
-        if (response.statusCode == 200) {
-          print("Uploaded! ");
-          print('response.body ' + response.body);
-          List jsonResponse = json.decode(response.body);
-          return jsonResponse
-              .map((item) => new ConvertedImage.fromJson(item))
-              .toList();
-        } else {
-          print(response.statusCode);
-          print(response.body);
-          return <ConvertedImage>[];
-        }
-        //return <ConvertedImage>[];
-        //return ConvertedImage.fromJson(jsonDecode(response.body));
-      });
-    })
-    .catchError((err) => print('error : ' + err.toString()))
-    .whenComplete(() {received = true;});
+
+    var request = http.MultipartRequest('POST', uri)
+      ..fields['image'] = imagePath;
+
+    request.headers.addAll({
+      'Content-Type': 'multipart/form-data',
+      // 'Authorization':'your token'
+    });
+
+
+    // var response = await request.send();
+    // if (response.statusCode == 200) {
+    //
+    //   List jsonResponse = json.decode(response.body);
+    //   return jsonResponse
+    //       .map((item) => new ConvertedImage.fromJson(item))
+    //       .toList();
+    // } else {
+    //   throw Exception('Failed to create album, code:' + response.statusCode.toString() + 'body' + response.body);
+    // }
+
+    // final response = await http.post(
+    //   uri,
+    //   headers: <String, String>{
+    //     'Access-Control-Allow-Origin': '*',
+    //     'Access-Control-Allow-Credentials': 'true',
+    //     'Content-Type': 'multipart/form-data',
+    //   },
+    //   body: jsonEncode(<String, dynamic>{
+    //     'image': imagePath,
+    //   }),
+    // );
+    //
+    // if (response.statusCode == 201) {
+    //   List jsonResponse = json.decode(response.body);
+    //         return jsonResponse
+    //             .map((item) => new ConvertedImage.fromJson(item))
+    //             .toList();
+    // } else {
+    //   throw Exception('Failed to create album, code:' + response.statusCode.toString() + 'body' + response.body);
+    // }
+
+
+    // Map<String, String> headers = {
+    //   "Access-Control-Allow-Origin": "*", // Required for CORS support to work
+    //   "Access-Control-Allow-Credentials":
+    //       "true", // Required for cookies, authorization headers with HTTPS
+    // };
+    // var request = new http.MultipartRequest("POST", uri);
+    // request.headers.addAll(headers);
+    //
+    // //Constructor
+    // // var multipartFile = new http.MultipartFile('image',
+    // //     File(imagePath).readAsBytes().asStream(), File(imagePath).lengthSync());
+    // // request.files.add(multipartFile);
+    //
+    // //Path
+    // request.files.add(await http.MultipartFile.fromPath('image', imagePath));
+    // print('Sending Multipart file from path');
+    //
+    // //Bytes
+    // // request.files.add(http.MultipartFile.fromBytes(
+    // //     'image', File(imagePath).readAsBytesSync(),));
+    //
+    // request
+    //     .send()
+    //     .then((result) {
+    //   http.Response.fromStream(result).then((response) {
+    //     if (response.statusCode == 200) {
+    //       print("Uploaded! ");
+    //       print('response.body ' + response.body);
+    //       List jsonResponse = json.decode(response.body);
+    //       return jsonResponse
+    //           .map((item) => new ConvertedImage.fromJson(item))
+    //           .toList();
+    //     } else {
+    //       print(response.statusCode);
+    //       print(response.body);
+    //       return <ConvertedImage>[];
+    //     }
+    //     //return <ConvertedImage>[];
+    //     //return ConvertedImage.fromJson(jsonDecode(response.body));
+    //   });
+    // })
+    // .catchError((err) => print('error : ' + err.toString()))
+    // .whenComplete(() {received = true;});
   }
 
-  FutureBuilder<List<ConvertedImage>> buildFutureBuilder(imagePath) {
+  Future<void> retriveLostData() async {
+    final LostData response = await _picker.getLostData();
+    if (response.isEmpty) {
+      return;
+    }
+    if (response.file != null) {
+      setState(() {
+        _imageFile = response.file;
+      });
+    } else {
+      print('Retrieve error ' + response.exception.code);
+    }
+  }
+
+  FutureBuilder<List<ConvertedImage>> buildFutureBuilder() {
     return FutureBuilder<List<ConvertedImage>>(
         future: _future,
         builder: (context, snapshot) {
@@ -565,28 +715,47 @@ class _AddStepsState extends State<AddSteps> {
           //   // return: show loading widget
           // }
           print(snapshot.connectionState);
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return CircularProgressIndicator();
-          }
-          if (snapshot.hasError) {
-              return const Text('Error');
-          }
-          if (!snapshot.hasData) {
-              return const Text('Error');
-          }
-          var dataToShow = snapshot.data;
+          if (snapshot.hasData) {
+            var dataToShow = snapshot.data;
 
-          return ListView.builder(
-              itemCount: dataToShow == null ? 0 : dataToShow.length,
-              itemBuilder: (context, index) {
-                final item = dataToShow[index];
-                return Card(
-                  child: ListTile(
-                    title: Text(dataToShow[index].x1.toString()),
-                    subtitle: Text(dataToShow[index].x2.toString()),
-                  ),
-                );
-              });
+            return ListView.builder(
+                itemCount: dataToShow == null ? 0 : dataToShow.length,
+                itemBuilder: (context, index) {
+                  final item = dataToShow[index];
+                  return Card(
+                    child: ListTile(
+                      title: Text(dataToShow[index].x1.toString()),
+                      subtitle: Text(dataToShow[index].x2.toString()),
+                    ),
+                  );
+                });
+          } else if (snapshot.hasError) {
+            return Text('${snapshot.error}');
+          }
+
+          return const CircularProgressIndicator();
+          // if (snapshot.connectionState == ConnectionState.waiting) {
+          //   return CircularProgressIndicator();
+          // }
+          // if (snapshot.hasError) {
+          //   return const Text('Error');
+          // }
+          // if (!snapshot.hasData) {
+          //   return const Text('Error');
+          // }
+          // var dataToShow = snapshot.data;
+          //
+          // return ListView.builder(
+          //     itemCount: dataToShow == null ? 0 : dataToShow.length,
+          //     itemBuilder: (context, index) {
+          //       final item = dataToShow[index];
+          //       return Card(
+          //         child: ListTile(
+          //           title: Text(dataToShow[index].x1.toString()),
+          //           subtitle: Text(dataToShow[index].x2.toString()),
+          //         ),
+          //       );
+          //     });
           // switch (snapshot.connectionState) {
           //   case ConnectionState.waiting:
           //     return Text('Loading....');
@@ -599,22 +768,22 @@ class _AddStepsState extends State<AddSteps> {
           // if (snapshot.hasData) {
           //   List<ConvertedImage> holdsData = snapshot.data ?? [];
           //   return Text(holdsData.toString());
-            // return ListView.builder(
-            // itemCount: users.length,
-            // itemBuilder: (context, index) {
-            // User user = users[index];
-            // return new ListTile(
-            // leading: CircleAvatar(
-            // backgroundImage: AssetImage(user.profilePicture),
-            // ),
-            // trailing: user.icon,
-            // title: new Text(user.name),
-            // onTap: () {
-            // Navigator.push(context,
-            // new MaterialPageRoute(builder: (context) => new Home()));
-            // },
-            // );
-            // });
+          // return ListView.builder(
+          // itemCount: users.length,
+          // itemBuilder: (context, index) {
+          // User user = users[index];
+          // return new ListTile(
+          // leading: CircleAvatar(
+          // backgroundImage: AssetImage(user.profilePicture),
+          // ),
+          // trailing: user.icon,
+          // title: new Text(user.name),
+          // onTap: () {
+          // Navigator.push(context,
+          // new MaterialPageRoute(builder: (context) => new Home()));
+          // },
+          // );
+          // });
           // } else if (snapshot.hasError) {
           //   return Text("${snapshot.error}");
           // }
@@ -623,4 +792,33 @@ class _AddStepsState extends State<AddSteps> {
           // return CircularProgressIndicator();
         });
   }
+
+  // Widget _buildHoldsTable() {
+  //   if (_imageFile != null) {
+  //     return Center(
+  //       child: Column(
+  //         mainAxisAlignment: MainAxisAlignment.center,
+  //         children: <Widget>[
+  //           buildFutureBuilder(_imageFile.path),
+  //           SizedBox(
+  //             height: 20,
+  //           ),
+  //           ElevatedButton(
+  //             onPressed: () async {
+  //               var res = await convertImage(_imageFile.path);
+  //               print(res);
+  //               print(received);
+  //             },
+  //             child: const Text('Upload'),
+  //           )
+  //         ],
+  //       ),
+  //     );
+  //   } else {
+  //     return const Text(
+  //       'You have not yet picked an image.',
+  //       textAlign: TextAlign.center,
+  //     );
+  //   }
+  // }
 }

@@ -1,11 +1,11 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:dio/dio.dart';
-import 'package:flutter/material.dart';
 import 'package:perfectBeta/dto/gyms/climbing_gym_dto.dart';
 import 'package:perfectBeta/dto/gyms/climbing_gym_with_details_dto.dart';
+import 'package:perfectBeta/dto/gyms/climbing_gym_with_maintainers_dto.dart';
+import 'package:perfectBeta/dto/gyms/gym_details_dto.dart';
 import 'package:perfectBeta/dto/pages/page_dto.dart';
-
 import '../api_client.dart';
 
 class ClimbingGymEndpoint {
@@ -13,7 +13,8 @@ class ClimbingGymEndpoint {
   Dio _client;
   ClimbingGymEndpoint(this._client);
 
-
+  // ANONIM
+  // GET
   Future<GymPage> getVerifiedGyms() async {
     try {
       //final response = await _client.get('/gym/verified/all');
@@ -26,7 +27,6 @@ class ClimbingGymEndpoint {
       //print('PAGE' + page.toString());
 
       return page;
-
     } on DioError catch (ex) {
       // The request was made and the server responded with a status code
       // that falls out of the range of 2xx and is also not 304.
@@ -43,8 +43,7 @@ class ClimbingGymEndpoint {
         String errorMessage = json.decode(ex.response.toString())["message"];
         throw new Exception(errorMessage);
       }
-    }
-    catch (e, s) {
+    } catch (e, s) {
       print("Exception $e");
       print("StackTrace $s");
     }
@@ -58,9 +57,136 @@ class ClimbingGymEndpoint {
 
       //Decode response data and create new model class
       final jsonResponse = json.decode(response.data);
-      ClimbingGymWithDetailsDTO page = new ClimbingGymWithDetailsDTO.fromJson(jsonResponse);
+      ClimbingGymWithDetailsDTO page =
+          new ClimbingGymWithDetailsDTO.fromJson(jsonResponse);
       //print('PAGE' + page.toString());
 
+      return page;
+    } on DioError catch (ex) {
+      // The request was made and the server responded with a status code
+      // that falls out of the range of 2xx and is also not 304.
+      if (ex.response != null) {
+        print('Dio error!');
+        print('STATUS: ${ex.response?.statusCode}');
+        print('DATA: ${ex.response?.data}');
+        print('HEADERS: ${ex.response?.headers}');
+      } else {
+        // Error due to setting up or sending the request
+        print('Error sending request!');
+        print(ex.message);
+        // Assuming there will be an errorMessage property in the JSON object
+        String errorMessage = json.decode(ex.response.toString())["message"];
+        throw new Exception(errorMessage);
+      }
+    } catch (e, s) {
+      print("Exception $e");
+      print("StackTrace $s");
+    }
+  }
+
+  // Future<List<ClimbingGymDTO>> getVerifiedGymsWithoutPage() async {
+  //   try {
+  //     final response = await _client.get('/gym/verified/all');
+  //     //Response<String> response = await _client.get('/gym/verified/all');
+  //     //print('RESPONSE: ${response.data.toString()}');
+  //     //print('RESPONSE: ${response.data['content'].toString()}');
+  //     //return response.data;
+  //     // It's better to return a Model class instead but this is
+  //     // only for example purposes only
+  //     //var jsonResponse = json.decode(response.data['content']);
+  //     //print('JSON RESPONSE: ${jsonResponse.toString()}');
+  //     //print('JSON RESPONSE:');
+  //
+  //     // print(json.decode(response.data['content'])
+  //     //     .map((item) => new ClimbingGymDTO.fromJson(item))
+  //     //     .toList().toString());
+  //
+  //     print(response.data['content']);
+  //     // List jsonResponse = json.decode(response.data['content']);
+  //     // print(jsonResponse);
+  //     // return jsonResponse
+  //     //     .map((item) => new ClimbingGymDTO.fromJson(item))
+  //     //     .toList();
+  //     //var responseBodyGyms = response.data['content'];
+  //     Iterable l = json.decode(response.data['content']);
+  //     //print('TEST Iterable' + l.toString());
+  //     //List<ClimbingGymDTO> res = List<ClimbingGymDTO>.from(responseBodyGyms.map((model)=> ClimbingGymDTO.fromJson(model)));
+  //     List<ClimbingGymDTO> res = List<ClimbingGymDTO>.from(l.map((model)=> ClimbingGymDTO.fromJson(model)));
+  //     print('TEST' + res.toString());
+  //     return res;
+  //
+  //     // return (response.data as List)
+  //     //     .map((item) => ClimbingGymDTO.fromJson(item))
+  //     //     .toList();
+  //     // return jsonResponse
+  //     //     .map((item) => new ClimbingGymDTO.fromJson(item))
+  //     //     .toList();
+  //     //return ClimbingGymDTO.fromJson(jsonDecode(response.data));
+  //   } on DioError catch (ex) {
+  //     // The request was made and the server responded with a status code
+  //     // that falls out of the range of 2xx and is also not 304.
+  //     if (ex.response != null) {
+  //       print('Dio error!');
+  //       print('STATUS: ${ex.response?.statusCode}');
+  //       print('DATA: ${ex.response?.data}');
+  //       print('HEADERS: ${ex.response?.headers}');
+  //     } else {
+  //       // Error due to setting up or sending the request
+  //       print('Error sending request!');
+  //       print(ex.message);
+  //       // Assuming there will be an errorMessage property in the JSON object
+  //       // String errorMessage = json.decode(ex.response.toString())["errorMessage"];
+  //       // throw new Exception(errorMessage);
+  //     }
+  //   }
+  //   catch(e) {
+  //     print(e);
+  //   }
+  // }
+
+  // ADMIN
+  // GET
+  Future<GymPage> getAllGyms() async {
+    try {
+      //TODO: query params
+      Response<String> response = await _client.get('/gym/all');
+
+      //Decode response data and create new model class
+      final jsonResponse = json.decode(response.data);
+      GymPage page = new GymPage.fromJson(jsonResponse);
+      //print('PAGE' + page.toString());
+
+      return page;
+    } on DioError catch (ex) {
+      // The request was made and the server responded with a status code
+      // that falls out of the range of 2xx and is also not 304.
+      if (ex.response != null) {
+        print('Dio error!');
+        print('STATUS: ${ex.response?.statusCode}');
+        print('DATA: ${ex.response?.data}');
+        print('HEADERS: ${ex.response?.headers}');
+      } else {
+        // Error due to setting up or sending the request
+        print('Error sending request!');
+        print(ex.message);
+        // Assuming there will be an errorMessage property in the JSON object
+        String errorMessage = json.decode(ex.response.toString())["message"];
+        throw new Exception(errorMessage);
+      }
+    } catch (e, s) {
+      print("Exception $e");
+      print("StackTrace $s");
+    }
+  }
+
+  Future<ClimbingGymWithDetailsDTO> getGymById(int gymId) async {
+    try {
+      Response<String> response = await _client.get('/gym/$gymId');
+
+      //Decode response data and create new model class
+      final jsonResponse = json.decode(response.data);
+      ClimbingGymWithDetailsDTO page =
+      new ClimbingGymWithDetailsDTO.fromJson(jsonResponse);
       return page;
 
     } on DioError catch (ex) {
@@ -79,60 +205,82 @@ class ClimbingGymEndpoint {
         String errorMessage = json.decode(ex.response.toString())["message"];
         throw new Exception(errorMessage);
       }
-    }
-    catch (e, s) {
+    } catch (e, s) {
       print("Exception $e");
       print("StackTrace $s");
     }
   }
 
-
-
-
-
-
-
-
-
-
-  Future<List<ClimbingGymDTO>> getVerifiedGymsWithoutPage() async {
+  // PUT
+  Future<ClimbingGymDTO> verifyGym(int gymId) async {
     try {
-      final response = await _client.get('/gym/verified/all');
-      //Response<String> response = await _client.get('/gym/verified/all');
-      //print('RESPONSE: ${response.data.toString()}');
-      //print('RESPONSE: ${response.data['content'].toString()}');
-      //return response.data;
-      // It's better to return a Model class instead but this is
-      // only for example purposes only
-      //var jsonResponse = json.decode(response.data['content']);
-      //print('JSON RESPONSE: ${jsonResponse.toString()}');
-      //print('JSON RESPONSE:');
+      Response<String> response = await _client.put('/gym/verify/$gymId');
 
-      // print(json.decode(response.data['content'])
-      //     .map((item) => new ClimbingGymDTO.fromJson(item))
-      //     .toList().toString());
+      //Decode response data and create new model class
+      final jsonResponse = json.decode(response.data);
+      ClimbingGymDTO page =
+      new ClimbingGymDTO.fromJson(jsonResponse);
+      return page;
 
-      print(response.data['content']);
-      // List jsonResponse = json.decode(response.data['content']);
-      // print(jsonResponse);
-      // return jsonResponse
-      //     .map((item) => new ClimbingGymDTO.fromJson(item))
-      //     .toList();
-      //var responseBodyGyms = response.data['content'];
-      Iterable l = json.decode(response.data['content']);
-      //print('TEST Iterable' + l.toString());
-      //List<ClimbingGymDTO> res = List<ClimbingGymDTO>.from(responseBodyGyms.map((model)=> ClimbingGymDTO.fromJson(model)));
-      List<ClimbingGymDTO> res = List<ClimbingGymDTO>.from(l.map((model)=> ClimbingGymDTO.fromJson(model)));
-      print('TEST' + res.toString());
-      return res;
+    } on DioError catch (ex) {
+      if (ex.response != null) {
+        print('Dio error!');
+        print('STATUS: ${ex.response?.statusCode}');
+        print('DATA: ${ex.response?.data}');
+        print('HEADERS: ${ex.response?.headers}');
+      } else {
+        print('Error sending request!');
+        print(ex.message);
+        String errorMessage = json.decode(ex.response.toString())["message"];
+        throw new Exception(errorMessage);
+      }
+    } catch (e, s) {
+      print("Exception $e");
+      print("StackTrace $s");
+    }
+  }
 
-      // return (response.data as List)
-      //     .map((item) => ClimbingGymDTO.fromJson(item))
-      //     .toList();
-      // return jsonResponse
-      //     .map((item) => new ClimbingGymDTO.fromJson(item))
-      //     .toList();
-      //return ClimbingGymDTO.fromJson(jsonDecode(response.data));
+  Future<ClimbingGymDTO> closeGym(int gymId) async {
+    try {
+      Response<String> response = await _client.put('/gym/close/$gymId');
+
+      //Decode response data and create new model class
+      final jsonResponse = json.decode(response.data);
+      ClimbingGymDTO page =
+      new ClimbingGymDTO.fromJson(jsonResponse);
+      return page;
+
+    } on DioError catch (ex) {
+      if (ex.response != null) {
+        print('Dio error!');
+        print('STATUS: ${ex.response?.statusCode}');
+        print('DATA: ${ex.response?.data}');
+        print('HEADERS: ${ex.response?.headers}');
+      } else {
+        print('Error sending request!');
+        print(ex.message);
+        String errorMessage = json.decode(ex.response.toString())["message"];
+        throw new Exception(errorMessage);
+      }
+    } catch (e, s) {
+      print("Exception $e");
+      print("StackTrace $s");
+    }
+  }
+
+  // MANAGER
+  // GET
+  Future<GymPage> getAllOwnedGyms() async {
+    try {
+      //TODO: query params
+      Response<String> response = await _client.get('/gym/owned_gyms');
+
+      //Decode response data and create new model class
+      final jsonResponse = json.decode(response.data);
+      GymPage page = new GymPage.fromJson(jsonResponse);
+      //print('PAGE' + page.toString());
+
+      return page;
     } on DioError catch (ex) {
       // The request was made and the server responded with a status code
       // that falls out of the range of 2xx and is also not 304.
@@ -146,12 +294,136 @@ class ClimbingGymEndpoint {
         print('Error sending request!');
         print(ex.message);
         // Assuming there will be an errorMessage property in the JSON object
-        // String errorMessage = json.decode(ex.response.toString())["errorMessage"];
-        // throw new Exception(errorMessage);
+        String errorMessage = json.decode(ex.response.toString())["message"];
+        throw new Exception(errorMessage);
       }
+    } catch (e, s) {
+      print("Exception $e");
+      print("StackTrace $s");
     }
-    catch(e) {
-      print(e);
+  }
+
+  Future<GymPage> getAllMaintainedGyms() async {
+    try {
+      //TODO: query params
+      Response<String> response = await _client.get('/gym/maintained_gyms');
+
+      //Decode response data and create new model class
+      final jsonResponse = json.decode(response.data);
+      GymPage page = new GymPage.fromJson(jsonResponse);
+      //print('PAGE' + page.toString());
+
+      return page;
+    } on DioError catch (ex) {
+      // The request was made and the server responded with a status code
+      // that falls out of the range of 2xx and is also not 304.
+      if (ex.response != null) {
+        print('Dio error!');
+        print('STATUS: ${ex.response?.statusCode}');
+        print('DATA: ${ex.response?.data}');
+        print('HEADERS: ${ex.response?.headers}');
+      } else {
+        // Error due to setting up or sending the request
+        print('Error sending request!');
+        print(ex.message);
+        // Assuming there will be an errorMessage property in the JSON object
+        String errorMessage = json.decode(ex.response.toString())["message"];
+        throw new Exception(errorMessage);
+      }
+    } catch (e, s) {
+      print("Exception $e");
+      print("StackTrace $s");
+    }
+  }
+
+  // PUT
+  Future<ClimbingGymWithMaintainersDTO> addMaintainerToGym(int gymId, int maintainerId) async {
+    try {
+      Response<String> response = await _client.put('/gym/$gymId/add_maintainer/$maintainerId');
+
+      final jsonResponse = json.decode(response.data);
+      ClimbingGymWithMaintainersDTO page =
+      new ClimbingGymWithMaintainersDTO.fromJson(jsonResponse);
+      return page;
+
+    } on DioError catch (ex) {
+      if (ex.response != null) {
+        print('Dio error!');
+        print('STATUS: ${ex.response?.statusCode}');
+        print('DATA: ${ex.response?.data}');
+        print('HEADERS: ${ex.response?.headers}');
+      } else {
+        print('Error sending request!');
+        print(ex.message);
+        String errorMessage = json.decode(ex.response.toString())["message"];
+        throw new Exception(errorMessage);
+      }
+    } catch (e, s) {
+      print("Exception $e");
+      print("StackTrace $s");
+    }
+  }
+
+  Future<ClimbingGymWithDetailsDTO> editGymDetails(int gymId, GymDetailsDTO body) async {
+    try {
+      //body is a map eg.
+      // var body =  {
+      //   "country": "Poland",
+      //   "city": "Łódź",
+      //   "street": "al. Politechniki",
+      //   "number": 1,
+      //   "description": "Zatoka Sportu"
+      // };
+      Response<String> response = await _client.put('/gym/edit_gym_details/$gymId', data: jsonEncode(body));
+
+      final jsonResponse = json.decode(response.data);
+      ClimbingGymWithDetailsDTO page =
+      new ClimbingGymWithDetailsDTO.fromJson(jsonResponse);
+      return page;
+
+    } on DioError catch (ex) {
+      if (ex.response != null) {
+        print('Dio error!');
+        print('STATUS: ${ex.response?.statusCode}');
+        print('DATA: ${ex.response?.data}');
+        print('HEADERS: ${ex.response?.headers}');
+      } else {
+        print('Error sending request!');
+        print(ex.message);
+        String errorMessage = json.decode(ex.response.toString())["message"];
+        throw new Exception(errorMessage);
+      }
+    } catch (e, s) {
+      print("Exception $e");
+      print("StackTrace $s");
+    }
+  }
+
+  // POST
+  Future<ClimbingGymWithDetailsDTO> registerNewGym(String gymName) async {
+    try {
+      Response<String> response = await _client.post('/gym/register/$gymName');
+
+      final jsonResponse = json.decode(response.data);
+      ClimbingGymWithDetailsDTO page =
+      new ClimbingGymWithDetailsDTO.fromJson(jsonResponse);
+      return page;
+
+    } on DioError catch (ex) {
+      if (ex.response != null) {
+        print('Dio error!');
+        print('STATUS: ${ex.response?.statusCode}');
+        print('DATA: ${ex.response?.data}');
+        print('HEADERS: ${ex.response?.headers}');
+      } else {
+        print('Error sending request!');
+        print(ex.message);
+        String errorMessage = json.decode(ex.response.toString())["message"];
+        throw new Exception(errorMessage);
+      }
+    } catch (e, s) {
+      print("Exception $e");
+      print("StackTrace $s");
     }
   }
 }
