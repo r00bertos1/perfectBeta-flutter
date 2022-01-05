@@ -1,10 +1,10 @@
-import 'package:perfectBeta/dto/gyms/pages/pageable.dart';
-import 'package:perfectBeta/dto/gyms/pages/sort.dart';
-
-import '../climbing_gym_dto.dart';
+import 'package:perfectBeta/dto/gyms/climbing_gym_dto.dart';
+import 'package:perfectBeta/dto/pages/pageable.dart';
+import 'package:perfectBeta/dto/pages/sort.dart';
+import 'package:perfectBeta/dto/routes/route_dto.dart';
 
 class GymPage {
-  List<ClimbingGymDTO> content;
+  List<dynamic> content;
   Pageable pageable;
   bool last;
   int totalPages;
@@ -18,16 +18,16 @@ class GymPage {
 
   GymPage(
       {this.content,
-        this.pageable,
-        this.last,
-        this.totalPages,
-        this.totalElements,
-        this.size,
-        this.number,
-        this.sort,
-        this.numberOfElements,
-        this.first,
-        this.empty});
+      this.pageable,
+      this.last,
+      this.totalPages,
+      this.totalElements,
+      this.size,
+      this.number,
+      this.sort,
+      this.numberOfElements,
+      this.first,
+      this.empty});
 
   // GymPage.fromJson(Map<String, dynamic> json) {
   //   if (json['content'] != null) {
@@ -73,13 +73,17 @@ class GymPage {
   // }
 
   factory GymPage.fromJson(Map<String, dynamic> json) {
-
     var list = json['content'] as List;
-    print(list.runtimeType);
-    List<ClimbingGymDTO> climbingGymsList = list.map((i) => ClimbingGymDTO.fromJson(i)).toList();
+    //print(list.toString());
+    List<dynamic> contentList;
+    if (list[0].containsKey("gymName")) {
+      contentList = list.map((i) => ClimbingGymDTO.fromJson(i)).toList();
+    } else if (list[0].containsKey("routeName")) {
+      contentList = list.map((i) => RouteDTO.fromJson(i)).toList();
+    }
 
     return GymPage(
-        content: climbingGymsList,
+        content: contentList,
         pageable: Pageable.fromJson(json['pageable']),
         last: json['last'],
         totalPages: json['totalPages'],

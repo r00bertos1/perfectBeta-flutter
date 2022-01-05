@@ -30,14 +30,18 @@ class RouteDTO {
   // });
 
   factory RouteDTO.fromJson(Map<String, dynamic> json) {
+    var list = json['photos'] as List;
+    print(list.runtimeType);
+    List<PhotoDTO> photosList = list.map((i) => PhotoDTO.fromJson(i)).toList();
+
     return RouteDTO(
-        routeName: json['routeName'],
-        difficulty: json['difficulty'],
+      routeName: json['routeName'],
+      difficulty: json['difficulty'],
       description: json['description'],
       holdsDetails: json['holdsDetails'],
       avgRating: json['avgRating'],
       climbingGymId: json['climbingGymId'],
-      photos: json['photos'],
+      photos: photosList,
     );
   }
 }

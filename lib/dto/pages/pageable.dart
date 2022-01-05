@@ -1,4 +1,4 @@
-import 'package:perfectBeta/dto/gyms/pages/sort.dart';
+import 'package:perfectBeta/dto/pages/sort.dart';
 
 class Pageable {
   Sort sort;
