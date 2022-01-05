@@ -4,7 +4,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:perfectBeta/dto/gyms/climbing_gym_dto.dart';
 import 'package:perfectBeta/dto/gyms/climbing_gym_with_details_dto.dart';
-import 'package:perfectBeta/dto/gyms/pages/gym_page_dto.dart';
+import 'package:perfectBeta/dto/pages/page_dto.dart';
 
 import '../api_client.dart';
 
