@@ -4,7 +4,6 @@ import 'package:dio/dio.dart';
 import 'package:perfectBeta/dto/auth/registration_dto.dart';
 import 'package:perfectBeta/dto/users/user_with_access_level_dto.dart';
 import 'package:perfectBeta/dto/users/user_with_personal_data_access_level_dto.dart';
-
 import '../api_client.dart';
 
 class ManagerEndpoint {
