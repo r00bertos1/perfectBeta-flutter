@@ -16,8 +16,8 @@ class RouteEndpoint {
   RouteEndpoint(this._client);
 
   // ANONIM
-  // GET
-  Future<GymPage> getAllGymRoutes(int gymId) async {
+    // GET
+  Future<DataPage> getAllGymRoutes(int gymId) async {
     try {
       //final response = await _client.get('/gym/verified/all');
       Response<String> response = await _client.get('/route/$gymId');
@@ -25,7 +25,7 @@ class RouteEndpoint {
 
       //Decode response data and create new model class
       final jsonResponse = json.decode(response.data);
-      GymPage page = new GymPage.fromJson(jsonResponse);
+      DataPage page = new DataPage.fromJson(jsonResponse);
       //print('PAGE' + page.toString());
 
       return page;
@@ -52,7 +52,7 @@ class RouteEndpoint {
   }
 
   // MANAGER
-  // PUT
+    // PUT
   Future<RouteDTO> editRouteDetails(int gymId, int routeId, RouteDTO body) async {
     try {
       //body is RouteDTO eg.
@@ -85,7 +85,7 @@ class RouteEndpoint {
     }
   }
 
-  // POST
+    // POST
   Future<RouteDTO> addWallToGym(RouteDTO body) async {
     try {
       //body is a RouteDTO eg.
@@ -128,7 +128,7 @@ class RouteEndpoint {
     }
   }
 
-  // DELETE
+    // DELETE
   Future<Response> deleteRoute(int gymId, int routeId) async {
     try {
       Response<String> response =
@@ -178,12 +178,12 @@ class RouteEndpoint {
   }
 
   // CLIMBER
-  // GET
-  Future<GymPage> getAllFavourites() async {
+    // GET
+  Future<DataPage> getAllFavourites() async {
     try {
       Response<String> response = await _client.get('/route/favorites');
       final jsonResponse = json.decode(response.data);
-      GymPage page = new GymPage.fromJson(jsonResponse);
+      DataPage page = new DataPage.fromJson(jsonResponse);
 
       return page;
     } on DioError catch (ex) {
@@ -204,7 +204,7 @@ class RouteEndpoint {
     }
   }
 
-  // POST
+    // POST
   Future<RouteDTO> addRouteToFavourites(int routeID) async {
     try {
       //body is a RouteDTO eg.
@@ -277,7 +277,7 @@ class RouteEndpoint {
     }
   }
 
-  // DELETE
+    // DELETE
   Future<Response> removeRouteFromFavourites(int routeID) async {
     try {
       Response<String> response =

@@ -14,7 +14,7 @@ class CloudEndpoint {
   CloudEndpoint(this._client);
 
   // ANONIM
-  // POST
+    // POST
   Future<List<Uri>> uploadFile(map) async {
     try {
       var formData = FormData.fromMap(map);

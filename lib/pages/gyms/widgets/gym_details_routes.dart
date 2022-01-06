@@ -101,7 +101,7 @@ class GymsDetailsRoutes extends StatelessWidget {
                                   ),
                                 ],
                               ),
-                              FutureBuilder<GymPage>(
+                              FutureBuilder<DataPage>(
                                   future: _routeEndpoint.getAllGymRoutes(gymId),
                                   builder: (context, snapshot) {
                                     print(

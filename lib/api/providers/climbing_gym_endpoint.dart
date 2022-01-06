@@ -14,8 +14,8 @@ class ClimbingGymEndpoint {
   ClimbingGymEndpoint(this._client);
 
   // ANONIM
-  // GET
-  Future<GymPage> getVerifiedGyms() async {
+    // GET
+  Future<DataPage> getVerifiedGyms() async {
     try {
       //final response = await _client.get('/gym/verified/all');
       Response<String> response = await _client.get('/gym/verified/all');
@@ -23,7 +23,7 @@ class ClimbingGymEndpoint {
 
       //Decode response data and create new model class
       final jsonResponse = json.decode(response.data);
-      GymPage page = new GymPage.fromJson(jsonResponse);
+      DataPage page = new DataPage.fromJson(jsonResponse);
       //print('PAGE' + page.toString());
 
       return page;
@@ -145,15 +145,15 @@ class ClimbingGymEndpoint {
   // }
 
   // ADMIN
-  // GET
-  Future<GymPage> getAllGyms() async {
+    // GET
+  Future<DataPage> getAllGyms() async {
     try {
       //TODO: query params
       Response<String> response = await _client.get('/gym/all');
 
       //Decode response data and create new model class
       final jsonResponse = json.decode(response.data);
-      GymPage page = new GymPage.fromJson(jsonResponse);
+      DataPage page = new DataPage.fromJson(jsonResponse);
       //print('PAGE' + page.toString());
 
       return page;
@@ -211,7 +211,7 @@ class ClimbingGymEndpoint {
     }
   }
 
-  // PUT
+    // PUT
   Future<ClimbingGymDTO> verifyGym(int gymId) async {
     try {
       Response<String> response = await _client.put('/gym/verify/$gymId');
@@ -269,15 +269,15 @@ class ClimbingGymEndpoint {
   }
 
   // MANAGER
-  // GET
-  Future<GymPage> getAllOwnedGyms() async {
+    // GET
+  Future<DataPage> getAllOwnedGyms() async {
     try {
       //TODO: query params
       Response<String> response = await _client.get('/gym/owned_gyms');
 
       //Decode response data and create new model class
       final jsonResponse = json.decode(response.data);
-      GymPage page = new GymPage.fromJson(jsonResponse);
+      DataPage page = new DataPage.fromJson(jsonResponse);
       //print('PAGE' + page.toString());
 
       return page;
@@ -303,14 +303,14 @@ class ClimbingGymEndpoint {
     }
   }
 
-  Future<GymPage> getAllMaintainedGyms() async {
+  Future<DataPage> getAllMaintainedGyms() async {
     try {
       //TODO: query params
       Response<String> response = await _client.get('/gym/maintained_gyms');
 
       //Decode response data and create new model class
       final jsonResponse = json.decode(response.data);
-      GymPage page = new GymPage.fromJson(jsonResponse);
+      DataPage page = new DataPage.fromJson(jsonResponse);
       //print('PAGE' + page.toString());
 
       return page;
@@ -336,7 +336,7 @@ class ClimbingGymEndpoint {
     }
   }
 
-  // PUT
+    // PUT
   Future<ClimbingGymWithMaintainersDTO> addMaintainerToGym(int gymId, int maintainerId) async {
     try {
       Response<String> response = await _client.put('/gym/$gymId/add_maintainer/$maintainerId');
@@ -399,7 +399,7 @@ class ClimbingGymEndpoint {
     }
   }
 
-  // POST
+    // POST
   Future<ClimbingGymWithDetailsDTO> registerNewGym(String gymName) async {
     try {
       Response<String> response = await _client.post('/gym/register/$gymName');

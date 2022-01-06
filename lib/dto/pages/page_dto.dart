@@ -2,8 +2,9 @@ import 'package:perfectBeta/dto/gyms/climbing_gym_dto.dart';
 import 'package:perfectBeta/dto/pages/pageable.dart';
 import 'package:perfectBeta/dto/pages/sort.dart';
 import 'package:perfectBeta/dto/routes/route_dto.dart';
+import 'package:perfectBeta/dto/users/user_with_personal_data_access_level_dto.dart';
 
-class GymPage {
+class DataPage {
   List<dynamic> content;
   Pageable pageable;
   bool last;
@@ -16,7 +17,7 @@ class GymPage {
   bool first;
   bool empty;
 
-  GymPage(
+  DataPage(
       {this.content,
       this.pageable,
       this.last,
@@ -72,7 +73,7 @@ class GymPage {
   //   return data;
   // }
 
-  factory GymPage.fromJson(Map<String, dynamic> json) {
+  factory DataPage.fromJson(Map<String, dynamic> json) {
     var list = json['content'] as List;
     //print(list.toString());
     List<dynamic> contentList;
@@ -80,9 +81,11 @@ class GymPage {
       contentList = list.map((i) => ClimbingGymDTO.fromJson(i)).toList();
     } else if (list[0].containsKey("routeName")) {
       contentList = list.map((i) => RouteDTO.fromJson(i)).toList();
+    } else if (list[0].containsKey("login")) {
+      contentList = list.map((i) => UserWithPersonalDataAccessLevelDTO.fromJson(i)).toList();
     }
 
-    return GymPage(
+    return DataPage(
         content: contentList,
         pageable: Pageable.fromJson(json['pageable']),
         last: json['last'],

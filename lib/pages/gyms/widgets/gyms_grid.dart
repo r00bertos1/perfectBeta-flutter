@@ -29,7 +29,7 @@ class GymsGrid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<GymPage>(
+    return FutureBuilder<DataPage>(
         future: _climbingGymEndpoint.getVerifiedGyms(),
         builder: (context, snapshot) {
           print('Connection state: ${snapshot.connectionState}');

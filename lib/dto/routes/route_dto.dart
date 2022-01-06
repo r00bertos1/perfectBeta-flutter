@@ -1,6 +1,7 @@
 import 'package:perfectBeta/dto/routes/photo_dto.dart';
 
 class RouteDTO {
+  //TODO: add id to DTOs
   final String routeName;
   final String difficulty;
   final String description;
