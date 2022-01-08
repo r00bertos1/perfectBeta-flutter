@@ -5,12 +5,14 @@ class UserWithPersonalDataDTO extends UserDTO {
   PersonalDataDTO personalData;
 
   UserWithPersonalDataDTO(
-      {String login,
+      {int id,
+      String login,
       String email,
       bool isActive,
       bool isVerified,
       PersonalDataDTO personalData})
       : super(
+            id: id,
             login: login,
             email: email,
             isActive: isActive,
@@ -18,10 +20,11 @@ class UserWithPersonalDataDTO extends UserDTO {
 
   factory UserWithPersonalDataDTO.fromJson(Map<String, dynamic> json) {
     return UserWithPersonalDataDTO(
+        id: json['id'],
         login: json['login'],
         email: json['email'],
         isActive: json['isActive'],
         isVerified: json['isVerified'],
-        personalData: json['personalData']);
+        personalData: PersonalDataDTO.fromJson(json['personalData']));
   }
 }

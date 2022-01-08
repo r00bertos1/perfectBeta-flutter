@@ -6,13 +6,15 @@ class UserWithPersonalDataAccessLevelDTO extends UserWithAccessLevelDTO {
   PersonalDataDTO personalData;
 
   UserWithPersonalDataAccessLevelDTO(
-      {String login,
+      {int id,
+      String login,
       String email,
       bool isActive,
       bool isVerified,
       List<AccessLevelDTO> accessLevels,
       this.personalData})
       : super(
+            id: id,
             login: login,
             email: email,
             isActive: isActive,
@@ -22,12 +24,12 @@ class UserWithPersonalDataAccessLevelDTO extends UserWithAccessLevelDTO {
   factory UserWithPersonalDataAccessLevelDTO.fromJson(
       Map<String, dynamic> json) {
     return UserWithPersonalDataAccessLevelDTO(
+        id: json['id'],
         login: json['login'],
         email: json['email'],
         isActive: json['isActive'],
         isVerified: json['isVerified'],
         accessLevels: json['accessLevels'],
-        personalData: json['personalData']
-    );
+        personalData: PersonalDataDTO.fromJson(json['personalData']));
   }
 }

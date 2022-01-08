@@ -1,7 +1,7 @@
 import 'package:perfectBeta/dto/routes/photo_dto.dart';
 
 class RouteDTO {
-  //TODO: add id to DTOs
+  final int id;
   final String routeName;
   final String difficulty;
   final String description;
@@ -11,6 +11,7 @@ class RouteDTO {
   final List<PhotoDTO> photos;
 
   RouteDTO({
+    this.id,
     this.routeName,
     this.difficulty,
     this.description,
@@ -36,6 +37,7 @@ class RouteDTO {
     List<PhotoDTO> photosList = list.map((i) => PhotoDTO.fromJson(i)).toList();
 
     return RouteDTO(
+      id: json['id'],
       routeName: json['routeName'],
       difficulty: json['difficulty'],
       description: json['description'],
