@@ -231,7 +231,7 @@ class UserEndpoint {
 
   // ANONIM
     // POST
-  Future<UserWithPersonalDataAccessLevelDTO> registerUser(
+  Future<Response> registerUser(
       RegistrationDTO body) async {
     try {
       //body is a RegistrationDTO eg.
@@ -246,7 +246,8 @@ class UserEndpoint {
       final jsonResponse = json.decode(response.data);
       UserWithPersonalDataAccessLevelDTO page =
           new UserWithPersonalDataAccessLevelDTO.fromJson(jsonResponse);
-      return page;
+      //return page;
+      return response;
     } on DioError catch (ex) {
       if (ex.response != null) {
         print('Dio error!');

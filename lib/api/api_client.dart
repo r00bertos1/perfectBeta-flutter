@@ -16,7 +16,8 @@ class ApiClient {
         'https://perfectbeta-spring-boot-tls-pyclimb.apps.okd.cti.p.lodz.pl/api';
     _dio.options.headers['Content-Type'] = 'application/json';
     _tokenDio.options = _dio.options;
-    _dio.interceptors.add(ApiInterceptors());
+    //_dio.interceptors.add(ApiInterceptors());
+    _dio.interceptors.add(LoggingInterceptors());
     //TODO: Interceptor for token authentication
     // _dio.interceptors.add(QueuedInterceptorsWrapper(
     //   onRequest: (options, handler) async {
@@ -82,7 +83,7 @@ class ApiInterceptors extends Interceptor {
     return super.onResponse(response, handler);
   }
 
-  @override
+    @override
   Future<FutureOr> onError(DioError err, ErrorInterceptorHandler handler) async {
     print(
       'ERROR[${err.response?.statusCode}] => PATH: ${err.requestOptions.path}',
@@ -147,7 +148,7 @@ class ApiInterceptors extends Interceptor {
 class LoggingInterceptors extends Interceptor {
   @override
   FutureOr<dynamic> onRequest(
-      RequestOptions options, RequestInterceptorHandler handler) {
+      RequestOptions options, RequestInterceptorHandler handler) async {
     print(
         "--> ${options.method != null ? options.method.toUpperCase() : 'METHOD'} ${"" + (options.baseUrl ?? "") + (options.path ?? "")}");
     print("Headers:");
@@ -162,26 +163,31 @@ class LoggingInterceptors extends Interceptor {
     print(
         "--> END ${options.method != null ? options.method.toUpperCase() : 'METHOD'}");
 
-    return options;
+    //return options;
+    return super.onRequest(options, handler);
   }
 
   @override
   FutureOr<dynamic> onResponse(
-      Response response, ResponseInterceptorHandler handler) {
+      Response response, ResponseInterceptorHandler handler) async {
     print(
         "<-- ${response.statusCode} ${(response.requestOptions != null ? (response.requestOptions.baseUrl + response.requestOptions.path) : 'URL')}");
     print("Headers:");
     response.headers?.forEach((k, v) => print('$k: $v'));
     print("Response: ${response.data}");
     print("<-- END HTTP");
+
+    return super.onResponse(response, handler);
   }
 
   @override
-  FutureOr<dynamic> onError(DioError err, ErrorInterceptorHandler handler) {
+  Future<FutureOr> onError(DioError err, ErrorInterceptorHandler handler) async {
     print(
         "<-- ${err.message} ${(err.response?.requestOptions != null ? (err.response.requestOptions.baseUrl + err.response.requestOptions.path) : 'URL')}");
     print("${err.response != null ? err.response.data : 'Unknown Error'}");
     print("<-- End error");
+    return err;
+    //return super.onError(err, handler);
   }
 }
 

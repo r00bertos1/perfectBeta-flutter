@@ -36,9 +36,10 @@ class AuthenticationEndpoint {
 
         // var resp = await response.stream.bytesToString();
         // final data = jsonDecode(resp);
-        print(response);
-        final jsonResponse = json.decode(response.data);
-        TokenDTO tokenDTO = new TokenDTO.fromJson(jsonResponse);
+        //print(response);
+        //Map<String, String> jsonResponse = jsonDecode(response.data);
+        //final jsonResponse = json.decode(response.data);
+        TokenDTO tokenDTO = new TokenDTO.fromJson(response.data);
         secStore.secureWrite('token', tokenDTO.token);
         //print('${tokenDTO.token}');
         //return tokenDTO;
@@ -114,8 +115,6 @@ class AuthenticationEndpoint {
       Response response = await _client.post('/auth/authenticate',
           data: jsonEncode(body),
           options: Options(headers: {'Accept': 'application/json'}));
-
-      print(response.data);
 
       return response;
 

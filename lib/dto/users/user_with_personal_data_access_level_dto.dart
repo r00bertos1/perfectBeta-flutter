@@ -23,13 +23,18 @@ class UserWithPersonalDataAccessLevelDTO extends UserWithAccessLevelDTO {
 
   factory UserWithPersonalDataAccessLevelDTO.fromJson(
       Map<String, dynamic> json) {
+    var list = json['accessLevels'] as List;
+    //print(list.toString());
+    List<AccessLevelDTO> accessLevelsList;
+    accessLevelsList = list.map((i) => AccessLevelDTO.fromJson(i)).toList();
+
     return UserWithPersonalDataAccessLevelDTO(
         id: json['id'],
         login: json['login'],
         email: json['email'],
         isActive: json['isActive'],
         isVerified: json['isVerified'],
-        accessLevels: json['accessLevels'],
+        accessLevels: accessLevelsList,
         personalData: PersonalDataDTO.fromJson(json['personalData']));
   }
 }
