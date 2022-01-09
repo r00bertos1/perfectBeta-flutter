@@ -8,6 +8,7 @@ import 'package:perfectBeta/pages/404/error.dart';
 import 'package:perfectBeta/pages/authentication/authentication.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:perfectBeta/pages/authentication/registration.dart';
 import 'package:perfectBeta/routing/http_overwrites.dart';
 import 'routing/routes.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -36,6 +37,7 @@ class MyApp extends StatelessWidget {
           return SiteLayout();
         }),
         GetPage(name: authenticationPageRoute, page: () => AuthenticationPage()),
+        GetPage(name: registrationPageRoute, page: () => RegistrationPage()),
       ],
       debugShowCheckedModeBanner: false,
       title: 'Dashboard',

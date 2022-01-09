@@ -15,6 +15,9 @@ const addRoutePageRoute = "/add-route";
 const authenticationPageDisplayName = "Log out";
 const authenticationPageRoute = "/auth";
 
+const registrationPageDisplayName = "Register account";
+const registrationPageRoute = "/register";
+
 class MenuItem {
   final String name;
   final String route;

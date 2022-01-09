@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:perfectBeta/api/api_client.dart';
+import 'package:perfectBeta/api/providers/authentication_endpoint.dart';
+import 'package:perfectBeta/dto/auth/token_dto.dart';
 import 'package:perfectBeta/helpers/reponsiveness.dart';
 import 'package:perfectBeta/constants/controllers.dart';
 import 'package:perfectBeta/pages/overview/widgets/available_drivers_table.dart';
@@ -12,6 +15,10 @@ import 'package:get/get.dart';
 import 'widgets/revenue_section_small.dart';
 
 class OverviewPage extends StatelessWidget {
+  static ApiClient _client = new ApiClient();
+  // final ApiClient _client = new ApiClient();
+  var _authenticationEndpoint = new AuthenticationEndpoint(_client.init());
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -36,6 +43,20 @@ class OverviewPage extends StatelessWidget {
           Expanded(
               child: ListView(
             children: [
+              // FutureBuilder<TokenDTO>(
+              //     future: _authenticationEndpoint.refreshToken(),
+              //     builder: (context, snapshot) {
+              //       print('Connection state: ${snapshot.connectionState}');
+              //       if (snapshot.connectionState == ConnectionState.done) {
+              //         if (snapshot.hasError) {
+              //           return Text("Error");
+              //         }
+              //         if (snapshot.hasData) {
+              //           return Text("DATA");
+              //         }
+              //       }
+              //         return SizedBox(child: Center(child: CircularProgressIndicator()));
+              //     }),
               if (ResponsiveWidget.isHugeScreen(context))
                 OverviewCardsLargeScreen()
               else

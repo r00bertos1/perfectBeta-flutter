@@ -218,6 +218,7 @@ class GymsGrid extends StatelessWidget {
         child: GridTile(
           child: Column(
             mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               // CachedNetworkImage(
               //   imageUrl:
@@ -233,8 +234,9 @@ class GymsGrid extends StatelessWidget {
                 imageUrl:
                     "https://perfectbeta.s3.eu-north-1.amazonaws.com/photos/logo.png",
                 fit: BoxFit.fill,
-                placeholder: (context, url) => CircularProgressIndicator(
-                  color: active,
+                placeholder: (context, url) => SizedBox(
+                    child: Center(
+                        child: CircularProgressIndicator(color: active,))
                 ),
                 errorWidget: (context, url, error) =>
                     Image(image: AssetImage('images/gym-template.jpg')),

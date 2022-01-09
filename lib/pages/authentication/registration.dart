@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:perfectBeta/api/api_client.dart';
 import 'package:perfectBeta/api/providers/authentication_endpoint.dart';
-import 'package:perfectBeta/constants/controllers.dart';
+import 'package:perfectBeta/api/providers/user_endpoint.dart';
 import 'package:perfectBeta/constants/style.dart';
 import 'package:perfectBeta/dto/auth/credentials_dto.dart';
-import 'package:perfectBeta/pages/authentication/registration.dart';
+import 'package:perfectBeta/dto/auth/registration_dto.dart';
+import 'package:perfectBeta/pages/authentication/authentication.dart';
 import 'package:perfectBeta/routing/routes.dart';
 import 'package:perfectBeta/storage/secure_storage.dart';
 import 'package:perfectBeta/storage/user_secure_storage.dart';
@@ -12,43 +13,25 @@ import 'package:perfectBeta/widgets/custom_text.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-class AuthenticationPage extends StatefulWidget {
-  const AuthenticationPage({Key key}) : super(key: key);
+class RegistrationPage extends StatefulWidget {
+  const RegistrationPage({Key key}) : super(key: key);
 
   @override
-  _AuthenticationPage createState() => _AuthenticationPage();
+  _RegistrationPage createState() => _RegistrationPage();
 }
 
-class _AuthenticationPage extends State<AuthenticationPage> {
-  final _formKey = GlobalKey<FormState>();
+class _RegistrationPage extends State<RegistrationPage> {
+  final _registrationformKey = GlobalKey<FormState>();
 
   //API
   static ApiClient _client = new ApiClient();
   // final ApiClient _client = new ApiClient();
-  var _authenticationEndpoint = new AuthenticationEndpoint(_client.init());
+  var _userEndpoint = new UserEndpoint(_client.init());
 
   final _usernameController = TextEditingController();
   final _passwordController = TextEditingController();
-  bool _isChecked = false;
-
-  @override
-  void initState() {
-    super.initState();
-    _loadUserUsernamePassword();
-    //init();
-  }
-
-  // Future init() async {
-  //   final name = await UserSecureStorage.getUsername() ?? '';
-  //   final birthday = await UserSecureStorage.getBirthday();
-  //   final pets = await UserSecureStorage.getPets() ?? [];
-  //
-  //   setState(() {
-  //     this.controllerName.text = name;
-  //     this.birthday = birthday;
-  //     this.pets = pets;
-  //   });
-  // }
+  final _emailController = TextEditingController();
+  //bool _isChecked = false;
 
   @override
   Widget build(BuildContext context) {
@@ -57,9 +40,9 @@ class _AuthenticationPage extends State<AuthenticationPage> {
       //resizeToAvoidBottomInset: false,
       body: Center(
         child: SingleChildScrollView(
-          physics: NeverScrollableScrollPhysics(),
+          //physics: NeverScrollableScrollPhysics(),
           child: Form(
-            key: _formKey,
+            key: _registrationformKey,
             child: Container(
               constraints: BoxConstraints(maxWidth: 400),
               padding: EdgeInsets.all(24),
@@ -80,20 +63,9 @@ class _AuthenticationPage extends State<AuthenticationPage> {
                   ),
                   Row(
                     children: [
-                      Text("Login",
+                      Text("Register Account",
                           style: GoogleFonts.roboto(
                               fontSize: 30, fontWeight: FontWeight.bold)),
-                    ],
-                  ),
-                  SizedBox(
-                    height: 10,
-                  ),
-                  Row(
-                    children: [
-                      CustomText(
-                        text: "Welcome back.",
-                        color: lightGrey,
-                      ),
                     ],
                   ),
                   SizedBox(
@@ -112,14 +84,56 @@ class _AuthenticationPage extends State<AuthenticationPage> {
                       if (value == null || value.isEmpty) {
                         return 'Please enter username';
                       } else if (!regExp.hasMatch(value)) {
-                        return 'Please enter valid username';
+                        return 'Please enter valid username (alphanumeric characters, number of characters must be between 4 to 20.';
+                      } else if (value.length < 4) {
+                        return 'Username must be at least 4 characters long';
+                      } else if (value.length > 20) {
+                        return 'Username cannot be longer than 20 characters';
                       }
                       return null;
                     },
                     controller: _usernameController,
                     decoration: InputDecoration(
+                        errorMaxLines: 4,
                         labelText: "Username",
                         hintText: "Enter your username",
+                        border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(20))),
+                  ),
+                  SizedBox(
+                    height: 15,
+                  ),
+                  TextFormField(
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter email address';
+                      } else if (!value.isEmail) {
+                        return 'Please enter valid email address';
+                      }
+                      return null;
+                    },
+                    controller: _emailController,
+                    decoration: InputDecoration(
+                        labelText: "Email",
+                        hintText: "Enter your email",
+                        border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(20))),
+                  ),
+                  SizedBox(
+                    height: 15,
+                  ),
+                  TextFormField(
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter email address';
+                      } else if (value != _emailController.text) {
+                        return 'Email must be same as above';
+                      }
+                      return null;
+                    },
+                    decoration: InputDecoration(
+                        labelText: "Confirm email",
+                        hintText: "Enter your email",
                         border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(20))),
                   ),
@@ -135,13 +149,18 @@ class _AuthenticationPage extends State<AuthenticationPage> {
                       if (value == null || value.isEmpty) {
                         return 'Please enter password';
                       } else if (!regExp.hasMatch(value)) {
-                        return 'Please enter valid password';
+                        return 'Please enter valid password (minimum eight characters, at least one uppercase letter, one lowercase letter, one number and one special character)';
+                      } else if (value.length < 8) {
+                        return 'Password must be at least 8 characters long';
+                      } else if (value.length > 32) {
+                        return 'Password cannot be longer than 32 characters';
                       }
                       return null;
                     },
                     controller: _passwordController,
                     obscureText: true,
                     decoration: InputDecoration(
+                      errorMaxLines: 4,
                         labelText: "Password",
                         hintText: "Enter your password",
                         border: OutlineInputBorder(
@@ -150,31 +169,29 @@ class _AuthenticationPage extends State<AuthenticationPage> {
                   SizedBox(
                     height: 15,
                   ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Row(
-                        children: [
-                          Checkbox(
-                              value: _isChecked, onChanged: _handleRemeberme),
-                          CustomText(
-                            text: "Remember Me",
-                          ),
-                        ],
-                      ),
-                      //CustomText(text: "Forgot password?", color: active)
-                    ],
+                  TextFormField(
+                    validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter password';
+                        } else if (value != _passwordController.text) {
+                          return 'Password must be same as above';
+                        }
+                      return null;
+                    },
+                    obscureText: true,
+                    decoration: InputDecoration(
+                        labelText: "Confirm Password",
+                        hintText: "Enter your password",
+                        border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(20))),
                   ),
                   SizedBox(
                     height: 15,
                   ),
                   InkWell(
                     onTap: () async {
-                      if (_formKey.currentState.validate()) {
-                        if (_isChecked) {
-                          _handleRemeberme(true);
-                        }
-                        _handleAuthentication();
+                      if (_registrationformKey.currentState.validate()) {
+                        _handleRegistration();
                       }
                     },
                     child: Container(
@@ -185,46 +202,11 @@ class _AuthenticationPage extends State<AuthenticationPage> {
                       width: double.maxFinite,
                       padding: EdgeInsets.symmetric(vertical: 16),
                       child: CustomText(
-                        text: "Login",
+                        text: "Register",
                         color: Colors.white,
                       ),
                     ),
                   ),
-                  InkWell(
-                    onTap: () {
-                      //navigationController.navigateTo("/register");
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => RegistrationPage()),
-                      );
-                      //Get.offAllNamed(gymsPageRoute);
-                      //Get.offAllNamed(registrationPageRoute);
-                      // navigationController.navigatorKey.currentState
-                      //     .pushNamedAndRemoveUntil(
-                      //         "/register", (Route<dynamic> route) => false);
-                    },
-                    child: Container(
-                      alignment: Alignment.center,
-                      width: double.maxFinite,
-                      padding: EdgeInsets.symmetric(vertical: 16),
-                      child: CustomText(
-                        text: "Register",
-                        color: active,
-                      ),
-                    ),
-                  ),
-                  SizedBox(
-                    height: 15,
-                  ),
-                  // RichText(
-                  //     text: TextSpan(children: [
-                  //   TextSpan(
-                  //       text: "Do not have admin credentials? ",
-                  //       style: TextStyle(color: lightGrey)),
-                  //   TextSpan(
-                  //       text: "Request Credentials! ",
-                  //       style: TextStyle(color: active))
-                  // ]))
                 ],
               ),
             ),
@@ -234,46 +216,16 @@ class _AuthenticationPage extends State<AuthenticationPage> {
     );
   }
 
-  //handle remember me function
-  Future<void> _handleRemeberme(bool value) async {
-    _isChecked = value;
-    await UserSecureStorage.setRememberMe(value);
-    await UserSecureStorage.setUsername(_usernameController.text);
-    await UserSecureStorage.setPassword(_passwordController.text);
-
-    setState(() {
-      _isChecked = value;
-    });
-  }
-
-  //load email and password
-  void _loadUserUsernamePassword() async {
-    try {
-      var _rememberMe = await UserSecureStorage.getRememberMe() ?? false;
-      var _username = await UserSecureStorage.getUsername() ?? "";
-      var _password = await UserSecureStorage.getPassword() ?? "";
-      print(_rememberMe.toString());
-      print(_username.toString());
-      print(_password.toString());
-      if (_rememberMe) {
-        setState(() {
-          _isChecked = true;
-        });
-        _usernameController.text = _username ?? "";
-        _passwordController.text = _password ?? "";
-      }
-    } catch (e) {
-      print(e);
-    }
-  }
-
-  Future<void> _handleAuthentication() async {
+  Future<void> _handleRegistration() async {
     // login
-    CredentialsDTO authData = new CredentialsDTO(
-        username: _usernameController.text, password: _passwordController.text);
-    var res = await _authenticationEndpoint.authenticate(authData);
+    RegistrationDTO registerData = new RegistrationDTO(
+        login: _usernameController.text, email: _emailController.text, password: _passwordController.text);
+    var res = await _userEndpoint.registerUser(registerData);
     if (res.statusCode == 200) {
-      Get.offAllNamed(rootRoute);
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => AuthenticationPage()),
+      );
     } else {
       print('ERRRROR');
     }
