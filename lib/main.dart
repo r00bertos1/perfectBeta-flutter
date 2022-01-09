@@ -14,7 +14,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 
 void main() {
-  //HttpOverrides.global = MyHttpOverrides();
+  HttpOverrides.global = MyHttpOverrides();
   Get.put(MenuController());
   Get.put(NavigationController());
   // WidgetsFlutterBinding.ensureInitialized();
