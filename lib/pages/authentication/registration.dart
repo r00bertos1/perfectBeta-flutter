@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:perfectBeta/api/api_client.dart';
 import 'package:perfectBeta/api/providers/authentication_endpoint.dart';
 import 'package:perfectBeta/api/providers/user_endpoint.dart';
@@ -126,7 +127,7 @@ class _RegistrationPage extends State<RegistrationPage> {
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'Please enter email address';
-                      } else if (value != _emailController.text) {
+                      } else if (value != _emailController.text.trim()) {
                         return 'Email must be same as above';
                       }
                       return null;
@@ -173,7 +174,7 @@ class _RegistrationPage extends State<RegistrationPage> {
                     validator: (value) {
                         if (value == null || value.isEmpty) {
                           return 'Please enter password';
-                        } else if (value != _passwordController.text) {
+                        } else if (value != _passwordController.text.trim()) {
                           return 'Password must be same as above';
                         }
                       return null;
@@ -219,15 +220,16 @@ class _RegistrationPage extends State<RegistrationPage> {
   Future<void> _handleRegistration() async {
     // login
     RegistrationDTO registerData = new RegistrationDTO(
-        login: _usernameController.text, email: _emailController.text, password: _passwordController.text);
+        login: _usernameController.text.trim(), email: _emailController.text.trim(), password: _passwordController.text.trim());
     var res = await _userEndpoint.registerUser(registerData);
-    if (res.statusCode == 200) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => AuthenticationPage()),
-      );
-    } else {
-      print('ERRRROR');
+    try {
+      if (res.statusCode == 200) {
+        Navigator.of(context).pop();
+        EasyLoading.showSuccess('User was successfully created! Please verify your email before Login');
+      }
+    } catch (e, s) {
+      print("Exception $e");
+      print("StackTrace $s");
     }
   }
 }

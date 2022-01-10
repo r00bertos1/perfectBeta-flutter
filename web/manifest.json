@@ -1,6 +1,6 @@
 {
-    "name": "perfectBeta",
-    "short_name": "perfectBeta",
+    "name": "PerfectBeta",
+    "short_name": "PerfectBeta",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#26A69A",

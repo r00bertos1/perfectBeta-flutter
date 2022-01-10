@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 SecureStorage secStore = new SecureStorage();
@@ -7,7 +9,9 @@ class SecureStorage {
 
   static const _keyUsername = 'username';
   static const _keyToken = 'token';
+  static const _tokenExpiry = 'tokenExpiry';
   static const _accessLevel = 'accessLevel';
+  static const _accessLevels = 'accessLevels';
   static const _isAdmin = 'isAdmin';
   static const _isManager = 'isManager';
   static const _isClimber = 'isClimber';
@@ -59,6 +63,10 @@ class SecureStorage {
     return _storage.read(key: _keyUsername);
   }
 
+  Future<String> getAccessLevel() {
+    return _storage.read(key: _accessLevel);
+  }
+
   bool isAuthenticated() {
    return _storage.read(key: _keyToken) != null;
   }
@@ -76,6 +84,19 @@ class SecureStorage {
   }
 
   Future<void> changeAccessLevel(String value) async {
-    _storage.write(key: 'accessLevel', value: value);
+    _storage.write(key: _accessLevel, value: value);
   }
+
+  Future<Map<String, bool>> getAccessLevels() async {
+    final value = await _storage.read(key: _accessLevels);
+    
+    return Map<String, bool>.from(json.decode(value));
+  }
+
+  Future setAccessLevels(Map<String, bool> levels) async {
+    final value = json.encode(levels);
+    return _storage.write(key: _accessLevels, value: value);
+  }
+
+
 }

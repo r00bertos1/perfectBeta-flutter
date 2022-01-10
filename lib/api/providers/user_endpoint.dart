@@ -11,6 +11,7 @@ import 'package:perfectBeta/dto/users/user_dto.dart';
 import 'package:perfectBeta/dto/users/user_with_access_level_dto.dart';
 import 'package:perfectBeta/dto/users/user_with_personal_data_access_level_dto.dart';
 import 'package:perfectBeta/dto/users/user_with_personal_data_dto.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import '../api_client.dart';
 
 class UserEndpoint {
@@ -55,64 +56,6 @@ class UserEndpoint {
     try {
       Response<String> response = await _client.put('/users/change_email',
           queryParameters: {'token': token, 'email': email});
-
-      final jsonResponse = json.decode(response.data);
-      UserDTO page = new UserDTO.fromJson(jsonResponse);
-
-      return page;
-    } on DioError catch (ex) {
-      if (ex.response != null) {
-        print('Dio error!');
-        print('STATUS: ${ex.response?.statusCode}');
-        print('DATA: ${ex.response?.data}');
-        print('HEADERS: ${ex.response?.headers}');
-      } else {
-        print('Error sending request!');
-        print(ex.message);
-        String errorMessage = json.decode(ex.response.toString())["message"];
-        throw new Exception(errorMessage);
-      }
-    } catch (e, s) {
-      print("Exception $e");
-      print("StackTrace $s");
-    }
-  }
-
-  Future<UserDTO> requestResetPassword(EmailDTO body) async {
-    try {
-      //body is a EmailDTO eg.
-      // var body =  {
-      // "email": "a@b.c"
-      // };
-      Response<String> response = await _client
-          .put('/users/request_reset_password', data: jsonEncode(body));
-
-      final jsonResponse = json.decode(response.data);
-      UserDTO page = new UserDTO.fromJson(jsonResponse);
-
-      return page;
-    } on DioError catch (ex) {
-      if (ex.response != null) {
-        print('Dio error!');
-        print('STATUS: ${ex.response?.statusCode}');
-        print('DATA: ${ex.response?.data}');
-        print('HEADERS: ${ex.response?.headers}');
-      } else {
-        print('Error sending request!');
-        print(ex.message);
-        String errorMessage = json.decode(ex.response.toString())["message"];
-        throw new Exception(errorMessage);
-      }
-    } catch (e, s) {
-      print("Exception $e");
-      print("StackTrace $s");
-    }
-  }
-
-  Future<UserDTO> confirmResetPassword(String id, String token) async {
-    try {
-      Response<String> response = await _client.put('/users/reset_password',
-          queryParameters: {'id': id, 'token': token});
 
       final jsonResponse = json.decode(response.data);
       UserDTO page = new UserDTO.fromJson(jsonResponse);
@@ -276,6 +219,65 @@ class UserEndpoint {
 
       final jsonResponse = json.decode(response.data);
       UserWithAccessLevelDTO page = new UserWithAccessLevelDTO.fromJson(jsonResponse);
+
+      return page;
+    } on DioError catch (ex) {
+      if (ex.response != null) {
+        print('Dio error!');
+        print('STATUS: ${ex.response?.statusCode}');
+        print('DATA: ${ex.response?.data}');
+        print('HEADERS: ${ex.response?.headers}');
+      } else {
+        print('Error sending request!');
+        print(ex.message);
+        String errorMessage = json.decode(ex.response.toString())["message"];
+        throw new Exception(errorMessage);
+      }
+    } catch (e, s) {
+      print("Exception $e");
+      print("StackTrace $s");
+    }
+  }
+
+  Future<Response> requestResetPassword(EmailDTO body) async {
+    try {
+      EasyLoading.show(status: 'loading...');
+
+      Response<String> response = await _client
+          .put('/users/request_reset_password', data: body,
+          options: Options(headers: {"requiresToken" : false}));
+
+      final jsonResponse = json.decode(response.data);
+      UserDTO page = new UserDTO.fromJson(jsonResponse);
+      //return page;
+      return response;
+
+    } on DioError catch (ex) {
+      if (ex.response != null) {
+        print('Dio error!');
+        print('STATUS: ${ex.response?.statusCode}');
+        print('DATA: ${ex.response?.data}');
+        print('HEADERS: ${ex.response?.headers}');
+      } else {
+        print('Error sending request!');
+        print(ex.message);
+        String errorMessage = json.decode(ex.response.toString())["message"];
+        throw new Exception(errorMessage);
+      }
+    } catch (e, s) {
+      print("Exception $e");
+      print("StackTrace $s");
+    }
+  }
+
+  Future<UserDTO> confirmResetPassword(String id, String token) async {
+    try {
+      Response<String> response = await _client.put('/users/reset_password',
+          queryParameters: {'id': id, 'token': token},
+          options: Options(headers: {"requiresToken" : false}));
+
+      final jsonResponse = json.decode(response.data);
+      UserDTO page = new UserDTO.fromJson(jsonResponse);
 
       return page;
     } on DioError catch (ex) {

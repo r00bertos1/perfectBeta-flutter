@@ -12,17 +12,11 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:perfectBeta/pages/authentication/registration.dart';
 import 'package:perfectBeta/routing/http_overwrites.dart';
 import 'routing/routes.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'firebase_options.dart';
 
 void main() {
   HttpOverrides.global = MyHttpOverrides();
   Get.put(MenuController());
   Get.put(NavigationController());
-  // WidgetsFlutterBinding.ensureInitialized();
-  // await Firebase.initializeApp(
-  //   options: DefaultFirebaseOptions.currentPlatform,
-  // );
   runApp(MyApp());
 }
 

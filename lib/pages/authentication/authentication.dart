@@ -12,6 +12,8 @@ import 'package:perfectBeta/widgets/custom_text.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import 'forgot_password.dart';
+
 class AuthenticationPage extends StatefulWidget {
   const AuthenticationPage({Key key}) : super(key: key);
 
@@ -88,13 +90,16 @@ class _AuthenticationPage extends State<AuthenticationPage> {
                   SizedBox(
                     height: 10,
                   ),
-                  Row(
-                    children: [
-                      CustomText(
-                        text: "Welcome back.",
-                        color: lightGrey,
-                      ),
-                    ],
+                  Align(
+                    alignment: Alignment.topLeft,
+                    child: Wrap(
+                      children: [
+                        CustomText(
+                          text: "Welcome back.",
+                          color: lightGrey,
+                        ),
+                      ],
+                    ),
                   ),
                   SizedBox(
                     height: 15,
@@ -162,7 +167,12 @@ class _AuthenticationPage extends State<AuthenticationPage> {
                           ),
                         ],
                       ),
-                      //CustomText(text: "Forgot password?", color: active)
+                      InkWell(
+                          onTap: () => Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => ForgotPasswordPage()),
+                          ),
+                          child: CustomText(text: "Forgot password?", color: active))
                     ],
                   ),
                   SizedBox(
@@ -191,18 +201,11 @@ class _AuthenticationPage extends State<AuthenticationPage> {
                     ),
                   ),
                   InkWell(
-                    onTap: () {
-                      //navigationController.navigateTo("/register");
-                      Navigator.push(
+                    onTap: () =>
+                    Navigator.push(
                         context,
                         MaterialPageRoute(builder: (context) => RegistrationPage()),
-                      );
-                      //Get.offAllNamed(gymsPageRoute);
-                      //Get.offAllNamed(registrationPageRoute);
-                      // navigationController.navigatorKey.currentState
-                      //     .pushNamedAndRemoveUntil(
-                      //         "/register", (Route<dynamic> route) => false);
-                    },
+                      ),
                     child: Container(
                       alignment: Alignment.center,
                       width: double.maxFinite,
@@ -270,7 +273,7 @@ class _AuthenticationPage extends State<AuthenticationPage> {
   Future<void> _handleAuthentication() async {
     // login
     CredentialsDTO authData = new CredentialsDTO(
-        username: _usernameController.text, password: _passwordController.text);
+        username: _usernameController.text.trim(), password: _passwordController.text.trim());
     var res = await _authenticationEndpoint.authenticate(authData);
     if (res.statusCode == 200) {
       Get.offAllNamed(rootRoute);
@@ -278,4 +281,5 @@ class _AuthenticationPage extends State<AuthenticationPage> {
       print(res.statusCode);
     }
   }
+
 }

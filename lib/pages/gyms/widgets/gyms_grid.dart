@@ -154,9 +154,11 @@ class GymsGrid extends StatelessWidget {
                   imageUrl:
                       "https://perfectbeta.s3.eu-north-1.amazonaws.com/photos/logo.png",
                   fit: BoxFit.cover,
-                  placeholder: (context, url) => CircularProgressIndicator(
-                    color: active,
-                  ),
+                  progressIndicatorBuilder: (context, url, downloadProgress) =>
+                      CircularProgressIndicator(value: downloadProgress.progress),
+                  // placeholder: (context, url) => CircularProgressIndicator(
+                  //   color: active,
+                  // ),
                   errorWidget: (context, url, error) =>
                       Image(image: AssetImage('assets/images/gym-template.jpg')),
                 ),
