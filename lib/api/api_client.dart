@@ -1,10 +1,13 @@
 import 'dart:async';
 import "package:dio/dio.dart";
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:perfectBeta/constants/controllers.dart';
 import 'package:perfectBeta/dto/auth/token_dto.dart';
 import 'package:perfectBeta/api/providers/authentication_endpoint.dart';
+import 'package:jwt_decoder/jwt_decoder.dart';
+import '../storage/secure_storage.dart';
 
 class ApiClient {
   Dio init() {
@@ -17,7 +20,7 @@ class ApiClient {
     _dio.options.headers['Content-Type'] = 'application/json';
     _tokenDio.options = _dio.options;
     //_dio.interceptors.add(ApiInterceptors());
-    _dio.interceptors.add(LoggingInterceptors());
+    _dio.interceptors.add(ApiInterceptors());
     //TODO: Interceptor for token authentication
     // _dio.interceptors.add(QueuedInterceptorsWrapper(
     //   onRequest: (options, handler) async {
@@ -47,22 +50,58 @@ class ApiClient {
 }
 
 class ApiInterceptors extends Interceptor {
-  @override
-  FutureOr<dynamic> onRequest(
-      RequestOptions options, RequestInterceptorHandler handler) async {
-    print('REQUEST[${options.method}] => PATH: ${options.path}');
+  //static ApiClient _client = new ApiClient();
+  // final ApiClient _client = new ApiClient();
+  //var _authenticationEndpoint = new AuthenticationEndpoint(_client.init());
 
-    // FlutterSecureStorage _storage = new FlutterSecureStorage();
-    // var token = _storage.read(key: "token");
-    // if (token != null)
-    //   options.headers.addAll({"Authorization": 'Bearer ${token}'});
-
-    return super.onRequest(options, handler);
+  bool isTokenExpired(String _token) {
+    DateTime expiryDate = JwtDecoder.getExpirationDate(_token);
+    bool isExpired = expiryDate.compareTo(DateTime.now()) < 0;
+    return isExpired;
   }
 
   @override
-  FutureOr<dynamic> onResponse(
-      Response response, ResponseInterceptorHandler handler) async {
+  void onRequest(
+      RequestOptions options, RequestInterceptorHandler handler) async {
+    print('REQUEST[${options.method}] => PATH: ${options.path}');
+
+    ApiClient _client = new ApiClient();
+    // final ApiClient _client = new ApiClient();
+    var _authenticationEndpoint = new AuthenticationEndpoint(_client.init());
+
+    if (options.headers.containsKey("requiresToken")) {
+      options.headers.remove("requiresToken");
+
+      handler.next(options);
+    } else {
+      final storedToken = await secStore.secureRead('token');
+      print('---OLD: ' + storedToken);
+
+      //bool _token = JwtDecoder.isExpired(storedToken);
+      bool _token = isTokenExpired(storedToken);
+      print('IS EXPIRED: $_token');
+      bool _refreshed = true;
+
+      if (_token) {
+        _authenticationEndpoint.logout();
+        EasyLoading.showInfo('Expired session');
+        DioError _err;
+        handler.reject(_err);
+      } else {
+        _refreshed = await _authenticationEndpoint.refreshToken();
+        if (_refreshed) {
+          options.headers["Authorization"] = "Bearer " + storedToken;
+          options.headers["Accept"] = "application/json";
+          print('---NEW' + storedToken);
+          handler.next(options);
+        }
+      }
+    }
+  }
+  //return super.onRequest(options, handler);
+
+  @override
+  void onResponse(Response response, ResponseInterceptorHandler handler) async {
     print(
         'RESPONSE[${response.statusCode}] => PATH: ${response.requestOptions.path}');
 
@@ -77,19 +116,20 @@ class ApiInterceptors extends Interceptor {
     //     return super.onResponse(response, handler);
     //   }
     // }
-
     // return DioError(
     //     requestOptions: response.requestOptions, error: "User is no longer active");
-    return super.onResponse(response, handler);
+
+    handler.next(response);
+    //return super.onResponse(response, handler);
   }
 
-    @override
-  Future<FutureOr> onError(DioError err, ErrorInterceptorHandler handler) async {
-    print(
+  @override
+  void onError(DioError err, ErrorInterceptorHandler handler) async {
+    EasyLoading.showError(
       'ERROR[${err.response?.statusCode}] => PATH: ${err.requestOptions.path}',
     );
     if (err.response == null) {
-      print(
+      EasyLoading.showError(
         'ERROR[${err.response?.statusCode}] => PATH: ${err.requestOptions.path} "CONNECTION_ERROR"',
       );
     } else {
@@ -99,51 +139,89 @@ class ApiInterceptors extends Interceptor {
       //     'ERROR[${err.response?.statusCode}] => PATH: ${err.requestOptions.path} "${err.response.data['key']}"',
       //   );
       // } else
-        if (responseClass == 5) {
-        print(
+      if (responseClass == 5) {
+        EasyLoading.showError(
           'ERROR[${err.response?.statusCode}] => PATH: ${err.requestOptions.path} "SERVER_ERROR"',
         );
       } else if (responseClass == 4) {
         if (err.response.statusCode == 401) {
-          print(
+          EasyLoading.showError(
             'ERROR[${err.response?.statusCode}] => PATH: ${err.requestOptions.path} "UNAUTHENTICATED"',
           );
-          // this will push a new route and remove all the routes that were present
-          //await refreshToken();
-          //return _retry(err.requestOptions);
-          // navigationController.navigatorKey.currentState
-          //     .pushNamedAndRemoveUntil(
-          //         "/auth", (Route<dynamic> route) => false);
+
+          // RequestOptions options = error.request;
+          //
+          // // If the token has been updated, repeat directly.
+          // String accessToken = await getToken();
+          //
+          // String token = "Bearer $accessToken";
+          // if (token != options.headers["Authorization"]) {
+          //   options.headers["Authorization"] = token;
+          //   return previous.request(options.path, options: options);
+          // }
+          //
+          // // Lock to block the incoming request until the token updated
+          // previous.lock();
+          // previous.interceptors.responseLock.lock();
+          // previous.interceptors.errorLock.lock();
+          //
+          // try {
+          //   // GET the [refresh token] from shared or LocalStorage or ....
+          //   String refreshToken = await secStore.secureRead('token');
+          //
+          //   Response responseRefresh = await refreshDio.post(
+          //       "${options.baseUrl}/refresh",
+          //       data: {},
+          //       options: Options(
+          //           headers: {
+          //             'Authorization': "Bearer $refreshToken"
+          //           }
+          //       )
+          //   );
+          //
+          //   //update token based on the new refresh token
+          //   options.headers["Authorization"] = "Bearer ${responseRefresh.data['token']}";
+          //
+          //   // Save the new token on shared or LocalStorage
+          //   await saveToken(responseRefresh.data['token']);
+          //
+          //   previous.unlock();
+          //   previous.interceptors.responseLock.unlock();
+          //   previous.interceptors.errorLock.unlock();
+          //
+          //   // repeat the request with a new options
+          //   return previous.request(options.path, options: options);
+
         } else if (err.response.statusCode == 403) {
-          print(
+          EasyLoading.showError(
             'ERROR[${err.response?.statusCode}] => PATH: ${err.requestOptions.path} "UNAUTHORIZED"',
           );
         } else {
-          print(
+          EasyLoading.showError(
             'ERROR[${err.response?.statusCode}] => PATH: ${err.requestOptions.path} "SERVER_ERROR"',
           );
         }
       } else {
-        print(
+        EasyLoading.showError(
           'ERROR[${err.response?.statusCode}] => PATH: ${err.requestOptions.path} "UNKNOWN_ERROR"',
         );
       }
     }
-    return err;
+    handler.next(err);
+    //return err;
     //return super.onError(err, handler);
   }
-
-  // Future<Response<dynamic>> _retry(RequestOptions requestOptions) async {
-  //   final options = new Options(
-  //     method: requestOptions.method,
-  //     headers: requestOptions.headers,
-  //   );
-  //   return this.api.request<dynamic>(requestOptions.path,
-  //       data: requestOptions.data,
-  //       queryParameters: requestOptions.queryParameters,
-  //       options: options);
-  // }
 }
+// Future<Response<dynamic>> _retry(RequestOptions requestOptions) async {
+//   final options = new Options(
+//     method: requestOptions.method,
+//     headers: requestOptions.headers,
+//   );
+//   return this.api.request<dynamic>(requestOptions.path,
+//       data: requestOptions.data,
+//       queryParameters: requestOptions.queryParameters,
+//       options: options);
+// }
 
 class LoggingInterceptors extends Interceptor {
   @override
@@ -181,7 +259,8 @@ class LoggingInterceptors extends Interceptor {
   }
 
   @override
-  Future<FutureOr> onError(DioError err, ErrorInterceptorHandler handler) async {
+  Future<FutureOr> onError(
+      DioError err, ErrorInterceptorHandler handler) async {
     print(
         "<-- ${err.message} ${(err.response?.requestOptions != null ? (err.response.requestOptions.baseUrl + err.response.requestOptions.path) : 'URL')}");
     print("${err.response != null ? err.response.data : 'Unknown Error'}");

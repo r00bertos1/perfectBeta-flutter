@@ -241,7 +241,8 @@ class UserEndpoint {
       // "password": "Jdoe123!"
       // };
       Response<String> response =
-          await _client.post('/users/register', data: jsonEncode(body));
+          await _client.post('/users/register', data: jsonEncode(body),
+              options: Options(headers: {"requiresToken" : false}));
 
       final jsonResponse = json.decode(response.data);
       UserWithPersonalDataAccessLevelDTO page =
@@ -270,7 +271,8 @@ class UserEndpoint {
   Future<UserWithAccessLevelDTO> verifyUser(String username, String token) async {
     try {
       Response<String> response = await _client.put('/users/verify',
-          queryParameters: {'username': username, 'token': token});
+          queryParameters: {'username': username, 'token': token},
+          options: Options(headers: {"requiresToken" : false}));
 
       final jsonResponse = json.decode(response.data);
       UserWithAccessLevelDTO page = new UserWithAccessLevelDTO.fromJson(jsonResponse);

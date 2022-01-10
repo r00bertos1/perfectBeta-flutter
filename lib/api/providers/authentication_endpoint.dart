@@ -2,13 +2,18 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:perfectBeta/constants/controllers.dart';
 import 'package:perfectBeta/dto/auth/credentials_dto.dart';
 import 'package:perfectBeta/dto/auth/token_dto.dart';
+import 'package:perfectBeta/pages/authentication/authentication.dart';
+import 'package:perfectBeta/routing/routes.dart';
 import '../api_client.dart';
+import 'package:http/http.dart' as http;
 import '../../storage/secure_storage.dart';
 
-//AuthenticationEndpoint appAuth = new AuthenticationEndpoint();
+
 
 class AuthenticationEndpoint {
   Dio _client;
@@ -20,30 +25,19 @@ class AuthenticationEndpoint {
   // POST
   Future<Response> authenticate(CredentialsDTO body) async {
     try {
-      //body is a CredentialsDTO eg.
-      // var body =  {
-      // "username": "pbucki",
-      // "password": "Pbucki123!"
-      // };
       Response response = await login(body);
 
-      //String token = "${response.data['token']}";
-      // String refresh = "${response.data['refresh']}";
+      TokenDTO tokenDTO = new TokenDTO.fromJson(response.data);
+      Map<String, dynamic> decodedToken = JwtDecoder.decode(tokenDTO.token);
+      secStore.secureWrite('username', decodedToken["sub"]);
+      secStore.secureWrite('token', tokenDTO.token);
+      secStore.secureWrite('tokenExpiry', JwtDecoder.getExpirationDate(tokenDTO.token).toString());
+      secStore.secureWrite('isAdmin', decodedToken["isAdmin"].toString());
+      secStore.secureWrite('isManager', decodedToken["isManager"].toString());
+      secStore.secureWrite('isClimber', decodedToken["isClimber"].toString());
 
-      //Map<String, String> data = { 'token': token,'refresh': refresh };
-      // Map<String, String> data = { 'token': token,'refresh': refresh };
-      //return data;
-
-        // var resp = await response.stream.bytesToString();
-        // final data = jsonDecode(resp);
-        //print(response);
-        //Map<String, String> jsonResponse = jsonDecode(response.data);
-        //final jsonResponse = json.decode(response.data);
-        TokenDTO tokenDTO = new TokenDTO.fromJson(response.data);
-        secStore.secureWrite('token', tokenDTO.token);
-        //print('${tokenDTO.token}');
-        //return tokenDTO;
-        return response;
+      //return tokenDTO;
+      return response;
     } on DioError catch (ex) {
       if (ex.response != null) {
         print('Dio error!');
@@ -62,51 +56,9 @@ class AuthenticationEndpoint {
     }
   }
 
-  // OLD
-  // Future<TokenDTO> authenticate(CredentialsDTO body) async {
-  //   try {
-  //     //body is a CredentialsDTO eg.
-  //     // var body =  {
-  //     // "username": "pbucki",
-  //     // "password": "Pbucki123!"
-  //     // };
-  //     Response<String> response = await _client.post('/auth/authenticate',
-  //         data: jsonEncode(body),
-  //         options: Options(headers: {'Accept': 'application/json'}));
-  //
-  //     TokenDTO tokenDTO;
-  //
-  //     if (response.statusCode == 200) {
-  //       // var resp = await response.stream.bytesToString();
-  //       // final data = jsonDecode(resp);
-  //       final jsonResponse = json.decode(response.data);
-  //       tokenDTO = new TokenDTO.fromJson(jsonResponse);
-  //       secStore.secureWrite('token', tokenDTO.token);
-  //       print('tokenDTO.token');
-  //       return tokenDTO;
-  //     } else {
-  //       return tokenDTO;
-  //     }
-  //   } on DioError catch (ex) {
-  //     if (ex.response != null) {
-  //       print('Dio error!');
-  //       print('STATUS: ${ex.response?.statusCode}');
-  //       print('DATA: ${ex.response?.data}');
-  //       print('HEADERS: ${ex.response?.headers}');
-  //     } else {
-  //       print('Error sending request!');
-  //       print(ex.message);
-  //       String errorMessage = json.decode(ex.response.toString())["message"];
-  //       throw new Exception(errorMessage);
-  //     }
-  //   } catch (e, s) {
-  //     print("Exception $e");
-  //     print("StackTrace $s");
-  //   }
-  // }
-
   Future<Response> login(CredentialsDTO body) async {
     try {
+
       //body is a CredentialsDTO eg.
       // var body =  {
       // "username": "pbucki",
@@ -114,10 +66,9 @@ class AuthenticationEndpoint {
       // };
       Response response = await _client.post('/auth/authenticate',
           data: jsonEncode(body),
-          options: Options(headers: {'Accept': 'application/json'}));
+          options: Options(headers: {'Accept': 'application/json', "requiresToken" : false}));
 
       return response;
-
     } on DioError catch (ex) {
       if (ex.response != null) {
         print('Dio error!');
@@ -138,41 +89,51 @@ class AuthenticationEndpoint {
 
   Future<void> logout() async {
     secStore.secureWrite('token', '');
-    secStore.secureWrite('refreshTimeout', '');
+    //secStore.secureWrite('refreshTimeout', '');
+    secStore.secureWrite('username', '');
+    secStore.secureWrite('accessLevel', '');
+    secStore.secureWrite('accessLevels', '');
+    secStore.secureWrite('tokenExpiry', '');
 
     await Future.delayed(Duration(milliseconds: 100));
-
-    navigationController.navigatorKey.currentState
-        .pushNamedAndRemoveUntil("/auth", (Route<dynamic> route) => false);
+    // navigationController.navigatorKey.currentState
+    //     .pushNamedAndRemoveUntil(
+    //         "/auth", (Route<dynamic> route) => false);
+    navigationController.navigateTo(authenticationPageRoute);
+    // Navigator.push(
+    //   context,
+    //   MaterialPageRoute(builder: (context) => AuthenticationPage()),
+    // );
   }
 
-  Future<void> changeAccessLevel(String value) async {
-    secStore.secureWrite('accessLevel', '${value}');
-  }
-
-  // USER
-  // GET
-  Future<TokenDTO> refreshToken() async {
+// USER
+// GET
+  Future<bool> refreshToken() async {
     try {
-      // CredentialsDTO user =
-      //     new CredentialsDTO(username: 'anowak', password: 'Nowak123!');
-      // await login(user);
-      final refreshToken = secStore.secureRead('token');
+      final oldToken = await secStore.secureRead('token');
 
-      print('BEFORE REFRESH: $refreshToken');
+      print('BEFORE REFRESH: $oldToken');
 
-      Response<String> response = await _client.get('/auth/refreshtoken',
-          options: Options(headers: {"Authorization": "Bearer $refreshToken"}));
+      Response response = await _client.get('/auth/refreshtoken',
+          options: Options(headers: {"Authorization": "Bearer $oldToken", "requiresToken" : false}));
 
       if (response.statusCode == 200) {
-        final jsonResponse = json.decode(response.data);
-        TokenDTO tokenDTO = new TokenDTO.fromJson(jsonResponse);
+        TokenDTO tokenDTO = new TokenDTO.fromJson(response.data);
+        Map<String, dynamic> decodedToken = JwtDecoder.decode(tokenDTO.token);
+        secStore.secureWrite('username', decodedToken["sub"]);
         secStore.secureWrite('token', tokenDTO.token);
-        final newToken = secStore.secureRead('token');
+        secStore.secureWrite('tokenExpiry', JwtDecoder.getExpirationDate(tokenDTO.token).toString());
+        secStore.secureWrite('isAdmin', decodedToken["isAdmin"].toString());
+        secStore.secureWrite('isManager', decodedToken["isManager"].toString());
+        secStore.secureWrite('isClimber', decodedToken["isClimber"].toString());
 
+        final newToken = await secStore.secureRead('token');
         print('AFTER REFRESH: $newToken');
 
-        return tokenDTO;
+        return true;
+        //return tokenDTO;
+      } else {
+        return false;
       }
     } on DioError catch (ex) {
       if (ex.response != null) {
@@ -191,4 +152,118 @@ class AuthenticationEndpoint {
       print("StackTrace $s");
     }
   }
+
+  //String baseURL = 'https://perfectbeta-spring-boot-tls-pyclimb.apps.okd.cti.p.lodz.pl/api';
+
+  //HTTP
+  // // ANONIM
+  // // POST
+  // Future<http.Response> authenticate(CredentialsDTO body) async {
+  //   try {
+  //     http.Response response = await login(body);
+  //
+  //     if (response.statusCode == 200) {
+  //       var resp = response.body;
+  //       final data = jsonDecode(resp);
+  //       token = data['token'];
+  //
+  //       TokenDTO tokenDTO = new TokenDTO(token: token);
+  //       Map<String, dynamic> decodedToken = JwtDecoder.decode(tokenDTO.token);
+  //       secStore.secureWrite('username', decodedToken["sub"]);
+  //       secStore.secureWrite('token', tokenDTO.token);
+  //       secStore.secureWrite('tokenExpiry', decodedToken["exp"]);
+  //       secStore.secureWrite('isAdmin', decodedToken["isAdmin"]);
+  //       secStore.secureWrite('isManager', decodedToken["isManager"]);
+  //       secStore.secureWrite('isClimber', decodedToken["isClimber"]);
+  //
+  //       return response;
+  //     }
+  //     return response;
+  //   } catch (e, s) {
+  //     print("Exception $e");
+  //     print("StackTrace $s");
+  //   }
+  // }
+  //
+  // Future<http.Response> login(CredentialsDTO body) async {
+  //   try {
+  //     var headers = {'Accept': 'application/json'};
+  //     // var request = http.MultipartRequest('POST', Uri.parse(baseURL + '/auth/authenticate'));
+  //     // request.fields.addAll({'username': body.username, 'password': body.password});
+  //     // request.headers.addAll(headers);
+  //     var response = await http.post(Uri.parse(baseURL + '/auth/authenticate'), body: {'username': body.username, 'password': body.password}, headers: headers);
+  //
+  //     //http.StreamedResponse response = await request.send();
+  //     return response;
+  //
+  //   } catch (e, s) {
+  //     print("Exception $e");
+  //     print("StackTrace $s");
+  //   }
+  // }
+  //
+  // Future<void> logout() async {
+  //   secStore.secureWrite('token', '');
+  //   //secStore.secureWrite('refreshTimeout', '');
+  //   secStore.secureWrite('username', '');
+  //   secStore.secureWrite('accessLevel', '');
+  //   secStore.secureWrite('accessLevels', '');
+  //   secStore.secureWrite('tokenExpiry', '');
+  //
+  //   await Future.delayed(Duration(milliseconds: 100));
+  //   // navigationController.navigatorKey.currentState
+  //   //     .pushNamedAndRemoveUntil(
+  //   //         "/auth", (Route<dynamic> route) => false);
+  //   navigationController.navigateTo(authenticationPageRoute);
+  //   // Navigator.push(
+  //   //   context,
+  //   //   MaterialPageRoute(builder: (context) => AuthenticationPage()),
+  //   // );
+  // }
+  //
+  //
+  // // USER
+  // // GET
+  // Future<bool> refreshToken() async {
+  //   try {
+  //     final oldToken = secStore.secureRead('token');
+  //
+  //     print('BEFORE REFRESH: $oldToken');
+  //
+  //     var headers = {'Accept': 'application/json', "Authorization": "Bearer $oldToken"};
+  //     var request =
+  //     http.MultipartRequest('POST', Uri.parse(baseURL + '/auth/refreshtoken'));
+  //     request.headers.addAll(headers);
+  //
+  //     http.StreamedResponse response = await request.send();
+  //
+  //     if (response.statusCode == 200) {
+  //       final data = jsonDecode(await response.stream.bytesToString());
+  //       token = data['token'];
+  //
+  //       TokenDTO tokenDTO = new TokenDTO(token: token);
+  //       Map<String, dynamic> decodedToken = JwtDecoder.decode(tokenDTO.token);
+  //       secStore.secureWrite('username', decodedToken["sub"]);
+  //       secStore.secureWrite('token', tokenDTO.token);
+  //       secStore.secureWrite('tokenExpiry', decodedToken["exp"]);
+  //       secStore.secureWrite('isAdmin', decodedToken["isAdmin"]);
+  //       secStore.secureWrite('isManager', decodedToken["isManager"]);
+  //       secStore.secureWrite('isClimber', decodedToken["isClimber"]);
+  //
+  //
+  //       final newToken = secStore.secureRead('token');
+  //       print('AFTER REFRESH: $newToken');
+  //
+  //       return true;
+  //       //return tokenDTO;
+  //     }
+  //     else {
+  //       print(response.reasonPhrase);
+  //       return false;
+  //     }
+  //   } catch (e, s) {
+  //     print("Exception $e");
+  //     print("StackTrace $s");
+  //   }
+  // }
 }

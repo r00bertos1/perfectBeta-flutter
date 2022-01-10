@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:perfectBeta/constants/style.dart';
 import 'package:perfectBeta/controllers/menu_controller.dart';
 import 'package:perfectBeta/controllers/navigation_controller.dart';
@@ -30,6 +31,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
+        builder: EasyLoading.init(),
         initialRoute: authenticationPageRoute,
         unknownRoute: GetPage(name: '/not-found', page: () => PageNotFound(), transition: Transition.fadeIn),
         getPages: [

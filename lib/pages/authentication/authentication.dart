@@ -252,9 +252,9 @@ class _AuthenticationPage extends State<AuthenticationPage> {
       var _rememberMe = await UserSecureStorage.getRememberMe() ?? false;
       var _username = await UserSecureStorage.getUsername() ?? "";
       var _password = await UserSecureStorage.getPassword() ?? "";
-      print(_rememberMe.toString());
-      print(_username.toString());
-      print(_password.toString());
+      // print(_rememberMe.toString());
+      // print(_username.toString());
+      // print(_password.toString());
       if (_rememberMe) {
         setState(() {
           _isChecked = true;
@@ -275,7 +275,7 @@ class _AuthenticationPage extends State<AuthenticationPage> {
     if (res.statusCode == 200) {
       Get.offAllNamed(rootRoute);
     } else {
-      print('ERRRROR');
+      print(res.statusCode);
     }
   }
 }

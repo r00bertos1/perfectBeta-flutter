@@ -9,12 +9,11 @@ import 'package:perfectBeta/dto/pages/page_dto.dart';
 import '../api_client.dart';
 
 class CloudEndpoint {
-
   Dio _client;
   CloudEndpoint(this._client);
 
   // ANONIM
-    // POST
+  // POST
   Future<List<Uri>> uploadFile(map) async {
     try {
       var formData = FormData.fromMap(map);
@@ -22,11 +21,11 @@ class CloudEndpoint {
       // {
       //   'files': '${imagePathList}',
       // }
-      Response<String> response =  await _client.post('/info', data: formData);
-
+      Response<String> response = await _client.post('/info',
+          data: formData, options: Options(headers: {"requiresToken": false}));
 
       var linksList = response.data as List<String>;
-      List<Uri> res = List<Uri>.from(linksList.map((item)=> Uri.parse(item)));
+      List<Uri> res = List<Uri>.from(linksList.map((item) => Uri.parse(item)));
       return res;
 
       // return jsonResponse
