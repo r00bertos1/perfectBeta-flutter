@@ -1,5 +1,5 @@
 import 'dart:ui';
-import 'package:perfectBeta/pages/add_route/widgets/step_progress_view.dart';
+import 'package:perfectBeta/pages/route/add_route/widgets/step_progress_view.dart';
 import 'package:flutter/material.dart';
 import 'package:perfectBeta/constants/style.dart';
 

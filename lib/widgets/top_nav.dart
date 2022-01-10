@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:perfectBeta/constants/style.dart';
 import 'package:perfectBeta/helpers/reponsiveness.dart';
+import 'package:perfectBeta/pages/users/user_page.dart';
+import 'package:perfectBeta/storage/secure_storage.dart';
 
 import 'custom_text.dart';
 
@@ -51,24 +53,41 @@ AppBar(
                       color: lightGrey,
                     ),
               SizedBox(width: 24,),
-              CustomText(text: "Jan Kowalski", color: lightGrey,),
+              FutureBuilder(
+                  future: secStore.getUsername(),
+                  initialData: "anonymous",
+                  builder: (BuildContext context,
+                      AsyncSnapshot<String> text) {
+                    return CustomText(
+                      text: text.data,
+                      weight: FontWeight.bold,
+                      color: lightGrey,
+                    );
+                  }),
               SizedBox(width: 16,),
-              Container(
-                  decoration: BoxDecoration(
-                    color: active.withOpacity(.5),
-                    borderRadius: BorderRadius.circular(30)
-                  ),
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(30)
-                  ),
-                  padding: EdgeInsets.all(2),
-                  margin: EdgeInsets.all(2),
-                  child: CircleAvatar(
-                    backgroundColor: light,
-                    child: Icon(Icons.person_outline, color: dark,),
+              InkWell(
+                onTap: () =>
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => UserPage()),
                     ),
+                child: Container(
+                    decoration: BoxDecoration(
+                      color: active.withOpacity(.5),
+                      borderRadius: BorderRadius.circular(30)
+                    ),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(30)
+                    ),
+                    padding: EdgeInsets.all(2),
+                    margin: EdgeInsets.all(2),
+                    child: CircleAvatar(
+                      backgroundColor: light,
+                      child: Icon(Icons.person_outline, color: dark,),
+                      ),
+                  ),
                 ),
               )
             ],

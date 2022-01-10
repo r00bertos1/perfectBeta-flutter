@@ -11,10 +11,10 @@ import 'package:perfectBeta/helpers/reponsiveness.dart';
 import 'package:perfectBeta/widgets/custom_text.dart';
 import 'dart:convert';
 import 'package:image_picker/image_picker.dart';
-import 'package:perfectBeta/pages/add_route/model/converted_image.dart';
+import 'package:perfectBeta/pages/route/add_route/model/converted_image.dart';
 import 'dart:io';
-import 'package:perfectBeta/pages/add_route/util/steps_params.dart';
-import 'package:perfectBeta/pages/add_route/widgets/step_progress_view.dart';
+import 'package:perfectBeta/pages/route/add_route/util/steps_params.dart';
+import 'package:perfectBeta/pages/route/add_route/widgets/step_progress_view.dart';
 import 'package:http/http.dart' as http;
 
 final uploadImageURL =

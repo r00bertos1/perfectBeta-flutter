@@ -1,4 +1,4 @@
-import 'package:perfectBeta/pages/gyms/model/gym.dart';
+import 'package:perfectBeta/pages/gym/model/gym.dart';
 import 'package:flutter/material.dart';
 
 class Uiitem extends StatelessWidget {

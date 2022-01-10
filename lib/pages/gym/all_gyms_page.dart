@@ -1,14 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:perfectBeta/constants/controllers.dart';
-import 'package:perfectBeta/constants/style.dart';
 import 'package:perfectBeta/helpers/reponsiveness.dart';
-import 'package:perfectBeta/pages/add_route/widgets/add_steps.dart';
-import 'package:perfectBeta/pages/add_route/widgets/route_steps.dart';
+import 'package:perfectBeta/pages/gym/widgets/gyms_grid.dart';
 import 'package:perfectBeta/widgets/custom_text.dart';
 import 'package:get/get.dart';
 
-class AddRoutePage extends StatelessWidget {
-  const AddRoutePage({Key key}) : super(key: key);
+class AllGymsPage extends StatelessWidget {
+  const AllGymsPage({Key key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -19,7 +17,6 @@ class AddRoutePage extends StatelessWidget {
                 () => Row(
               children: [
                 Container(
-                    color: light,
                     margin: EdgeInsets.only(
                         top: ResponsiveWidget.isSmallScreen(context) ? 100 : 10,
                         bottom:
@@ -33,9 +30,8 @@ class AddRoutePage extends StatelessWidget {
             ),
           ),
           Expanded(
-              child: AddSteps(),
-              //child: AddImagePage(onSubmit: (String value) {  },)
-              ),
+            child: GymsGrid(),
+          ),
         ],
       ),
     );

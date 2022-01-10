@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:perfectBeta/constants/controllers.dart';
 import 'package:perfectBeta/helpers/reponsiveness.dart';
-import 'package:perfectBeta/pages/gyms/widgets/gyms_table.dart';
-import 'package:perfectBeta/pages/gyms/widgets/gyms_grid.dart';
+import 'package:perfectBeta/pages/gym/widgets/gyms_table.dart';
+import 'package:perfectBeta/pages/gym/widgets/gyms_grid.dart';
 import 'package:perfectBeta/widgets/custom_text.dart';
 import 'package:get/get.dart';
 

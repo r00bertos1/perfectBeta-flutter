@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:perfectBeta/dto/gyms/climbing_gym_with_details_dto.dart';
 import 'package:perfectBeta/dto/pages/page_dto.dart';
-import 'package:perfectBeta/pages/my_routes/my_routes_page.dart';
+import 'package:perfectBeta/pages/route/my_routes/my_routes_page.dart';
 import 'package:perfectBeta/service.dart';
 import 'package:perfectBeta/constants/style.dart';
 import 'package:perfectBeta/helpers/reponsiveness.dart';

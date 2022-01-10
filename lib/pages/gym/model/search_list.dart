@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:perfectBeta/pages/gyms/model/gym.dart';
-import 'package:perfectBeta/pages/gyms/model/uiitem.dart';
+import 'package:perfectBeta/pages/gym/model/gym.dart';
+import 'package:perfectBeta/pages/gym/model/uiitem.dart';
 
 class SearchList extends StatefulWidget {
   SearchList({Key key}) : super(key: key);

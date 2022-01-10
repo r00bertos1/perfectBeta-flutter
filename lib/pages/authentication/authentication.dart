@@ -1,3 +1,5 @@
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:perfectBeta/api/api_client.dart';
 import 'package:perfectBeta/api/providers/authentication_endpoint.dart';
@@ -11,6 +13,7 @@ import 'package:perfectBeta/storage/user_secure_storage.dart';
 import 'package:perfectBeta/widgets/custom_text.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 
 import 'forgot_password.dart';
 
@@ -95,7 +98,7 @@ class _AuthenticationPage extends State<AuthenticationPage> {
                     child: Wrap(
                       children: [
                         CustomText(
-                          text: "Welcome back.",
+                          text: "Welcome back",
                           color: lightGrey,
                         ),
                       ],
@@ -169,10 +172,12 @@ class _AuthenticationPage extends State<AuthenticationPage> {
                       ),
                       InkWell(
                           onTap: () => Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (context) => ForgotPasswordPage()),
-                          ),
-                          child: CustomText(text: "Forgot password?", color: active))
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => ForgotPasswordPage()),
+                              ),
+                          child: CustomText(
+                              text: "Forgot password?", color: active))
                     ],
                   ),
                   SizedBox(
@@ -201,11 +206,11 @@ class _AuthenticationPage extends State<AuthenticationPage> {
                     ),
                   ),
                   InkWell(
-                    onTap: () =>
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => RegistrationPage()),
-                      ),
+                    onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => RegistrationPage()),
+                    ),
                     child: Container(
                       alignment: Alignment.center,
                       width: double.maxFinite,
@@ -219,15 +224,23 @@ class _AuthenticationPage extends State<AuthenticationPage> {
                   SizedBox(
                     height: 15,
                   ),
-                  // RichText(
-                  //     text: TextSpan(children: [
-                  //   TextSpan(
-                  //       text: "Do not have admin credentials? ",
-                  //       style: TextStyle(color: lightGrey)),
-                  //   TextSpan(
-                  //       text: "Request Credentials! ",
-                  //       style: TextStyle(color: active))
-                  // ]))
+                  RichText(
+                      textAlign: TextAlign.center,
+                      text: TextSpan(children: [
+                        TextSpan(
+                            text: "Do not want to create an account?\n",
+                            style: TextStyle(color: lightGrey)),
+                        TextSpan(
+                            recognizer: new TapGestureRecognizer()
+                              ..onTap = () async {
+                                if (_isChecked) {
+                                  _handleRemeberme(true);
+                                }
+                                _handleAuthenticationAnonim();
+                              },
+                            text: "Browse anonymously! ",
+                            style: TextStyle(color: active))
+                      ]))
                 ],
               ),
             ),
@@ -273,13 +286,24 @@ class _AuthenticationPage extends State<AuthenticationPage> {
   Future<void> _handleAuthentication() async {
     // login
     CredentialsDTO authData = new CredentialsDTO(
-        username: _usernameController.text.trim(), password: _passwordController.text.trim());
+        username: _usernameController.text.trim(),
+        password: _passwordController.text.trim());
     var res = await _authenticationEndpoint.authenticate(authData);
     if (res.statusCode == 200) {
+      menuController.changeActiveItemTo(overviewPageDisplayName);
       Get.offAllNamed(rootRoute);
     } else {
       print(res.statusCode);
     }
   }
 
+  void _handleAuthenticationAnonim() {
+    var res = _authenticationEndpoint.authenticateAnonim();
+    if (res) {
+      menuController.changeActiveItemTo(overviewPageDisplayName);
+      Get.offAllNamed(rootRoute);
+    } else {
+      EasyLoading.showError('Something went wrong');
+    }
+  }
 }

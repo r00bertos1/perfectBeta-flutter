@@ -67,6 +67,27 @@ class AuthenticationEndpoint {
     }
   }
 
+  bool authenticateAnonim()  {
+    try {
+      //secStore.secureWrite('username', 'anonymous');
+      secStore.secureDelete('token');
+      // secStore.secureDelete('username');
+      secStore.secureDelete('tokenExpiry');
+      //secStore.secureDelete('accessLevel');
+      secStore.secureWrite('accessLevel', '');
+      secStore.secureWrite('isAdmin', 'false');
+      secStore.secureWrite('isManager', 'false');
+      secStore.secureWrite('isClimber', 'false');
+      secStore.secureWrite('isAnonymous', 'true');
+
+      return true;
+
+    } catch (e, s) {
+      print("Exception $e");
+      print("StackTrace $s");
+    }
+  }
+
   Future<Response> login(CredentialsDTO body) async {
     try {
 

@@ -5,12 +5,12 @@ import 'package:flutter/material.dart';
 import 'package:perfectBeta/constants/style.dart';
 import 'package:perfectBeta/helpers/reponsiveness.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:perfectBeta/pages/add_route/model/converted_image.dart';
+import 'package:perfectBeta/pages/route/add_route/model/converted_image.dart';
 import 'dart:io';
 import 'package:http/http.dart' as http;
-import 'package:perfectBeta/pages/add_route/widgets/step_one.dart';
-import 'package:perfectBeta/pages/add_route/widgets/step_progress_view.dart';
-import 'package:perfectBeta/pages/add_route/widgets/step_two.dart';
+import 'package:perfectBeta/pages/route/add_route/widgets/step_one.dart';
+import 'package:perfectBeta/pages/route/add_route/widgets/step_progress_view.dart';
+import 'package:perfectBeta/pages/route/add_route/widgets/step_two.dart';
 import 'package:perfectBeta/widgets/custom_text.dart';
 
 enum ImageSourceType { gallery, camera }

@@ -15,6 +15,7 @@ class SecureStorage {
   static const _isAdmin = 'isAdmin';
   static const _isManager = 'isManager';
   static const _isClimber = 'isClimber';
+  static const _isAnonymous = 'isAnonymous';
   //static const _askRefresh = 'askRefresh';
   // static const _refreshTimeout = 'refreshTimeout';
   // static const _verifierTimeout = 'verifierTimeout';
@@ -81,6 +82,9 @@ class SecureStorage {
 
   bool isClimber() {
     return _storage.read(key: _isClimber) != null;
+  }
+  bool isAnonymous() {
+    return _storage.read(key: _isAnonymous) != null;
   }
 
   Future<void> changeAccessLevel(String value) async {
