@@ -36,6 +36,17 @@ class AuthenticationEndpoint {
       secStore.secureWrite('isManager', decodedToken["isManager"].toString());
       secStore.secureWrite('isClimber', decodedToken["isClimber"].toString());
 
+      Map<String, bool> accessLevels = {'ADMIN': decodedToken["isAdmin"], 'MANAGER': decodedToken["isManager"], 'CLIMBER': decodedToken["isClimber"]};
+      secStore.setAccessLevels(accessLevels);
+
+      if(decodedToken["isAdmin"] == true) {
+        secStore.secureWrite('accessLevel', 'ADMIN');
+      } else if (decodedToken["isManager"] == true) {
+        secStore.secureWrite('accessLevel', 'MANAGER');
+      } else if (decodedToken["isClimber"] == true) {
+        secStore.secureWrite('accessLevel', 'CLIMBER');
+      }
+
       //return tokenDTO;
       return response;
     } on DioError catch (ex) {
@@ -126,6 +137,8 @@ class AuthenticationEndpoint {
         secStore.secureWrite('isAdmin', decodedToken["isAdmin"].toString());
         secStore.secureWrite('isManager', decodedToken["isManager"].toString());
         secStore.secureWrite('isClimber', decodedToken["isClimber"].toString());
+        Map<String, bool> accessLevels = {'ADMIN': decodedToken["isAdmin"], 'MANAGER': decodedToken["isManager"], 'CLIMBER': decodedToken["isClimber"]};
+        secStore.setAccessLevels(accessLevels);
 
         final newToken = await secStore.secureRead('token');
         print('AFTER REFRESH: $newToken');
