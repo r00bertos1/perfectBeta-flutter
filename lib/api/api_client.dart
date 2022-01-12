@@ -18,6 +18,7 @@ class ApiClient {
     _dio.options.baseUrl =
         'https://perfectbeta-spring-boot-tls-pyclimb.apps.okd.cti.p.lodz.pl/api';
     _dio.options.headers['Content-Type'] = 'application/json';
+    _dio.options.headers['Access-Control-Allow-Origin'] = '*';
     _tokenDio.options = _dio.options;
     //_dio.interceptors.add(ApiInterceptors());
     _dio.interceptors.add(ApiInterceptors());

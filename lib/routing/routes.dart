@@ -54,7 +54,7 @@ class MenuItem {
 }
 
 Future<List<MenuItem>> getsideMenuItemRoutes() async {
-  List<MenuItem> sideMenuItemRoutes;
+  List<MenuItem> sideMenuItemRoutes = [];
   final accessLevel = await secStore.getAccessLevel();
   if (accessLevel == 'CLIMBER') {
     sideMenuItemRoutes = [

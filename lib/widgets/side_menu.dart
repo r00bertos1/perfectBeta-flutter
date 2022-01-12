@@ -15,6 +15,8 @@ class SideMenu extends StatelessWidget {
   Widget build(BuildContext context) {
     double _width = MediaQuery.of(context).size.width;
 
+    List<MenuItem> sideMenuItems = [];
+
     return Container(
       color: light,
       child: ListView(
@@ -71,18 +73,23 @@ class SideMenu extends StatelessWidget {
           Column(
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
-              FutureBuilder(
+              FutureBuilder<List<MenuItem>>(
                   future: getsideMenuItemRoutes(),
-                  initialData: [Text('123'), Text('123')],
                   builder: (BuildContext context, menuItems) {
+                    sideMenuItems = menuItems.data;
                     return Column(
                       mainAxisSize: MainAxisSize.min,
-                      children: menuItems.data
+                      children: sideMenuItems
                           .map<Widget>((item) => SideMenuItem(
                               itemName: item.name,
                               onTap: () {
                                 if (item.route == authenticationPageRoute) {
                                   Get.offAllNamed(authenticationPageRoute);
+                                  menuController.changeActiveItemTo(
+                                      overviewPageDisplayName);
+                                }
+                                if (item.route == registrationPageRoute) {
+                                  Get.offAllNamed(registrationPageRoute);
                                   menuController.changeActiveItemTo(
                                       overviewPageDisplayName);
                                 }
