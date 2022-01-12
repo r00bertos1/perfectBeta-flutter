@@ -49,8 +49,7 @@ class SideMenu extends StatelessWidget {
                           initialData: "Loading ...",
                           builder: (BuildContext context,
                               AsyncSnapshot<String> text) {
-                            if (text.hasError)
-                              return Text('E');
+                            if (text.hasError) return Container();
                             return CustomText(
                               text: text.data.capitalize,
                               size: 14,
@@ -76,32 +75,44 @@ class SideMenu extends StatelessWidget {
               FutureBuilder<List<MenuItem>>(
                   future: getsideMenuItemRoutes(),
                   builder: (BuildContext context, menuItems) {
-                    sideMenuItems = menuItems.data;
-                    return Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: sideMenuItems
-                          .map<Widget>((item) => SideMenuItem(
-                              itemName: item.name,
-                              onTap: () {
-                                if (item.route == authenticationPageRoute) {
-                                  Get.offAllNamed(authenticationPageRoute);
-                                  menuController.changeActiveItemTo(
-                                      overviewPageDisplayName);
-                                }
-                                if (item.route == registrationPageRoute) {
-                                  Get.offAllNamed(registrationPageRoute);
-                                  menuController.changeActiveItemTo(
-                                      overviewPageDisplayName);
-                                }
-                                if (!menuController.isActive(item.name)) {
-                                  menuController.changeActiveItemTo(item.name);
-                                  if (ResponsiveWidget.isSmallScreen(context))
-                                    Get.back();
-                                  navigationController.navigateTo(item.route);
-                                }
-                              }))
-                          .toList(),
-                    );
+                    if (menuItems.hasData) {
+                      sideMenuItems = menuItems.data;
+                      return Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: sideMenuItems.isNotEmpty
+                              ? sideMenuItems
+                                  .map<Widget>((item) => SideMenuItem(
+                                      itemName: item.name,
+                                      onTap: () {
+                                        if (item.route ==
+                                            authenticationPageRoute) {
+                                          Get.offAllNamed(
+                                              authenticationPageRoute);
+                                          menuController.changeActiveItemTo(
+                                              overviewPageDisplayName);
+                                        }
+                                        if (item.route ==
+                                            registrationPageRoute) {
+                                          Get.offAllNamed(
+                                              registrationPageRoute);
+                                          menuController.changeActiveItemTo(
+                                              overviewPageDisplayName);
+                                        }
+                                        if (!menuController
+                                            .isActive(item.name)) {
+                                          menuController
+                                              .changeActiveItemTo(item.name);
+                                          if (ResponsiveWidget.isSmallScreen(
+                                              context)) Get.back();
+                                          navigationController
+                                              .navigateTo(item.route);
+                                        }
+                                      }))
+                                  .toList()
+                              : []);
+                    } else {
+                      return Container();
+                    }
                   })
             ],
           ),

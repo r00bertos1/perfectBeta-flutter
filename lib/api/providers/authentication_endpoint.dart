@@ -26,7 +26,9 @@ class AuthenticationEndpoint {
   Future<Response> authenticate(CredentialsDTO body) async {
     try {
       Response response = await login(body);
-
+      // print('==Type: ' + response.data.runtimeType.toString());
+      // print('==Response data: ' + response.data.toString());
+      // print('==Response' + response.toString());
       TokenDTO tokenDTO = new TokenDTO.fromJson(response.data);
       Map<String, dynamic> decodedToken = JwtDecoder.decode(tokenDTO.token);
       secStore.secureWrite('username', decodedToken["sub"]);
@@ -35,6 +37,7 @@ class AuthenticationEndpoint {
       secStore.secureWrite('isAdmin', decodedToken["isAdmin"].toString());
       secStore.secureWrite('isManager', decodedToken["isManager"].toString());
       secStore.secureWrite('isClimber', decodedToken["isClimber"].toString());
+      secStore.secureWrite('isAnonymous', 'false');
 
       Map<String, bool> accessLevels = {'ADMIN': decodedToken["isAdmin"], 'MANAGER': decodedToken["isManager"], 'CLIMBER': decodedToken["isClimber"]};
       secStore.setAccessLevels(accessLevels);
@@ -75,9 +78,9 @@ class AuthenticationEndpoint {
       secStore.secureDelete('tokenExpiry');
       //secStore.secureDelete('accessLevel');
       secStore.secureWrite('accessLevel', '');
-      secStore.secureWrite('isAdmin', 'false');
-      secStore.secureWrite('isManager', 'false');
-      secStore.secureWrite('isClimber', 'false');
+      // secStore.secureWrite('isAdmin', 'false');
+      // secStore.secureWrite('isManager', 'false');
+      // secStore.secureWrite('isClimber', 'false');
       secStore.secureWrite('isAnonymous', 'true');
 
       return true;

@@ -290,8 +290,8 @@ class _AuthenticationPage extends State<AuthenticationPage> {
         password: _passwordController.text.trim());
     var res = await _authenticationEndpoint.authenticate(authData);
     if (res.statusCode == 200) {
-      menuController.changeActiveItemTo(overviewPageDisplayName);
       Get.offAllNamed(rootRoute);
+      menuController.changeActiveItemTo(overviewPageDisplayName);
     } else {
       print(res.statusCode);
     }
@@ -300,8 +300,8 @@ class _AuthenticationPage extends State<AuthenticationPage> {
   void _handleAuthenticationAnonim() {
     var res = _authenticationEndpoint.authenticateAnonim();
     if (res) {
-      menuController.changeActiveItemTo(overviewPageDisplayName);
       Get.offAllNamed(rootRoute);
+      menuController.changeActiveItemTo(overviewPageDisplayName);
     } else {
       EasyLoading.showError('Something went wrong');
     }

@@ -68,25 +68,6 @@ class SecureStorage {
     return _storage.read(key: _accessLevel);
   }
 
-  bool isAuthenticated() {
-   return _storage.read(key: _keyToken) != null;
-  }
-
-  bool isAdmin() {
-    return _storage.read(key: _isAdmin) != null;
-  }
-
-  bool isManager() {
-    return _storage.read(key: _isManager) != null;
-  }
-
-  bool isClimber() {
-    return _storage.read(key: _isClimber) != null;
-  }
-  bool isAnonymous() {
-    return _storage.read(key: _isAnonymous) != null;
-  }
-
   Future<void> changeAccessLevel(String value) async {
     _storage.write(key: _accessLevel, value: value);
   }

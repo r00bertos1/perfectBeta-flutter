@@ -18,11 +18,13 @@ class ApiClient {
     _dio.options.baseUrl =
         'https://perfectbeta-spring-boot-tls-pyclimb.apps.okd.cti.p.lodz.pl/api';
     _dio.options.headers['Content-Type'] = 'application/json';
+    _dio.options.headers['Access-Control-Allow-Credentials'] = true;
     _dio.options.headers['Access-Control-Allow-Origin'] = '*';
+    // _dio.options.headers['Access-Control-Allow-Headers'] = 'Origin,Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,locale';
+    // _dio.options.headers['Access-Control-Allow-Methods'] = 'POST, GET, PUT, DELETE, OPTIONS';
     _tokenDio.options = _dio.options;
     //_dio.interceptors.add(ApiInterceptors());
     _dio.interceptors.add(ApiInterceptors());
-    //TODO: Interceptor for token authentication
     // _dio.interceptors.add(QueuedInterceptorsWrapper(
     //   onRequest: (options, handler) async {
     //     print('send request：path:${options.path}，baseURL:${options.baseUrl}');

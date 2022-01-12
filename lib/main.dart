@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:perfectBeta/constants/style.dart';
+import 'package:perfectBeta/controllers/access_level_controller.dart';
 import 'package:perfectBeta/controllers/menu_controller.dart';
 import 'package:perfectBeta/controllers/navigation_controller.dart';
 import 'package:perfectBeta/layout.dart';
@@ -17,6 +18,7 @@ void main() {
   HttpOverrides.global = MyHttpOverrides();
   Get.put(MenuController());
   Get.put(NavigationController());
+  Get.put(AccessLevelController());
   runApp(MyApp());
 }
 

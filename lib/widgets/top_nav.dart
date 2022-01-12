@@ -1,99 +1,168 @@
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:perfectBeta/constants/style.dart';
 import 'package:perfectBeta/helpers/reponsiveness.dart';
+import 'package:perfectBeta/pages/authentication/authentication.dart';
 import 'package:perfectBeta/pages/users/user_page.dart';
 import 'package:perfectBeta/storage/secure_storage.dart';
-
+import 'access_level_dropdown_menu.dart';
 import 'custom_text.dart';
 
-AppBar topNavigationBar(BuildContext context,  GlobalKey<ScaffoldState> key) =>
-AppBar(
-        leading: !ResponsiveWidget.isSmallScreen(context) ? Row(
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(left: 16),
-              child: Image.asset("assets/icons/logo.png", width: 28,),
-            ),
-          ],
-        ) : IconButton(icon: Icon(Icons.menu), onPressed: (){
-          key.currentState.openDrawer();
-        }),
-        title: Container(
-          child: Row(
-            children: [
-              Visibility(
-                visible: !ResponsiveWidget.isSmallScreen(context),
-                child: CustomText(text: "PerfectBeta", color: lightGrey, size: 20, weight: FontWeight.bold,)),
-              Expanded(child: Container()),
-              IconButton(icon: Icon(Icons.settings, color: dark,), onPressed: (){}),
+Map dropDownItemsMap;
+List<DropdownMenuItem<int>> list = [];
 
-              Stack(
-                children: [
-                  IconButton(icon: Icon(Icons.notifications, color: dark.withOpacity(.7),), onPressed: (){}),
-                  Positioned(
-                    top: 7,
-                    right: 7,
-                    child: Container(
-                      width: 12,
-                      height: 12,
-                      padding: EdgeInsets.all(4),
-                      decoration: BoxDecoration(
-                        color: active,
-                        borderRadius: BorderRadius.circular(30),
-                        border: Border.all(color: light, width: 2)
-                      ),
-                    ),
-                  )
-                ],
-              ),
-
-            Container(
-                      width: 1,
-                      height: 22,
-                      color: lightGrey,
-                    ),
-              SizedBox(width: 24,),
-              FutureBuilder(
-                  future: secStore.getUsername(),
-                  initialData: "anonymous",
-                  builder: (BuildContext context,
-                      AsyncSnapshot<String> text) {
-                    return CustomText(
-                      text: text.data,
-                      weight: FontWeight.bold,
-                      color: lightGrey,
-                    );
-                  }),
-              SizedBox(width: 16,),
-              InkWell(
-                onTap: () =>
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => UserPage()),
-                    ),
-                child: Container(
-                    decoration: BoxDecoration(
-                      color: active.withOpacity(.5),
-                      borderRadius: BorderRadius.circular(30)
-                    ),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(30)
-                    ),
-                    padding: EdgeInsets.all(2),
-                    margin: EdgeInsets.all(2),
-                    child: CircleAvatar(
-                      backgroundColor: light,
-                      child: Icon(Icons.person_outline, color: dark,),
-                      ),
+AppBar topNavigationBar(BuildContext context, GlobalKey<ScaffoldState> key) =>
+    AppBar(
+      leading: !ResponsiveWidget.isSmallScreen(context)
+          ? Row(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(left: 16),
+                  child: Image.asset(
+                    "assets/icons/logo.png",
+                    width: 28,
                   ),
                 ),
-              )
-            ],
+              ],
+            )
+          : IconButton(
+              icon: Icon(Icons.menu),
+              onPressed: () {
+                key.currentState.openDrawer();
+              }),
+      title: Container(
+        child: Row(
+          children: [
+            Visibility(
+                visible: !ResponsiveWidget.isSmallScreen(context),
+                child: CustomText(
+                  text: "PerfectBeta",
+                  color: lightGrey,
+                  size: 20,
+                  weight: FontWeight.bold,
+                )),
+          ],
+        ),
+      ),
+      actions: [
+        FutureBuilder<bool>(
+            future: isAnonymous(),
+            builder: (BuildContext context, snapshot) {
+              if (snapshot.hasError) {
+                return Container();
+              } else if (snapshot.hasData) {
+                if (snapshot.data == true) {
+                  return _buildAnonimTopBar(context);
+                } else {
+                  return _buildUserTopBar(context);
+                }
+              } else {
+                return CircularProgressIndicator();
+              }
+            }),
+      ],
+      iconTheme: IconThemeData(color: dark),
+      elevation: 0,
+      backgroundColor: Colors.transparent,
+    );
+
+Future<bool> isAnonymous() async {
+  final anonymousCheckValue = await secStore.secureRead('isAnonymous');
+  if (anonymousCheckValue == 'true') {
+    return true;
+  }
+  return false;
+}
+
+Widget _buildAnonimTopBar(context) {
+  return !kIsWeb
+      ? Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            IconButton(
+                icon: Icon(
+                  Icons.login,
+                  color: dark,
+                ),
+                onPressed: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => AuthenticationPage()),
+                    )),
+            SizedBox(
+              width: 16,
+            ),
+          ],
+        )
+      : Container();
+}
+
+Widget _buildUserTopBar(context) {
+  return Row(
+    mainAxisSize: MainAxisSize.min,
+    children: [
+      SizedBox(
+        width: 50,
+      ),
+      AccessLevelDropdownMenu(),
+      SizedBox(
+        width: 16,
+      ),
+      Container(
+        width: 1,
+        height: 22,
+        color: lightGrey,
+      ),
+      SizedBox(
+        width: 24,
+      ),
+      Container(
+        width: 80,
+        alignment: Alignment.centerRight,
+        child: FutureBuilder(
+            future: secStore.getUsername(),
+            initialData: "Username",
+            builder: (BuildContext context, AsyncSnapshot<String> text) {
+              return CustomText(
+                text: text.data,
+                color: lightGrey,
+                weight: FontWeight.bold,
+              );
+            }),
+      ),
+      SizedBox(
+        width: 16,
+      ),
+      InkWell(
+        borderRadius: BorderRadius.circular(40),
+        onTap: () => Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => UserPage()),
+        ),
+        child: Container(
+          decoration: BoxDecoration(
+              color: active.withOpacity(.5),
+              borderRadius: BorderRadius.circular(30)),
+          child: Container(
+            decoration: BoxDecoration(
+                color: Colors.white, borderRadius: BorderRadius.circular(30)),
+            padding: EdgeInsets.all(2),
+            margin: EdgeInsets.all(2),
+            child: CircleAvatar(
+              backgroundColor: light,
+              child: Icon(
+                Icons.person_outline,
+                color: dark,
+              ),
+            ),
           ),
         ),
-        iconTheme: IconThemeData(color: dark),
-        elevation: 0,
-        backgroundColor: Colors.transparent,
-      );
+      ),
+      SizedBox(
+        width: 16,
+      ),
+    ],
+  );
+}
