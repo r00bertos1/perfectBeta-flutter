@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:perfectBeta/api/api_client.dart';
+import 'package:perfectBeta/api/providers/authentication_endpoint.dart';
 import 'package:perfectBeta/constants/controllers.dart';
 import 'package:perfectBeta/constants/style.dart';
 import 'package:perfectBeta/helpers/reponsiveness.dart';
@@ -9,7 +11,10 @@ import 'package:perfectBeta/widgets/side_menu_item.dart';
 import 'package:get/get.dart';
 
 class SideMenu extends StatelessWidget {
-  const SideMenu({Key key}) : super(key: key);
+  SideMenu({Key key}) : super(key: key);
+
+  static ApiClient _client = new ApiClient();
+  var _authenticationEndpoint = new AuthenticationEndpoint(_client.init());
 
   @override
   Widget build(BuildContext context) {
@@ -86,6 +91,7 @@ class SideMenu extends StatelessWidget {
                                       onTap: () {
                                         if (item.route ==
                                             authenticationPageRoute) {
+                                           _authenticationEndpoint.logout();
                                           Get.offAllNamed(
                                               authenticationPageRoute);
                                           menuController.changeActiveItemTo(

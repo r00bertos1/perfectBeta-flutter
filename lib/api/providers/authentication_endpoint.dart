@@ -10,7 +10,9 @@ import 'package:perfectBeta/dto/auth/token_dto.dart';
 import 'package:perfectBeta/pages/authentication/authentication.dart';
 import 'package:perfectBeta/routing/routes.dart';
 import '../api_client.dart';
+
 import 'package:http/http.dart' as http;
+
 import '../../storage/secure_storage.dart';
 
 
@@ -123,22 +125,17 @@ class AuthenticationEndpoint {
   }
 
   Future<void> logout() async {
-    secStore.secureWrite('token', '');
-    //secStore.secureWrite('refreshTimeout', '');
-    secStore.secureWrite('username', '');
-    secStore.secureWrite('accessLevel', '');
-    secStore.secureWrite('accessLevels', '');
-    secStore.secureWrite('tokenExpiry', '');
-
+    //await secStore.secureDeleteAll();
+    await secStore.secureDelete('username');
+    await secStore.secureDelete('token');
+    await secStore.secureDelete('tokenExpiry');
+    await secStore.secureDelete('accessLevel');
+    await secStore.secureDelete('accessLevels');
+    await secStore.secureDelete('isAdmin');
+    await secStore.secureDelete('isManager');
+    await secStore.secureDelete('isClimber');
+    await secStore.secureDelete('isAnonymous');
     await Future.delayed(Duration(milliseconds: 100));
-    // navigationController.navigatorKey.currentState
-    //     .pushNamedAndRemoveUntil(
-    //         "/auth", (Route<dynamic> route) => false);
-    navigationController.navigateTo(authenticationPageRoute);
-    // Navigator.push(
-    //   context,
-    //   MaterialPageRoute(builder: (context) => AuthenticationPage()),
-    // );
   }
 
 // USER
@@ -147,7 +144,7 @@ class AuthenticationEndpoint {
     try {
       final oldToken = await secStore.secureRead('token');
 
-      print('BEFORE REFRESH: $oldToken');
+      //print('BEFORE REFRESH: $oldToken');
 
       Response response = await _client.get('/auth/refreshtoken',
           options: Options(headers: {"Authorization": "Bearer $oldToken", "requiresToken" : false}));
@@ -164,8 +161,8 @@ class AuthenticationEndpoint {
         Map<String, bool> accessLevels = {'ADMIN': decodedToken["isAdmin"], 'MANAGER': decodedToken["isManager"], 'CLIMBER': decodedToken["isClimber"]};
         secStore.setAccessLevels(accessLevels);
 
-        final newToken = await secStore.secureRead('token');
-        print('AFTER REFRESH: $newToken');
+        //final newToken = await secStore.secureRead('token');
+        //print(' AFTER REFRESH: $newToken');
 
         return true;
         //return tokenDTO;

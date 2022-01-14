@@ -7,7 +7,9 @@ import 'package:perfectBeta/constants/controllers.dart';
 import 'package:perfectBeta/dto/auth/token_dto.dart';
 import 'package:perfectBeta/api/providers/authentication_endpoint.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
+import 'package:perfectBeta/routing/routes.dart';
 import '../storage/secure_storage.dart';
+import 'package:get/get.dart' as nav;
 
 class ApiClient {
   Dio init() {
@@ -88,15 +90,18 @@ class ApiInterceptors extends Interceptor {
 
       if (_token) {
         _authenticationEndpoint.logout();
+        nav.Get.offAllNamed(
+            authenticationPageRoute);
         EasyLoading.showInfo('Expired session');
         DioError _err;
         handler.reject(_err);
       } else {
         _refreshed = await _authenticationEndpoint.refreshToken();
         if (_refreshed) {
-          options.headers["Authorization"] = "Bearer " + storedToken;
+          final newStoredToken = await secStore.secureRead('token');
+          options.headers["Authorization"] = "Bearer " + newStoredToken;
           options.headers["Accept"] = "application/json";
-          print('---NEW' + storedToken);
+          print('---NEW: ' + newStoredToken);
           handler.next(options);
         }
       }

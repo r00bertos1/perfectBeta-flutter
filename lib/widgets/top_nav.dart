@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:perfectBeta/constants/style.dart';
 import 'package:perfectBeta/helpers/reponsiveness.dart';
 import 'package:perfectBeta/pages/authentication/authentication.dart';
-import 'package:perfectBeta/pages/users/user_page.dart';
+import 'package:perfectBeta/pages/users/user.dart';
 import 'package:perfectBeta/storage/secure_storage.dart';
 import 'access_level_dropdown_menu.dart';
 import 'custom_text.dart';
@@ -125,11 +125,17 @@ Widget _buildUserTopBar(context) {
             future: secStore.getUsername(),
             initialData: "Username",
             builder: (BuildContext context, AsyncSnapshot<String> text) {
-              return CustomText(
-                text: text.data,
-                color: lightGrey,
-                weight: FontWeight.bold,
-              );
+              if (text.hasError) {
+                return Container();
+              } else if (text.hasData) {
+                return CustomText(
+                  text: text.data,
+                  color: lightGrey,
+                  weight: FontWeight.bold,
+                );
+              } else {
+                return CircularProgressIndicator();
+              }
             }),
       ),
       SizedBox(

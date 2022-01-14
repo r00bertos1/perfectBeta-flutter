@@ -12,6 +12,8 @@ import 'package:perfectBeta/dto/users/user_with_access_level_dto.dart';
 import 'package:perfectBeta/dto/users/user_with_personal_data_access_level_dto.dart';
 import 'package:perfectBeta/dto/users/user_with_personal_data_dto.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:perfectBeta/storage/secure_storage.dart';
+import 'package:perfectBeta/storage/user_secure_storage.dart';
 import '../api_client.dart';
 
 class UserEndpoint {
@@ -20,8 +22,36 @@ class UserEndpoint {
   UserEndpoint(this._client);
 
   // USER
+    // GET
+  Future<UserWithPersonalDataAccessLevelDTO> getUserPersonalDataAccessLevel() async {
+    try {
+      Response<String> response = await _client.get('/users/self');
+
+      final jsonResponse = json.decode(response.data);
+      UserWithPersonalDataAccessLevelDTO page =
+      new UserWithPersonalDataAccessLevelDTO.fromJson(jsonResponse);
+      return page;
+
+    } on DioError catch (ex) {
+      if (ex.response != null) {
+        print('Dio error!');
+        print('STATUS: ${ex.response?.statusCode}');
+        print('DATA: ${ex.response?.data}');
+        print('HEADERS: ${ex.response?.headers}');
+      } else {
+        print('Error sending request!');
+        print(ex.message);
+        String errorMessage = json.decode(ex.response.toString())["message"];
+        throw new Exception(errorMessage);
+      }
+    } catch (e, s) {
+      print("Exception $e");
+      print("StackTrace $s");
+    }
+  }
+
     // PUT
-  Future<UserDTO> requestChangeEmail(EmailDTO body) async {
+  Future<Response> requestChangeEmail(EmailDTO body) async {
     try {
       //body is a EmailDTO eg.
       // var body =  {
@@ -30,10 +60,10 @@ class UserEndpoint {
       Response<String> response = await _client
           .put('/users/request_change_email', data: jsonEncode(body));
 
-      final jsonResponse = json.decode(response.data);
-      UserDTO page = new UserDTO.fromJson(jsonResponse);
+      // final jsonResponse = json.decode(response.data);
+      // UserDTO page = new UserDTO.fromJson(jsonResponse);
 
-      return page;
+      return response;
     } on DioError catch (ex) {
       if (ex.response != null) {
         print('Dio error!');
@@ -79,20 +109,15 @@ class UserEndpoint {
     }
   }
 
-  Future<UserDTO> changePassword(ChangePasswordDTO body) async {
+  Future<Response> changePassword(ChangePasswordDTO body) async {
     try {
-      //body is a ChangePasswordDTO eg.
-      // var body =  {
-      // "newPassword": "Test12345!",
-      // "oldPassword": "Test1234!"
-      // };
       Response<String> response =
-          await _client.put('/users/change_password', data: jsonEncode(body));
+          await _client.put('/users/change_password', data: body);
 
-      final jsonResponse = json.decode(response.data);
-      UserDTO page = new UserDTO.fromJson(jsonResponse);
+      // final jsonResponse = json.decode(response.data);
+      // UserDTO page = new UserDTO.fromJson(jsonResponse);
 
-      return page;
+      return response;
     } on DioError catch (ex) {
       if (ex.response != null) {
         print('Dio error!');
@@ -111,23 +136,15 @@ class UserEndpoint {
     }
   }
 
-  Future<UserWithPersonalDataDTO> updatePersonalData(
+  Future<Response> updatePersonalData(
       int userID, PersonalDataDTO body) async {
     try {
-      //body is a EmailDTO eg.
-      // var body =  {
-      // "name": "ziomekkk",
-      // "surname": "ziomekk",
-      // "phoneNumber": "555666777",
-      // "gender": true,
-      // "language": "EN",
-      // };
       Response<String> response =
           await _client.put('/users/update/$userID', data: jsonEncode(body));
 
-      final jsonResponse = json.decode(response.data);
-      UserDTO page = new UserDTO.fromJson(jsonResponse);
-      return page;
+      // final jsonResponse = json.decode(response.data);
+      // UserDTO page = new UserDTO.fromJson(jsonResponse);
+      return response;
     } on DioError catch (ex) {
       if (ex.response != null) {
         print('Dio error!');
@@ -150,8 +167,14 @@ class UserEndpoint {
   Future<Response> deleteUser(int userId, PasswordDTO body) async {
     try {
       Response<String> response =
-      await _client.delete('/users/delete/$userId', data: jsonEncode(body));
+      await _client.delete('/users/delete/$userId', data: body);
 
+      //Delete all data from storage
+      await secStore.secureDeleteAll();
+      await UserSecureStorage.secureDeleteAll();
+
+      return response;
+      
       return response;
     } on DioError catch (ex) {
       if (ex.response != null) {
@@ -177,12 +200,6 @@ class UserEndpoint {
   Future<Response> registerUser(
       RegistrationDTO body) async {
     try {
-      //body is a RegistrationDTO eg.
-      // var body =  {
-      // "login": "manager2",
-      // "email": "manager2@perfectbeta.pl",
-      // "password": "Jdoe123!"
-      // };
       Response<String> response =
           await _client.post('/users/register', data: jsonEncode(body),
               options: Options(headers: {"requiresToken" : false}));
