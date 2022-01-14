@@ -43,20 +43,6 @@ class OverviewPage extends StatelessWidget {
           Expanded(
               child: ListView(
             children: [
-              // FutureBuilder<TokenDTO>(
-              //     future: _authenticationEndpoint.refreshToken(),
-              //     builder: (context, snapshot) {
-              //       print('Connection state: ${snapshot.connectionState}');
-              //       if (snapshot.connectionState == ConnectionState.done) {
-              //         if (snapshot.hasError) {
-              //           return Text("Error");
-              //         }
-              //         if (snapshot.hasData) {
-              //           return Text("DATA");
-              //         }
-              //       }
-              //         return SizedBox(child: Center(child: CircularProgressIndicator()));
-              //     }),
               if (ResponsiveWidget.isHugeScreen(context))
                 OverviewCardsLargeScreen()
               else

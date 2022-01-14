@@ -6,9 +6,9 @@ import 'package:perfectBeta/pages/route/my_routes/my_routes_page.dart';
 import 'package:perfectBeta/pages/gym/gyms_page.dart';
 import 'package:perfectBeta/pages/overview/overview.dart';
 import 'package:perfectBeta/pages/route/add_route/add_route.dart';
-import 'package:perfectBeta/pages/users/manager_registration_page.dart';
-import 'package:perfectBeta/pages/users/all_users_page.dart';
-import 'package:perfectBeta/pages/users/user_page.dart';
+import 'package:perfectBeta/pages/users/manager_registration.dart';
+import 'package:perfectBeta/pages/users/all_users.dart';
+import 'package:perfectBeta/pages/users/user.dart';
 import 'package:perfectBeta/routing/routes.dart';
 
 Route<dynamic> generateRoute(RouteSettings settings){

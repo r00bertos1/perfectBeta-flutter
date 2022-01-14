@@ -32,28 +32,15 @@ class _AuthenticationPage extends State<AuthenticationPage> {
   // final ApiClient _client = new ApiClient();
   var _authenticationEndpoint = new AuthenticationEndpoint(_client.init());
 
-  final _usernameController = TextEditingController();
+  final _loginController = TextEditingController();
   final _passwordController = TextEditingController();
   bool _isChecked = false;
 
   @override
   void initState() {
     super.initState();
-    _loadUserUsernamePassword();
-    //init();
+    _loadUserLoginPassword();
   }
-
-  // Future init() async {
-  //   final name = await UserSecureStorage.getUsername() ?? '';
-  //   final birthday = await UserSecureStorage.getBirthday();
-  //   final pets = await UserSecureStorage.getPets() ?? [];
-  //
-  //   setState(() {
-  //     this.controllerName.text = name;
-  //     this.birthday = birthday;
-  //     this.pets = pets;
-  //   });
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -124,7 +111,7 @@ class _AuthenticationPage extends State<AuthenticationPage> {
                       }
                       return null;
                     },
-                    controller: _usernameController,
+                    controller: _loginController,
                     decoration: InputDecoration(
                         labelText: "Username",
                         hintText: "Enter your username",
@@ -164,7 +151,9 @@ class _AuthenticationPage extends State<AuthenticationPage> {
                       Row(
                         children: [
                           Checkbox(
-                              value: _isChecked, onChanged: _handleRemeberme),
+                              value: _isChecked, onChanged: (bool value) { setState(() {
+                            _isChecked = value;
+                          }); },),
                           CustomText(
                             text: "Remember Me",
                           ),
@@ -252,21 +241,20 @@ class _AuthenticationPage extends State<AuthenticationPage> {
 
   //handle remember me function
   Future<void> _handleRemeberme(bool value) async {
-    _isChecked = value;
+    //_isChecked = value;
     await UserSecureStorage.setRememberMe(value);
-    await UserSecureStorage.setUsername(_usernameController.text);
-    await UserSecureStorage.setPassword(_passwordController.text);
-
-    setState(() {
-      _isChecked = value;
-    });
+    await UserSecureStorage.setLogin(_loginController.text.trim());
+    await UserSecureStorage.setPassword(_passwordController.text.trim());
+    // setState(() {
+    //   _isChecked = value;
+    // });
   }
 
   //load email and password
-  void _loadUserUsernamePassword() async {
+  void _loadUserLoginPassword() async {
     try {
       var _rememberMe = await UserSecureStorage.getRememberMe() ?? false;
-      var _username = await UserSecureStorage.getUsername() ?? "";
+      var _username = await UserSecureStorage.getLogin() ?? "";
       var _password = await UserSecureStorage.getPassword() ?? "";
       // print(_rememberMe.toString());
       // print(_username.toString());
@@ -275,7 +263,7 @@ class _AuthenticationPage extends State<AuthenticationPage> {
         setState(() {
           _isChecked = true;
         });
-        _usernameController.text = _username ?? "";
+        _loginController.text = _username ?? "";
         _passwordController.text = _password ?? "";
       }
     } catch (e) {
@@ -286,7 +274,7 @@ class _AuthenticationPage extends State<AuthenticationPage> {
   Future<void> _handleAuthentication() async {
     // login
     CredentialsDTO authData = new CredentialsDTO(
-        username: _usernameController.text.trim(),
+        username: _loginController.text.trim(),
         password: _passwordController.text.trim());
     var res = await _authenticationEndpoint.authenticate(authData);
     if (res.statusCode == 200) {

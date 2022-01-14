@@ -5,14 +5,18 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 class UserSecureStorage {
   static final _storage = FlutterSecureStorage();
 
-  static const _keyUsername = 'username';
+  static const _keyLogin = 'login';
   static const _keyPassword = 'password';
   static const _keyRememberMe = 'remember_me';
 
-  static Future setUsername(String username) async =>
-      await _storage.write(key: _keyUsername, value: username);
+  static Future<void> secureDeleteAll() async {
+    await _storage.deleteAll();
+  }
 
-  static Future<String> getUsername() async => await _storage.read(key: _keyUsername);
+  static Future setLogin(String login) async =>
+      await _storage.write(key: _keyLogin, value: login);
+
+  static Future<String> getLogin() async => await _storage.read(key: _keyLogin);
 
   static Future setPassword(String password) async =>
       await _storage.write(key: _keyPassword, value: password);

@@ -24,7 +24,7 @@ class ForgotPasswordPage extends StatefulWidget {
 }
 
 class _ForgotPasswordPage extends State<ForgotPasswordPage> {
-  final _forgotPasswordformKey = GlobalKey<FormState>();
+  final _forgotPasswordFormKey = GlobalKey<FormState>();
 
   //API
   static ApiClient _client = new ApiClient();
@@ -39,7 +39,7 @@ class _ForgotPasswordPage extends State<ForgotPasswordPage> {
       //resizeToAvoidBottomInset: false,
       body: Center(
         child: Form(
-          key: _forgotPasswordformKey,
+          key: _forgotPasswordFormKey,
           child: Container(
             constraints: BoxConstraints(maxWidth: 400),
             padding: EdgeInsets.all(24),
@@ -103,7 +103,7 @@ class _ForgotPasswordPage extends State<ForgotPasswordPage> {
                 ),
                 InkWell(
                   onTap: () async {
-                    if (_forgotPasswordformKey.currentState.validate()) {
+                    if (_forgotPasswordFormKey.currentState.validate()) {
                       _handleResetPassword();
                     }
                   },

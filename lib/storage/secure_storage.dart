@@ -40,9 +40,19 @@ class SecureStorage {
     return value;
   }
 
+  Future<Map<String, String>> secureReadAll() async {
+    Map<String, String> allValues = await _storage.readAll();
+    return allValues;
+  }
+
   Future<void> secureDelete(String key) async {
     await _storage.delete(key: key);
   }
+
+  Future<void> secureDeleteAll() async {
+    await _storage.deleteAll();
+  }
+
 
   Future<void> secureWrite(String key, String value) async {
     await _storage.write(key: key, value: value);

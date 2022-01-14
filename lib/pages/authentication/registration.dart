@@ -22,7 +22,7 @@ class RegistrationPage extends StatefulWidget {
 }
 
 class _RegistrationPage extends State<RegistrationPage> {
-  final _registrationformKey = GlobalKey<FormState>();
+  final _registrationFormKey = GlobalKey<FormState>();
 
   //API
   static ApiClient _client = new ApiClient();
@@ -43,7 +43,7 @@ class _RegistrationPage extends State<RegistrationPage> {
         child: SingleChildScrollView(
           //physics: NeverScrollableScrollPhysics(),
           child: Form(
-            key: _registrationformKey,
+            key: _registrationFormKey,
             child: Container(
               constraints: BoxConstraints(maxWidth: 400),
               padding: EdgeInsets.all(24),
@@ -191,7 +191,7 @@ class _RegistrationPage extends State<RegistrationPage> {
                   ),
                   InkWell(
                     onTap: () async {
-                      if (_registrationformKey.currentState.validate()) {
+                      if (_registrationFormKey.currentState.validate()) {
                         _handleRegistration();
                       }
                     },
