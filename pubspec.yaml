@@ -45,7 +45,10 @@ dependencies:
   image_picker_web: any
   time_machine: ^0.9.16
 
+  #===NEW===
   dropdown_below: ^1.0.3
+  intl_phone_number_input: ^0.7.0+2
+  country_list_pick: ^1.0.1+5
 
 flutter_icons:
   android: "ic_launcher"
@@ -76,6 +79,7 @@ flutter:
   assets:
     - assets/icons/
     - assets/images/
+    - assets/country_data.json
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
