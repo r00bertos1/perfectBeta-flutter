@@ -67,6 +67,7 @@ class ApiInterceptors extends Interceptor {
   void onRequest(
       RequestOptions options, RequestInterceptorHandler handler) async {
     print('REQUEST[${options.method}] => PATH: ${options.path}');
+    EasyLoading.show(status: 'loading...');
 
     ApiClient _client = new ApiClient();
     // final ApiClient _client = new ApiClient();
@@ -107,7 +108,7 @@ class ApiInterceptors extends Interceptor {
   void onResponse(Response response, ResponseInterceptorHandler handler) async {
     print(
         'RESPONSE[${response.statusCode}] => PATH: ${response.requestOptions.path}');
-
+    EasyLoading.dismiss();
     // if (response.headers.value("verifyToken") != null) {
     //   //if the header is present, then compare it with the Shared Prefs key
     //   SharedPreferences prefs = await SharedPreferences.getInstance();
