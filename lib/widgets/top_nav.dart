@@ -123,7 +123,6 @@ Widget _buildUserTopBar(context) {
         alignment: Alignment.centerRight,
         child: FutureBuilder(
             future: secStore.getUsername(),
-            initialData: "Username",
             builder: (BuildContext context, AsyncSnapshot<String> text) {
               if (text.hasError) {
                 return Container();

@@ -8,7 +8,6 @@ import 'package:perfectBeta/constants/style.dart';
 import 'package:perfectBeta/dto/auth/credentials_dto.dart';
 import 'package:perfectBeta/pages/authentication/registration.dart';
 import 'package:perfectBeta/routing/routes.dart';
-import 'package:perfectBeta/storage/secure_storage.dart';
 import 'package:perfectBeta/storage/user_secure_storage.dart';
 import 'package:perfectBeta/widgets/custom_text.dart';
 import 'package:get/get.dart';

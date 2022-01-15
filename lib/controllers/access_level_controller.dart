@@ -31,7 +31,7 @@ class AccessLevelController extends GetxController {
       case climberDisplayName:
         return _customIcon(Icons.account_circle, itemName);
       default:
-        return _customIcon(Icons.list, itemName);
+        return Container();
     }
   }
 

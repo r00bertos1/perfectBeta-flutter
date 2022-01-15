@@ -5,10 +5,11 @@ import 'package:perfectBeta/dto/auth/token_dto.dart';
 import 'package:perfectBeta/helpers/reponsiveness.dart';
 import 'package:perfectBeta/constants/controllers.dart';
 import 'package:perfectBeta/pages/overview/widgets/available_drivers_table.dart';
-import 'package:perfectBeta/pages/overview/widgets/overview_cards_large.dart';
-import 'package:perfectBeta/pages/overview/widgets/overview_cards_medium.dart';
-import 'package:perfectBeta/pages/overview/widgets/overview_cards_small.dart';
+import 'package:perfectBeta/pages/overview/widgets/admin_overview_cards_large.dart';
+import 'package:perfectBeta/pages/overview/widgets/admin_overview_cards_medium.dart';
+import 'package:perfectBeta/pages/overview/widgets/admin_overview_cards_small.dart';
 import 'package:perfectBeta/pages/overview/widgets/revenue_section_large.dart';
+import 'package:perfectBeta/storage/secure_storage.dart';
 import 'package:perfectBeta/widgets/custom_text.dart';
 import 'package:get/get.dart';
 
@@ -31,7 +32,7 @@ class OverviewPage extends StatelessWidget {
                     margin: EdgeInsets.only(
                         top: ResponsiveWidget.isSmallScreen(context) ? 100 : 10,
                         bottom:
-                        ResponsiveWidget.isSmallScreen(context) ? 20 : 20),
+                            ResponsiveWidget.isSmallScreen(context) ? 20 : 20),
                     child: CustomText(
                       text: menuController.activeItem.value,
                       size: 24,
@@ -42,29 +43,62 @@ class OverviewPage extends StatelessWidget {
           ),
           Expanded(
               child: ListView(
+            padding: EdgeInsets.all(0),
             children: [
-              if (ResponsiveWidget.isHugeScreen(context))
-                OverviewCardsLargeScreen()
-              else
-                if (ResponsiveWidget.isLargeScreen(context) ||
-                  ResponsiveWidget.isMediumScreen(context))
-                if (ResponsiveWidget.isCustomSize(context))
-                  OverviewCardsMediumScreen()
-                else
-                  OverviewCardsLargeScreen()
-              else
-                OverviewCardsSmallScreen(),
-              if (!ResponsiveWidget.isSmallScreen(context))
-                RevenueSectionLarge()
-              else
-                RevenueSectionSmall(),
-
-                AvailableDriversTable(),
-             
+              FutureBuilder(
+                  future: _checkAccessLevel(),
+                  builder: (context, snapshot) {
+                    switch (snapshot.connectionState) {
+                      case ConnectionState.waiting:
+                        return Container();
+                      default:
+                        if (snapshot.hasError)
+                          return new Text('Error: ${snapshot.error}');
+                        else
+                          switch (snapshot.data) {
+                            case 'ADMIN':
+                              return Column(
+                                children: [
+                                  if (ResponsiveWidget.isHugeScreen(context))
+                                    AdminOverviewCardsLargeScreen()
+                                  else if (ResponsiveWidget.isLargeScreen(context) ||
+                                      ResponsiveWidget.isMediumScreen(context))
+                                    if (ResponsiveWidget.isCustomSize(context))
+                                      AdminOverviewCardsMediumScreen()
+                                    else
+                                      AdminOverviewCardsLargeScreen()
+                                  else
+                                    AdminOverviewCardsSmallScreen(),
+                                  // if (!ResponsiveWidget.isSmallScreen(context))
+                                  //   RevenueSectionLarge()
+                                  // else
+                                  //   RevenueSectionSmall(),
+                                  // AvailableDriversTable(),
+                                ],
+                              );
+                            case 'MANAGER':
+                              return Text('MANAGER');
+                            case 'CLIMBER':
+                              return Text('CLIMBER');
+                            default:
+                              return Text('default');
+                          }
+                    }
+                  }),
             ],
           ))
         ],
       ),
     );
+  }
+
+  Future<String> _checkAccessLevel() async {
+    try {
+      String _accessLevel = await secStore.getAccessLevel();
+      return _accessLevel;
+    } catch (e, s) {
+      print("Exception $e");
+      print("StackTrace $s");
+    }
   }
 }

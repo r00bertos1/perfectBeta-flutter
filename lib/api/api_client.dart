@@ -81,7 +81,7 @@ class ApiInterceptors extends Interceptor {
       handler.next(options);
     } else {
       final storedToken = await secStore.secureRead('token');
-      print('---OLD: ' + storedToken);
+      //print('---OLD: ' + storedToken);
 
       //bool _token = JwtDecoder.isExpired(storedToken);
       bool _token = isTokenExpired(storedToken);
@@ -101,7 +101,7 @@ class ApiInterceptors extends Interceptor {
           final newStoredToken = await secStore.secureRead('token');
           options.headers["Authorization"] = "Bearer " + newStoredToken;
           options.headers["Accept"] = "application/json";
-          print('---NEW: ' + newStoredToken);
+          //print('---NEW: ' + newStoredToken);
           handler.next(options);
         }
       }
