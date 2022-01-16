@@ -41,9 +41,11 @@ const registerManagerPageRoute = "/managers/register";
 const allGymsPageDisplayName = "Gyms";
 const allGymsPageRoute = "/gyms/all";
 
-//ADMIN + MANAGER
-const usersPageDisplayName = "Users";
+const usersPageDisplayName = "All users";
 const usersPageRoute = "/users";
+
+const managersPageDisplayName = "Managers";
+const managersPageRoute = "/managers";
 
 
 class MenuItem {
@@ -76,6 +78,7 @@ Future<List<MenuItem>> getsideMenuItemRoutes() async {
       MenuItem(overviewPageDisplayName, overviewPageRoute),
       MenuItem(allGymsPageDisplayName, allGymsPageRoute),
       MenuItem(usersPageDisplayName, usersPageRoute),
+      MenuItem(managersPageDisplayName, managersPageRoute),
       MenuItem(registerManagerPageDisplayName, registerManagerPageRoute),
       MenuItem(authenticationPageDisplayName, authenticationPageRoute),
     ];

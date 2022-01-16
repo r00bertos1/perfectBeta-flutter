@@ -6,6 +6,7 @@ import 'package:perfectBeta/api/providers/user_endpoint.dart';
 import 'package:perfectBeta/constants/style.dart';
 import 'package:perfectBeta/dto/auth/credentials_dto.dart';
 import 'package:perfectBeta/dto/auth/registration_dto.dart';
+import 'package:perfectBeta/dto/users/user_with_personal_data_access_level_dto.dart';
 import 'package:perfectBeta/pages/authentication/authentication.dart';
 import 'package:perfectBeta/routing/routes.dart';
 import 'package:perfectBeta/storage/secure_storage.dart';
@@ -13,6 +14,8 @@ import 'package:perfectBeta/storage/user_secure_storage.dart';
 import 'package:perfectBeta/widgets/custom_text.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+
+import 'confirm_registration_page.dart';
 
 class RegistrationPage extends StatefulWidget {
   const RegistrationPage({Key key}) : super(key: key);
@@ -225,8 +228,14 @@ class _RegistrationPage extends State<RegistrationPage> {
     var res = await _userEndpoint.registerUser(registerData);
     try {
       if (res.statusCode == 200) {
-        Navigator.of(context).pop();
-        EasyLoading.showSuccess('User was successfully created! Please verify your email before Login');
+        //Navigator.of(context).pop();
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => ConfirmRegistrationPage(),
+          ),
+        );
+        EasyLoading.showSuccess('User was successfully created! Please check your email to continue');
       }
     } catch (e, s) {
       print("Exception $e");

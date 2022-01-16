@@ -334,10 +334,10 @@ class ClimbingGymEndpoint {
 
   // PUT
   Future<ClimbingGymWithMaintainersDTO> addMaintainerToGym(
-      int gymId, int maintainerId) async {
+      int gymId, String maintainerUsername) async {
     try {
       Response<String> response =
-          await _client.put('/gym/$gymId/add_maintainer/$maintainerId');
+          await _client.put('/gym/$gymId/add_maintainer/$maintainerUsername');
 
       final jsonResponse = json.decode(response.data);
       ClimbingGymWithMaintainersDTO page =

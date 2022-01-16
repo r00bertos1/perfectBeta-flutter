@@ -28,9 +28,6 @@ class AuthenticationEndpoint {
   Future<Response> authenticate(CredentialsDTO body) async {
     try {
       Response response = await login(body);
-      // print('==Type: ' + response.data.runtimeType.toString());
-      // print('==Response data: ' + response.data.toString());
-      // print('==Response' + response.toString());
       TokenDTO tokenDTO = new TokenDTO.fromJson(response.data);
       Map<String, dynamic> decodedToken = JwtDecoder.decode(tokenDTO.token);
       secStore.secureWrite('username', decodedToken["sub"]);

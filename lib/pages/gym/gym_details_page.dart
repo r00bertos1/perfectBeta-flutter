@@ -53,7 +53,7 @@ class GymDetailsPage extends StatelessWidget {
                           case 'ADMIN':
                             return AllGymDetailsRoutes();
                           case 'MANAGER':
-                            return GymDetailsRoutes();
+                            return GymDetailsRoutes(gymId: gymId);
                           case 'CLIMBER':
                             return GymDetailsRoutes();
                           default:

@@ -90,8 +90,7 @@ class ApiInterceptors extends Interceptor {
 
       if (_token) {
         _authenticationEndpoint.logout();
-        nav.Get.offAllNamed(
-            authenticationPageRoute);
+        nav.Get.offAllNamed(authenticationPageRoute);
         EasyLoading.showInfo('Expired session');
         DioError _err;
         handler.reject(_err);
@@ -154,57 +153,37 @@ class ApiInterceptors extends Interceptor {
         );
       } else if (responseClass == 4) {
         if (err.response.statusCode == 401) {
-          EasyLoading.showError(
-            'ERROR[${err.response?.statusCode}] => PATH: ${err.requestOptions.path} "UNAUTHENTICATED"',
-          );
-
-          // RequestOptions options = error.request;
-          //
-          // // If the token has been updated, repeat directly.
-          // String accessToken = await getToken();
-          //
-          // String token = "Bearer $accessToken";
-          // if (token != options.headers["Authorization"]) {
-          //   options.headers["Authorization"] = token;
-          //   return previous.request(options.path, options: options);
-          // }
-          //
-          // // Lock to block the incoming request until the token updated
-          // previous.lock();
-          // previous.interceptors.responseLock.lock();
-          // previous.interceptors.errorLock.lock();
-          //
-          // try {
-          //   // GET the [refresh token] from shared or LocalStorage or ....
-          //   String refreshToken = await secStore.secureRead('token');
-          //
-          //   Response responseRefresh = await refreshDio.post(
-          //       "${options.baseUrl}/refresh",
-          //       data: {},
-          //       options: Options(
-          //           headers: {
-          //             'Authorization': "Bearer $refreshToken"
-          //           }
-          //       )
-          //   );
-          //
-          //   //update token based on the new refresh token
-          //   options.headers["Authorization"] = "Bearer ${responseRefresh.data['token']}";
-          //
-          //   // Save the new token on shared or LocalStorage
-          //   await saveToken(responseRefresh.data['token']);
-          //
-          //   previous.unlock();
-          //   previous.interceptors.responseLock.unlock();
-          //   previous.interceptors.errorLock.unlock();
-          //
-          //   // repeat the request with a new options
-          //   return previous.request(options.path, options: options);
-
+          if (err.response?.data["key"] == "INVALID_CREDENTIALS") {
+            EasyLoading.showError(
+              'There is no user with this username password combination',
+            );
+          } else {
+            EasyLoading.showError(
+              'ERROR[${err.response?.statusCode}] => PATH: ${err.requestOptions.path} "UNAUTHENTICATED"',
+            );
+          }
         } else if (err.response.statusCode == 403) {
           EasyLoading.showError(
             'ERROR[${err.response?.statusCode}] => PATH: ${err.requestOptions.path} "UNAUTHORIZED"',
           );
+        } else if (err.response.statusCode == 404) {
+          if (err.response?.data["key"] == "NOT_FOUND") {
+            if (err.response?.data["message"]
+                .toString()
+                .contains("USER_NOT_FOUND")) {
+              EasyLoading.showError(
+                'User not found',
+              );
+            } else {
+              EasyLoading.showError(
+                'Data not found',
+              );
+            }
+          } else {
+            EasyLoading.showError(
+              'ERROR[${err.response?.statusCode}] => PATH: ${err.requestOptions.path} "NOT_FOUND"',
+            );
+          }
         } else {
           EasyLoading.showError(
             'ERROR[${err.response?.statusCode}] => PATH: ${err.requestOptions.path} "SERVER_ERROR"',

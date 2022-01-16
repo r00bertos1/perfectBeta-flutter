@@ -21,11 +21,11 @@ class UserAllInfoCard extends StatefulWidget {
   _UserAllInfoCardState createState() => _UserAllInfoCardState();
 }
 
-class _UserAllInfoCardState extends State<UserAllInfoCard> with ChangeNotifier{
+class _UserAllInfoCardState extends State<UserAllInfoCard>{
   static ApiClient _client = new ApiClient();
   var _userEndpoint = new UserEndpoint(_client.init());
 
-  get _fieldValues => _onGenerateFields(widget.data);
+  //get _fieldValues => _onGenerateFields(widget.data);
 
   bool isSwitched = false;
   var textValue = 'Switch is OFF';
@@ -71,7 +71,7 @@ class _UserAllInfoCardState extends State<UserAllInfoCard> with ChangeNotifier{
               Column(
                 mainAxisSize: MainAxisSize.max,
                 crossAxisAlignment: CrossAxisAlignment.start,
-                children: _fieldValues,
+                children: _onGenerateFields(widget.data),
               )
             ],
           )
@@ -103,7 +103,7 @@ class _UserAllInfoCardState extends State<UserAllInfoCard> with ChangeNotifier{
               Column(
                 mainAxisSize: MainAxisSize.max,
                 crossAxisAlignment: CrossAxisAlignment.center,
-                children: _fieldValues,
+                children: _onGenerateFields(widget.data),
               )
             ],
           ),
@@ -144,19 +144,18 @@ class _UserAllInfoCardState extends State<UserAllInfoCard> with ChangeNotifier{
     String _accessLevelString = getAccessLevelsString(data.accessLevels);
 
     final _fieldValues = [
-      // Row(
-      //   mainAxisSize: MainAxisSize.min,
-      //   children: [
-      //     Text('Active'),
-      //     Switch(
-      //       onChanged: (bool value) {
-      //         toggleSwitch(value, data.id);
-      //         notifyListeners();
-      //       },
-      //       value: data.isActive,
-      //     ),
-      //   ],
-      // ),
+      Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text('Active'),
+          Switch(
+            onChanged: (bool value) {
+              toggleSwitch(value, data.id);
+            },
+            value: data.isActive,
+          ),
+        ],
+      ),
       Row(
         mainAxisSize: MainAxisSize.min,
         children: [

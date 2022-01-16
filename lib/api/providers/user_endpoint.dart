@@ -204,9 +204,9 @@ class UserEndpoint {
           await _client.post('/users/register', data: jsonEncode(body),
               options: Options(headers: {"requiresToken" : false}));
 
-      final jsonResponse = json.decode(response.data);
-      UserWithPersonalDataAccessLevelDTO page =
-          new UserWithPersonalDataAccessLevelDTO.fromJson(jsonResponse);
+      // final jsonResponse = json.decode(response.data);
+      // UserWithPersonalDataAccessLevelDTO page =
+      //     new UserWithPersonalDataAccessLevelDTO.fromJson(jsonResponse);
       //return page;
       return response;
     } on DioError catch (ex) {
@@ -228,16 +228,17 @@ class UserEndpoint {
   }
 
     // PUT
-  Future<UserWithAccessLevelDTO> verifyUser(String username, String token) async {
+  Future<Response> verifyUser(String token) async {
     try {
-      Response<String> response = await _client.put('/users/verify',
-          queryParameters: {'username': username, 'token': token},
+      Response<String> response = await _client.get('/users/token_verify',
+          queryParameters: {'token': token},
           options: Options(headers: {"requiresToken" : false}));
 
-      final jsonResponse = json.decode(response.data);
-      UserWithAccessLevelDTO page = new UserWithAccessLevelDTO.fromJson(jsonResponse);
+      // final jsonResponse = json.decode(response.data);
+      // UserWithAccessLevelDTO page = new UserWithAccessLevelDTO.fromJson(jsonResponse);
+      // return page;
 
-      return page;
+      return response;
     } on DioError catch (ex) {
       if (ex.response != null) {
         print('Dio error!');
