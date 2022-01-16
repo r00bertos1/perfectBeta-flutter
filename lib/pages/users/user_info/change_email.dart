@@ -92,6 +92,7 @@ class _ChangeEmailPage extends State<ChangeEmailPage> {
                     }
                     return null;
                   },
+                  keyboardType: TextInputType.emailAddress,
                   controller: _emailController,
                   decoration: InputDecoration(
                       labelText: "Email",

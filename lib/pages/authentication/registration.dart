@@ -113,6 +113,7 @@ class _RegistrationPage extends State<RegistrationPage> {
                       }
                       return null;
                     },
+                    keyboardType: TextInputType.emailAddress,
                     controller: _emailController,
                     decoration: InputDecoration(
                         labelText: "Email",

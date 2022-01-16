@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:perfectBeta/pages/authentication/registration.dart';
-import 'package:perfectBeta/pages/gym/all_gyms_page.dart';
 import 'package:perfectBeta/pages/gym/gym_registration_page.dart';
 import 'package:perfectBeta/pages/route/my_routes/my_routes_page.dart';
 import 'package:perfectBeta/pages/gym/gyms_page.dart';
@@ -19,6 +18,7 @@ Route<dynamic> generateRoute(RouteSettings settings){
     case ownedGymsPageRoute:
     case maintainedGymsPageRoute:
     case managerGymsPageRoute:
+    case allGymsPageRoute:
       return _getPageRoute(GymsPage());
     case userPersonalPageRoute:
       return _getPageRoute(UserPage());
@@ -32,8 +32,6 @@ Route<dynamic> generateRoute(RouteSettings settings){
       return _getPageRoute(GymRegistrationPage());
     case registerManagerPageRoute:
       return _getPageRoute(ManagerRegistrationPage());
-    case allGymsPageRoute:
-      return _getPageRoute(AllGymsPage());
     case usersPageRoute:
       return _getPageRoute(AllUsersPage());
     default:

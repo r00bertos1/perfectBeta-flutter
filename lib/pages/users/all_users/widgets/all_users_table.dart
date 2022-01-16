@@ -54,7 +54,8 @@ class _AllUsersTableState extends State<AllUsersTable> {
               List<UserWithPersonalDataAccessLevelDTO> list = snapshot.data;
               return _createDataTable(list);
             } else {
-              return Container(); //SizedBox(child: Center(child: CircularProgressIndicator()));
+              return SizedBox(
+                  child: Center(child: CircularProgressIndicator()));
             }
           }),
     );
@@ -71,11 +72,11 @@ class _AllUsersTableState extends State<AllUsersTable> {
         columns: _createColumns(list),
         rows: _createRows(list),
         sortColumnIndex: _currentSortColumn,
-        sortAscending: _isSortAsc)
-    ;
+        sortAscending: _isSortAsc);
   }
 
-  List<DataColumn> _createColumns(List<UserWithPersonalDataAccessLevelDTO> list) {
+  List<DataColumn> _createColumns(
+      List<UserWithPersonalDataAccessLevelDTO> list) {
     return [
       DataColumn2(
         label: Text('ID'),
@@ -157,12 +158,22 @@ class _AllUsersTableState extends State<AllUsersTable> {
                 _showDetails(context, user);
               },
             ),
-            DataCell(CustomText(
-                text: user.login,
-                color: (user.login[0] == '#') ? lightGrey : null)),
-            DataCell(CustomText(
-                text: user.email,
-                color: (user.login[0] == '#') ? lightGrey : null)),
+            DataCell(
+              CustomText(
+                  text: user.login,
+                  color: (user.login[0] == '#') ? lightGrey : null),
+              onTap: () {
+                _showDetails(context, user);
+              },
+            ),
+            DataCell(
+              CustomText(
+                  text: user.email,
+                  color: (user.login[0] == '#') ? lightGrey : null),
+              onTap: () {
+                _showDetails(context, user);
+              },
+            ),
             DataCell(Switch(
               onChanged: (bool value) {
                 toggleSwitch(value, user.id);
@@ -170,12 +181,13 @@ class _AllUsersTableState extends State<AllUsersTable> {
               value: user.isActive,
             )),
             DataCell(
-              IconButton(
-                icon:
-                    user.isVerified ? Icon(Icons.verified) : Icon(Icons.block),
+              Icon(
+                user.isVerified ? Icons.verified : Icons.block,
                 color: user.isVerified ? active : error,
-                onPressed: () {},
               ),
+              onTap: () {
+                _showDetails(context, user);
+              },
             ),
           ]));
     });
@@ -185,7 +197,7 @@ class _AllUsersTableState extends State<AllUsersTable> {
   void toggleSwitch(bool value, userId) async {
     if (value == true) {
       var res = await _userEndpoint.activateUser(userId);
-      if(res.isActive == true) {
+      if (res.isActive == true) {
         setState(() {
           textValue = 'Activated';
         });
@@ -193,7 +205,7 @@ class _AllUsersTableState extends State<AllUsersTable> {
       print('Switch Button is ON');
     } else {
       var res = await _userEndpoint.deactivateUser(userId);
-      if(res.isActive == false) {
+      if (res.isActive == false) {
         setState(() {
           textValue = 'Deactivated';
         });

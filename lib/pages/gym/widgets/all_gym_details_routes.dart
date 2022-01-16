@@ -10,7 +10,7 @@ import 'package:perfectBeta/widgets/custom_text.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 
-class GymDetailsRoutes extends StatelessWidget {
+class AllGymDetailsRoutes extends StatelessWidget {
   //Passed from GymGrid class
   final int gymId;
   bool _added = false;
@@ -19,12 +19,12 @@ class GymDetailsRoutes extends StatelessWidget {
   var _climbingGymEndpoint = new ClimbingGymEndpoint(_client.init());
   var _routeEndpoint = new RouteEndpoint(_client.init());
 
-  GymDetailsRoutes({Key key, this.gymId}) : super(key: key);
+  AllGymDetailsRoutes({Key key, this.gymId}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<ClimbingGymWithDetailsDTO>(
-        future: _climbingGymEndpoint.getVerifiedGymById(gymId),
+        future: _climbingGymEndpoint.getGymById(gymId),
         builder: (context, snapshot) {
           print('Connection state: ${snapshot.connectionState}');
           if (snapshot.connectionState == ConnectionState.done) {

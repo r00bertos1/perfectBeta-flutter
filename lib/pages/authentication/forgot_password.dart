@@ -91,6 +91,7 @@ class _ForgotPasswordPage extends State<ForgotPasswordPage> {
                     }
                     return null;
                   },
+                  keyboardType: TextInputType.emailAddress,
                   controller: _emailController,
                   decoration: InputDecoration(
                       labelText: "Email",

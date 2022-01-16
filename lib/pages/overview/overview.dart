@@ -46,7 +46,7 @@ class OverviewPage extends StatelessWidget {
             padding: EdgeInsets.all(0),
             children: [
               FutureBuilder(
-                  future: _checkAccessLevel(),
+                  future: secStore.getAccessLevel(),
                   builder: (context, snapshot) {
                     switch (snapshot.connectionState) {
                       case ConnectionState.waiting:
@@ -90,15 +90,5 @@ class OverviewPage extends StatelessWidget {
         ],
       ),
     );
-  }
-
-  Future<String> _checkAccessLevel() async {
-    try {
-      String _accessLevel = await secStore.getAccessLevel();
-      return _accessLevel;
-    } catch (e, s) {
-      print("Exception $e");
-      print("StackTrace $s");
-    }
   }
 }

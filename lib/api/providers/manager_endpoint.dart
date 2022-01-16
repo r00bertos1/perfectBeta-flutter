@@ -66,22 +66,16 @@ class ManagerEndpoint {
   }
 
     // POST
-  Future<UserWithPersonalDataAccessLevelDTO> registerManager(
+  Future<Response> registerManager(
       RegistrationDTO body) async {
     try {
-      //body is a RegistrationDTO eg.
-      // var body =  {
-      // "login": "manager2",
-      // "email": "manager2@perfectbeta.pl",
-      // "password": "Jdoe123!"
-      // };
       Response<String> response =
           await _client.post('/managers/register', data: jsonEncode(body));
 
-      final jsonResponse = json.decode(response.data);
-      UserWithPersonalDataAccessLevelDTO page =
-          new UserWithPersonalDataAccessLevelDTO.fromJson(jsonResponse);
-      return page;
+      // final jsonResponse = json.decode(response.data);
+      // UserWithPersonalDataAccessLevelDTO page =
+      //     new UserWithPersonalDataAccessLevelDTO.fromJson(jsonResponse);
+      return response;
     } on DioError catch (ex) {
       if (ex.response != null) {
         print('Dio error!');

@@ -150,7 +150,6 @@ class ClimbingGymEndpoint {
   // GET
   Future<DataPage> getAllGyms() async {
     try {
-      //TODO: query params
       Response<String> response = await _client.get('/gym/all');
 
       //Decode response data and create new model class
@@ -362,24 +361,16 @@ class ClimbingGymEndpoint {
     }
   }
 
-  Future<ClimbingGymWithDetailsDTO> editGymDetails(
+  Future<Response> editGymDetails(
       int gymId, GymDetailsDTO body) async {
     try {
-      //body is a map eg.
-      // var body =  {
-      //   "country": "Poland",
-      //   "city": "Łódź",
-      //   "street": "al. Politechniki",
-      //   "number": 1,
-      //   "description": "Zatoka Sportu"
-      // };
       Response<String> response = await _client
           .put('/gym/edit_gym_details/$gymId', data: jsonEncode(body));
 
-      final jsonResponse = json.decode(response.data);
-      ClimbingGymWithDetailsDTO page =
-          new ClimbingGymWithDetailsDTO.fromJson(jsonResponse);
-      return page;
+      // final jsonResponse = json.decode(response.data);
+      // ClimbingGymWithDetailsDTO page =
+      //     new ClimbingGymWithDetailsDTO.fromJson(jsonResponse);
+      return response;
     } on DioError catch (ex) {
       if (ex.response != null) {
         print('Dio error!');

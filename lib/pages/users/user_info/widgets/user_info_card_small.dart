@@ -71,6 +71,7 @@ class _UserInfoCardSmallState extends State<UserInfoCardSmall> {
                     ),
                   ),
                 ),
+                SizedBox(width: 20,),
                 FutureBuilder<UserWithPersonalDataAccessLevelDTO>(
                     future: _userEndpoint.getUserPersonalDataAccessLevel(),
                     builder: (BuildContext context, snapshot) {
@@ -78,24 +79,45 @@ class _UserInfoCardSmallState extends State<UserInfoCardSmall> {
                         return Container();
                       } else if (snapshot.hasData) {
                         _accessLevelString = getAccessLevelsString(snapshot.data.accessLevels);
-                        return Column(
-                          mainAxisSize: MainAxisSize.max,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              CustomText(text: snapshot.data.personalData.name + ' ' + snapshot.data.personalData.surname, size: 20, weight: FontWeight.bold, color: dark),
-                              GestureDetector(child: Text(snapshot.data.email), onLongPress: () {
-                                HapticFeedback.vibrate();
-                                Clipboard.setData(new ClipboardData(text: snapshot.data.email));
-                                EasyLoading.showToast('Email copied to Clipboard!');
-                              },),
-                              GestureDetector(child: Text(snapshot.data.personalData.phoneNumber), onLongPress: () {
-                                HapticFeedback.vibrate();
-                                Clipboard.setData(new ClipboardData(text: snapshot.data.personalData.phoneNumber));
-                                EasyLoading.showToast('Phone number copied to Clipboard!');
-                              },),
-                              SizedBox(height: 8,),
-                              CustomText(text: _accessLevelString, size: 12, weight: FontWeight.w300, color: lightGrey),
-                            ],
+                        return Expanded(
+                          child: Column(
+                            mainAxisSize: MainAxisSize.max,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    CustomText(
+                                        text:
+                                        snapshot.data.personalData.name ?? '',
+                                        size: 20,
+                                        weight: FontWeight.bold,
+                                        color: dark),
+                                    SizedBox(
+                                      width: 4,
+                                    ),
+                                    CustomText(
+                                        text:
+                                        snapshot.data.personalData.surname ?? '',
+                                        size: 20,
+                                        weight: FontWeight.bold,
+                                        color: dark),
+                                  ],
+                                ),
+                                GestureDetector(child: Text(snapshot.data.email ?? '', overflow: TextOverflow.ellipsis), onLongPress: () {
+                                  HapticFeedback.vibrate();
+                                  Clipboard.setData(new ClipboardData(text: snapshot.data.email));
+                                  EasyLoading.showToast('Email copied to Clipboard!');
+                                },),
+                                GestureDetector(child: Text(snapshot.data.personalData.phoneNumber ?? '', overflow: TextOverflow.ellipsis), onLongPress: () {
+                                  HapticFeedback.vibrate();
+                                  Clipboard.setData(new ClipboardData(text: snapshot.data.personalData.phoneNumber));
+                                  EasyLoading.showToast('Phone number copied to Clipboard!');
+                                },),
+                                SizedBox(height: 8,),
+                                CustomText(text: _accessLevelString, size: 12, weight: FontWeight.w300, color: lightGrey),
+                              ],
+                          ),
                         );
                       } else {
                         return SizedBox(child: Center(child: CircularProgressIndicator()));
