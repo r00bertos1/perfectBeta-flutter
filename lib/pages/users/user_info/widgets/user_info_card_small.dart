@@ -113,7 +113,9 @@ class _UserInfoCardSmallState extends State<UserInfoCardSmall> {
     String accessLevelsString = '';
 
     levels.forEach((level) {
-      accessLevelsString += level.accessLevel.toCapitalized() + ' ';
+      if(level.isActive == true) {
+        accessLevelsString += level.accessLevel.toCapitalized() + ' ';
+      }
     });
     return accessLevelsString.trim();
   }

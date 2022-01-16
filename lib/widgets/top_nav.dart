@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:perfectBeta/constants/style.dart';
 import 'package:perfectBeta/helpers/reponsiveness.dart';
 import 'package:perfectBeta/pages/authentication/authentication.dart';
-import 'package:perfectBeta/pages/users/user.dart';
+import 'package:perfectBeta/pages/users/user_info/user.dart';
 import 'package:perfectBeta/storage/secure_storage.dart';
 import 'access_level_dropdown_menu.dart';
 import 'custom_text.dart';

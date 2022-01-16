@@ -8,7 +8,7 @@ import 'package:perfectBeta/constants/style.dart';
 import 'package:perfectBeta/dto/users/data/personal_data_dto.dart';
 import 'package:perfectBeta/dto/users/user_with_personal_data_access_level_dto.dart';
 import 'package:perfectBeta/helpers/country_dropdown.dart';
-import 'package:perfectBeta/pages/users/user.dart';
+import 'package:perfectBeta/pages/users/user_info/user.dart';
 import 'package:perfectBeta/widgets/custom_text.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';

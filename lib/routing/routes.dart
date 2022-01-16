@@ -67,7 +67,6 @@ Future<List<MenuItem>> getsideMenuItemRoutes() async {
     sideMenuItemRoutes = [
       MenuItem(overviewPageDisplayName, overviewPageRoute),
       MenuItem(gymsPageDisplayName, managerGymsPageRoute),
-      MenuItem(usersPageDisplayName, usersPageRoute),
       MenuItem(addRoutePageDisplayName, addRoutePageRoute),
       MenuItem(registerGymPageDisplayName, registerGymPageRoute),
       MenuItem(authenticationPageDisplayName, authenticationPageRoute),

@@ -315,7 +315,7 @@ class UserEndpoint {
     }
   }
 
-  // MANAGER + ADMIN
+  // ADMIN
     // GET
   Future<DataPage> getAllUsers() async {
     try {
@@ -370,7 +370,6 @@ class UserEndpoint {
     }
   }
 
-  // ADMIN
     // PUT
   Future<UserWithAccessLevelDTO> activateUser(int userId) async {
     try {
