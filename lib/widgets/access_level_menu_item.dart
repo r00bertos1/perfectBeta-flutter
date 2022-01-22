@@ -30,9 +30,9 @@ class AccessLevelMenuItem extends StatelessWidget {
                 child: accessLevelController.returnIconFor(itemName),
               ),
               if(!accessLevelController.isActive(itemName))
-                Flexible(child: CustomText(text: itemName , color: accessLevelController.isHovering(itemName) ? dark : lightGrey,))
+                Flexible(child: CustomText(text: itemName , color: accessLevelController.isHovering(itemName) ? dark : lightGrey, overflow: TextOverflow.ellipsis,))
               else
-                Flexible(child: CustomText(text: itemName , color:  dark , weight: FontWeight.bold,))
+                Flexible(child: CustomText(text: itemName , color:  dark , weight: FontWeight.bold, overflow: TextOverflow.ellipsis,))
 
             ],
           ),

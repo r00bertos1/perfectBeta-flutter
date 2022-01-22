@@ -104,7 +104,7 @@ Widget _buildUserTopBar(context) {
     mainAxisSize: MainAxisSize.min,
     children: [
       SizedBox(
-        width: 50,
+        width: 40,
       ),
       AccessLevelDropdownMenu(),
       SizedBox(
@@ -129,6 +129,7 @@ Widget _buildUserTopBar(context) {
               } else if (text.hasData) {
                 return CustomText(
                   text: text.data,
+                  overflow: TextOverflow.ellipsis,
                   color: lightGrey,
                   weight: FontWeight.bold,
                 );
@@ -138,7 +139,7 @@ Widget _buildUserTopBar(context) {
             }),
       ),
       SizedBox(
-        width: 16,
+        width: 14,
       ),
       InkWell(
         borderRadius: BorderRadius.circular(40),

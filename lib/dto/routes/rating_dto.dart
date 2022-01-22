@@ -7,6 +7,16 @@ class RatingDTO {
 
   RatingDTO({this.id, this.comment, this.rate, this.routeId, this.userId});
 
+  Map<String, dynamic> toJson() {
+    return {
+      "id": this.id,
+      "comment": this.comment,
+      "rate": this.rate,
+      "routeId": this.routeId,
+      "userId": this.userId,
+    };
+  }
+
   factory RatingDTO.fromJson(Map<String, dynamic> json) {
     return RatingDTO(
         id: json['id'],

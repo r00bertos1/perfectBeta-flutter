@@ -77,12 +77,14 @@ class DataPage {
     var list = json['content'] as List;
     //print(list.toString());
     List<dynamic> contentList;
-    if (list[0].containsKey("gymName")) {
-      contentList = list.map((i) => ClimbingGymDTO.fromJson(i)).toList();
-    } else if (list[0].containsKey("routeName")) {
-      contentList = list.map((i) => RouteDTO.fromJson(i)).toList();
-    } else if (list[0].containsKey("login")) {
-      contentList = list.map((i) => UserWithPersonalDataAccessLevelDTO.fromJson(i)).toList();
+    if (list.isNotEmpty) {
+      if (list[0].containsKey("gymName")) {
+        contentList = list.map((i) => ClimbingGymDTO.fromJson(i)).toList();
+      } else if (list[0].containsKey("routeName")) {
+        contentList = list.map((i) => RouteDTO.fromJson(i)).toList();
+      } else if (list[0].containsKey("login")) {
+        contentList = list.map((i) => UserWithPersonalDataAccessLevelDTO.fromJson(i)).toList();
+      }
     }
 
     return DataPage(
