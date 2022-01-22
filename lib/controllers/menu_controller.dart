@@ -36,7 +36,6 @@ class MenuController extends GetxController {
         return _customIcon(Icons.app_registration, itemName);
       case myRoutesPageDisplayName:
         return _customIcon(Icons.alt_route, itemName);
-        //return _customIcon(Icons.alt_route, itemName);
       case addRoutePageDisplayName:
         return _customIcon(Icons.add, itemName);
       case registerGymPageDisplayName:
@@ -44,7 +43,11 @@ class MenuController extends GetxController {
       case registerManagerPageDisplayName:
         return _customIcon(Icons.manage_accounts, itemName);
       case usersPageDisplayName:
-        return _customIcon(Icons.people, itemName);
+        //return _customIcon(Icons.people, itemName);
+        return _customIcon(Icons.groups, itemName);
+      case managersPageDisplayName:
+        //return _customIcon(Icons.supervised_user_circle, itemName);
+        return _customIcon(Icons.supervisor_account, itemName);
       default:
         return _customIcon(Icons.list, itemName);
     }

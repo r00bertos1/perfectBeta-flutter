@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:perfectBeta/pages/authentication/registration.dart';
-import 'package:perfectBeta/pages/gym/gym_registration_page.dart';
+import 'package:perfectBeta/pages/gym/registration/gym_registration.dart';
 import 'package:perfectBeta/pages/route/my_routes/my_routes_page.dart';
 import 'package:perfectBeta/pages/gym/gyms_page.dart';
 import 'package:perfectBeta/pages/overview/overview.dart';
 import 'package:perfectBeta/pages/route/add_route/add_route.dart';
 import 'package:perfectBeta/pages/users/manager_registration.dart';
 import 'package:perfectBeta/pages/users/all_users/all_users.dart';
+import 'package:perfectBeta/pages/users/managers/managers.dart';
 import 'package:perfectBeta/pages/users/user_info/user.dart';
 import 'package:perfectBeta/routing/routes.dart';
 
@@ -34,6 +35,8 @@ Route<dynamic> generateRoute(RouteSettings settings){
       return _getPageRoute(ManagerRegistrationPage());
     case usersPageRoute:
       return _getPageRoute(AllUsersPage());
+    case managersPageRoute:
+      return _getPageRoute(ManagersPage());
     default:
       return _getPageRoute(OverviewPage());
 

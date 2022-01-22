@@ -6,6 +6,7 @@ import 'package:perfectBeta/api/providers/user_endpoint.dart';
 import 'package:perfectBeta/constants/controllers.dart';
 import 'package:perfectBeta/constants/style.dart';
 import 'package:perfectBeta/dto/users/data/password_dto.dart';
+import 'package:perfectBeta/dto/users/user_with_personal_data_access_level_dto.dart';
 import 'package:perfectBeta/pages/authentication/registration.dart';
 import 'package:perfectBeta/pages/users/user_info/change_password.dart';
 import 'package:perfectBeta/pages/users/user_info/change_personal_data.dart';
@@ -133,12 +134,13 @@ class UserCardsSmallScreen extends StatelessWidget {
     );
   }
 
-  //TODO: method for ID
   Future<void> _handleUserDelete(context) async {
+    UserWithPersonalDataAccessLevelDTO userData = await _userEndpoint.getUserPersonalDataAccessLevel();
+
     PasswordDTO password = new PasswordDTO(
         password: _passwordController.text.trim());
     _passwordController.clear();
-    var res = await _userEndpoint.deleteUser(5, password);
+    var res = await _userEndpoint.deleteUser(userData.id, password);
     if (res.statusCode == 200) {
       Get.offAllNamed(
           authenticationPageRoute);

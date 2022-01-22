@@ -179,7 +179,12 @@ class ApiInterceptors extends Interceptor {
                 'Data not found',
               );
             }
-          } else {
+          } else if (err.response?.data["key"] == "GYM_NOT_FOUND") {
+              EasyLoading.showError(
+                'Gym not found',
+              );
+          }
+          else {
             EasyLoading.showError(
               'ERROR[${err.response?.statusCode}] => PATH: ${err.requestOptions.path} "NOT_FOUND"',
             );
