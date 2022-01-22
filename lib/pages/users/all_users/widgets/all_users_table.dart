@@ -10,7 +10,7 @@ import 'package:perfectBeta/helpers/reponsiveness.dart';
 import 'package:perfectBeta/pages/users/all_users/widgets/user_all_info_card.dart';
 import 'package:perfectBeta/widgets/custom_text.dart';
 
-import 'custom_dialog.dart';
+import '../../widgets/custom_dialog.dart';
 
 /// Example without datasource
 class AllUsersTable extends StatefulWidget {
@@ -126,7 +126,7 @@ class _AllUsersTableState extends State<AllUsersTable> {
       ),
       DataColumn2(
         label: Text('Active'),
-        tooltip: 'is user account activated',
+        tooltip: 'this will disable/enable user account',
         size: ColumnSize.S,
       ),
       DataColumn2(

@@ -14,13 +14,13 @@ class AllUsersPage extends StatelessWidget {
       child: Column(
         children: [
           Obx(
-                () => Row(
+            () => Row(
               children: [
                 Container(
                     margin: EdgeInsets.only(
                         top: ResponsiveWidget.isSmallScreen(context) ? 100 : 10,
                         bottom:
-                        ResponsiveWidget.isSmallScreen(context) ? 20 : 20),
+                            ResponsiveWidget.isSmallScreen(context) ? 20 : 20),
                     child: CustomText(
                       text: menuController.activeItem.value,
                       size: 24,
@@ -31,11 +31,11 @@ class AllUsersPage extends StatelessWidget {
           ),
           Expanded(
               child: ListView(
-                padding: EdgeInsets.all(0),
-                children: [
-                  AllUsersTable(),
-                ],
-              )),
+            padding: EdgeInsets.all(0),
+            children: [
+              AllUsersTable(),
+            ],
+          )),
         ],
       ),
     );

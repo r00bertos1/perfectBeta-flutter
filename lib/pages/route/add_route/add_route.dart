@@ -9,7 +9,8 @@ import 'package:perfectBeta/widgets/custom_text.dart';
 import 'package:get/get.dart';
 
 class AddRoutePage extends StatelessWidget {
-  const AddRoutePage({Key key}) : super(key: key);
+  const AddRoutePage({Key key, this.gymId}) : super(key: key);
+  final int gymId;
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +36,7 @@ class AddRoutePage extends StatelessWidget {
           ),
           Expanded(
               // child: FutureTest(),
-              child: AddSteps(),
+              child: AddSteps(gymId: gymId),
               //child: AddImagePage(onSubmit: (String value) {  },)
               ),
         ],

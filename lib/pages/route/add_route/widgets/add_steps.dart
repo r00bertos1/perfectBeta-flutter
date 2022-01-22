@@ -21,7 +21,8 @@ final uploadImageURL =
     'https://perfectbeta-python-tls-pyclimb.apps.okd.cti.p.lodz.pl/upload';
 
 class AddSteps extends StatefulWidget {
-  const AddSteps({Key key}) : super(key: key);
+  const AddSteps({Key key, this.gymId}) : super(key: key);
+  final int gymId;
 
   @override
   _AddStepsState createState() => _AddStepsState();
