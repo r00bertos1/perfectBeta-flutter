@@ -1,61 +1,43 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
-import 'package:intl_phone_number_input/intl_phone_number_input.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:perfectBeta/api/api_client.dart';
 import 'package:perfectBeta/api/providers/climbing_gym_endpoint.dart';
-import 'package:perfectBeta/api/providers/user_endpoint.dart';
-import 'package:perfectBeta/constants/controllers.dart';
-import 'package:perfectBeta/constants/lists.dart';
 import 'package:perfectBeta/constants/style.dart';
 import 'package:perfectBeta/dto/gyms/climbing_gym_with_details_dto.dart';
 import 'package:perfectBeta/dto/gyms/gym_details_dto.dart';
-import 'package:perfectBeta/dto/users/data/personal_data_dto.dart';
-import 'package:perfectBeta/dto/users/user_with_personal_data_access_level_dto.dart';
 import 'package:perfectBeta/helpers/country_dropdown.dart';
-import 'package:perfectBeta/pages/users/user_info/user.dart';
-import 'package:perfectBeta/routing/routes.dart';
 import 'package:perfectBeta/widgets/custom_text.dart';
-import 'package:get/get.dart';
-import 'package:google_fonts/google_fonts.dart';
 
-class EditGymDetailsAfterRegistration extends StatefulWidget {
-  final ClimbingGymWithDetailsDTO gymData;
-  const EditGymDetailsAfterRegistration({Key key, this.gymData})
-      : super(key: key);
+class EditGymDetailsPage extends StatefulWidget {
+  const EditGymDetailsPage({Key key, this.gymId}) : super(key: key);
+  final int gymId;
 
   @override
-  _EditGymDetailsAfterRegistration createState() =>
-      _EditGymDetailsAfterRegistration();
+  _EditGymDetailsPageState createState() => _EditGymDetailsPageState();
 }
 
-class _EditGymDetailsAfterRegistration
-    extends State<EditGymDetailsAfterRegistration> {
+class _EditGymDetailsPageState extends State<EditGymDetailsPage> {
   final _editGymDataFormKey = GlobalKey<FormState>();
 
   //API
   static ApiClient _client = new ApiClient();
   var _climbingGymEndpoint = new ClimbingGymEndpoint(_client.init());
 
-  int _gymId;
-  String _country = 'PL';
-  String _city = '';
-  String _street = '';
-  String _number = '';
-  String _description = '';
   final _cityController = TextEditingController();
   final _streetController = TextEditingController();
   final _numberController = TextEditingController();
   final _descriptionController = TextEditingController();
-
-  String _selectedValue = 'false';
+  String _country = 'PL';
 
   List<DropdownMenuItem<String>> countries = [];
 
   @override
   void initState() {
-    super.initState();
     _loadCountryData();
-    _loadGymData();
+    super.initState();
+    _loadGymData(widget.gymId);
   }
 
   @override
@@ -170,7 +152,7 @@ class _EditGymDetailsAfterRegistration
                   DropdownButtonFormField(
                     isExpanded: true,
                     validator: (value) =>
-                        value == null ? "Select a country" : null,
+                    value == null ? "Select a country" : null,
                     hint: Text(
                       'Select country',
                     ),
@@ -217,7 +199,7 @@ class _EditGymDetailsAfterRegistration
                   InkWell(
                     onTap: () {
                       if (_editGymDataFormKey.currentState.validate()) {
-                        _handlePersonalDataChange(_gymId);
+                        _handlePersonalDataChange(widget.gymId);
                       }
                     },
                     child: Container(
@@ -256,7 +238,7 @@ class _EditGymDetailsAfterRegistration
         //menuController.changeActiveItemTo(overviewPageDisplayName);
 
         EasyLoading.showSuccess(
-            'Done! You can find your gym in Gyms > Owned gyms');
+            'Done!');
       }
     } catch (e, s) {
       print("Exception $e");
@@ -264,24 +246,6 @@ class _EditGymDetailsAfterRegistration
     }
   }
 
-  //load personal data
-  void _loadGymData() async {
-    try {
-      if (widget.gymData != null) {
-        _gymId = widget.gymData.id;
-        //_city = widget.gymData.gymDetailsDTO.city ?? "";
-        //_street = widget.gymData.gymDetailsDTO.street ?? "";
-        //_number = widget.gymData.gymDetailsDTO.number ?? "";
-        //_description =  widget.gymData.gymDetailsDTO.description ?? "";
-        //_country = widget.gymData.gymDetailsDTO.country ?? "";
-        print('============================');
-        print(_country);
-      }
-    } catch (e, s) {
-      print("Exception $e");
-      print("StackTrace $s");
-    }
-  }
 
   void _loadCountryData() async {
     try {
@@ -291,6 +255,24 @@ class _EditGymDetailsAfterRegistration
       print("StackTrace $s");
     }
   }
+
+  void _loadGymData(gymId) async {
+    try {
+      ClimbingGymWithDetailsDTO res =
+      await _climbingGymEndpoint.getVerifiedGymById(gymId);
+      if (res.id != null) {
+        _cityController.text = res.gymDetailsDTO.city ?? "";
+        _streetController.text = res.gymDetailsDTO.street ?? "";
+        _numberController.text = res.gymDetailsDTO.number ?? "";
+        _descriptionController.text =  res.gymDetailsDTO.description ?? "";
+        _country = res.gymDetailsDTO.country ?? "";
+      }
+    } catch (e, s) {
+      print("Exception $e");
+      print("StackTrace $s");
+    }
+  }
+  
 }
 
 extension BoolParsing on String {

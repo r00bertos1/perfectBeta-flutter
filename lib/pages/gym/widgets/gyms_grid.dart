@@ -10,7 +10,7 @@ import 'package:perfectBeta/helpers/reponsiveness.dart';
 import 'package:perfectBeta/widgets/custom_text.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
-import '../gym_details_page.dart';
+import '../gym_details.dart';
 
 /// Example without datasource
 class GymsGrid extends StatelessWidget {
@@ -115,7 +115,7 @@ class GymsGrid extends StatelessWidget {
     Navigator.push(
       context,
       //MaterialPageRoute(builder: (context) => GymDetails(index)),
-      MaterialPageRoute(builder: (context) => GymDetailsPage(gymId: gymId, gymName: gymName)),
+      MaterialPageRoute(builder: (context) => GymDetails(gymId: gymId)),
     );
   }
 
@@ -282,6 +282,27 @@ class GymsGrid extends StatelessWidget {
           ),
         ),
       );
+
+
+
+
+
+  // Future<List<RouteDTO>> _loadFavouriteRoutes() async {
+  //   try {
+  //     DataPage res = await _routeEndpoint.getAllFavourites();
+  //     List<RouteDTO> routes = [];
+  //     res.content.forEach((route) {
+  //       routes.add(route);
+  //     });
+  //     return routes;
+  //   } catch (e, s) {
+  //     print("Exception $e");
+  //     print("StackTrace $s");
+  //   }
+  // }
+
+
+
 }
 // children: List.generate(16, (index) ){
 //

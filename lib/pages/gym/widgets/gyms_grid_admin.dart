@@ -12,28 +12,28 @@ import 'package:perfectBeta/helpers/reponsiveness.dart';
 import 'package:perfectBeta/widgets/custom_text.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
-import '../gym_details_page.dart';
+import '../gym_details.dart';
 
-class AllGymsGrid extends StatefulWidget {
+class GymsGridAdmin extends StatefulWidget {
   static ApiClient _client = new ApiClient();
 
   @override
-  State<AllGymsGrid> createState() => _AllGymsGridState();
+  State<GymsGridAdmin> createState() => _GymsGridAdminState();
 }
 
-class _AllGymsGridState extends State<AllGymsGrid> {
+class _GymsGridAdminState extends State<GymsGridAdmin> {
   bool _isVerified = false;
   UserWithPersonalDataAccessLevelDTO _gymOwner;
 
   // final ApiClient _client = new ApiClient();
   var _climbingGymEndpoint =
-      new ClimbingGymEndpoint(AllGymsGrid._client.init());
-  var _userEndpoint = new UserEndpoint(AllGymsGrid._client.init());
+      new ClimbingGymEndpoint(GymsGridAdmin._client.init());
+  var _userEndpoint = new UserEndpoint(GymsGridAdmin._client.init());
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<DataPage>(
-        future: _climbingGymEndpoint.getAllGyms(),
+    return FutureBuilder<List<ClimbingGymDTO>>(
+        future: _loadGyms(),
         builder: (context, snapshot) {
           print('Connection state: ${snapshot.connectionState}');
           if (snapshot.connectionState == ConnectionState.done) {
@@ -42,7 +42,7 @@ class _AllGymsGridState extends State<AllGymsGrid> {
             }
             if (snapshot.hasData) {
               return GridView.builder(
-                itemCount: snapshot.data.content.length,
+                itemCount: snapshot.data.length,
                 //padding: const EdgeInsets.only(bottom: 20),
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisSpacing:
@@ -58,7 +58,7 @@ class _AllGymsGridState extends State<AllGymsGrid> {
                               : 4,
                 ),
                 itemBuilder: (context, index) {
-                  return buildGymGridFromSnapshot(context, snapshot, index);
+                  return buildGymGridFromSnapshot(context, snapshot.data, index);
                 },
               );
             } else {
@@ -79,17 +79,9 @@ class _AllGymsGridState extends State<AllGymsGrid> {
         });
   }
 
-  //For list
-  void _onTileClicked(int index, int gymId, String gymName, context) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-          builder: (context) => GymDetailsPage(gymId: gymId, gymName: gymName)),
-    );
-  }
 
-  Widget buildGymGridFromSnapshot(context, snapshot, index) {
-    _isVerified = snapshot.data.content[index].status == GymStatusEnum.VERIFIED ? true : false;
+  Widget buildGymGridFromSnapshot(context,List<ClimbingGymDTO> data,int index) {
+    _isVerified = data[index].status == GymStatusEnum.VERIFIED ? true : false;
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
@@ -104,8 +96,11 @@ class _AllGymsGridState extends State<AllGymsGrid> {
       ),
       child: GridTile(
         child: GestureDetector(
-          onTap: () => _onTileClicked(index, snapshot.data.content[index].id,
-              snapshot.data.content[index].gymName, context),
+          onTap: () => Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => GymDetails(gymId: data[index].id)),
+          ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
@@ -125,14 +120,14 @@ class _AllGymsGridState extends State<AllGymsGrid> {
                   ListTile(
                     isThreeLine: true,
                     contentPadding: const EdgeInsets.symmetric(horizontal: 32),
-                    title: Text("${snapshot.data.content[index].gymName}"),
+                    title: Text("${data[index].gymName}"),
                     subtitle: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        _parseGymEnum(snapshot.data.content[index].status),
+                        _parseGymEnum(data[index].status),
                         FutureBuilder<UserWithPersonalDataAccessLevelDTO>(
                             future: _getGymOwner(
-                                snapshot.data.content[index].ownerId),
+                                data[index].ownerId),
                             builder: (context, ownerData) {
                               if (ownerData.hasError) {
                                 return Text('Error: ${ownerData.error}');
@@ -153,7 +148,7 @@ class _AllGymsGridState extends State<AllGymsGrid> {
                       children: [
                         CustomText(text: _isVerified ? 'Close' : 'Verify'),
                         IconButton(onPressed: () {
-                                handleGymStatus(snapshot.data.content[index].status, snapshot.data.content[index].id);
+                                handleGymStatus(data[index].status, data[index].id);
                             },
                             tooltip: _isVerified ? 'close gym' : 'verify gym',
                             icon: _isVerified ? Icon(Icons.block) : Icon(Icons.verified)),
@@ -206,6 +201,20 @@ class _AllGymsGridState extends State<AllGymsGrid> {
       if (owner.login.isNotEmpty) {
         return owner;
       }
+    } catch (e, s) {
+      print("Exception $e");
+      print("StackTrace $s");
+    }
+  }
+
+  Future<List<ClimbingGymDTO>> _loadGyms() async {
+    try {
+      DataPage res = await _climbingGymEndpoint.getAllGyms();
+      List<ClimbingGymDTO> gyms = [];
+      res.content.forEach((gym) {
+        gyms.add(gym);
+      });
+      return gyms;
     } catch (e, s) {
       print("Exception $e");
       print("StackTrace $s");

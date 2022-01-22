@@ -3,8 +3,8 @@ import 'package:perfectBeta/api/api_client.dart';
 import 'package:perfectBeta/api/providers/authentication_endpoint.dart';
 import 'package:perfectBeta/constants/controllers.dart';
 import 'package:perfectBeta/helpers/reponsiveness.dart';
-import 'package:perfectBeta/pages/gym/widgets/all_gyms_grid.dart';
-import 'package:perfectBeta/pages/gym/widgets/gyms_table.dart';
+import 'package:perfectBeta/pages/gym/widgets/gyms_grid_admin.dart';
+import 'package:perfectBeta/pages/gym/widgets/gyms_table_manager.dart';
 import 'package:perfectBeta/pages/gym/widgets/gyms_grid.dart';
 import 'package:perfectBeta/storage/secure_storage.dart';
 import 'package:perfectBeta/widgets/custom_text.dart';
@@ -50,9 +50,9 @@ class GymsPage extends StatelessWidget {
                         else
                           switch (snapshot.data) {
                             case 'ADMIN':
-                              return AllGymsGrid();
+                              return GymsGridAdmin();
                             case 'MANAGER':
-                              return GymsGrid();
+                              return GymsTableManager();
                             case 'CLIMBER':
                               return GymsGrid();
                             default:
