@@ -166,14 +166,6 @@ class _GymsTableManagerState extends State<GymsTableManager> {
           CustomText(
             text: "${gym.gymName}",
           ),
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => GymDetails(gymId: gym.id),
-              ),
-            );
-          },
         ),
         DataCell(
           CustomText(
@@ -194,25 +186,9 @@ class _GymsTableManagerState extends State<GymsTableManager> {
           //         return CircularProgressIndicator();
           //       }
           //     }),
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => GymDetails(gymId: gym.id),
-              ),
-            );
-          },
         ),
         DataCell(
           _parseGymEnum(gym.status),
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => GymDetails(gymId: gym.id),
-              ),
-            );
-          },
         ),
         DataCell(
           FutureBuilder<int>(
@@ -242,7 +218,7 @@ class _GymsTableManagerState extends State<GymsTableManager> {
                             icon: Icon(Icons.person_add)),
                       ),
                       Visibility(
-                        visible: snapshot.data == gym.ownerId,
+                        visible: (snapshot.data == gym.ownerId) && (gym.status == GymStatusEnum.VERIFIED),
                         child: IconButton(
                             padding: EdgeInsets.all(0),
                             onPressed: () {
@@ -271,18 +247,21 @@ class _GymsTableManagerState extends State<GymsTableManager> {
                           },
                           tooltip: 'add route to gym',
                           icon: Icon(Icons.add)),
-                      IconButton(
-                          padding: EdgeInsets.all(0),
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => GymDetails(gymId: gym.id),
-                              ),
-                            );
-                          },
-                          tooltip: 'view details',
-                          icon: Icon(Icons.visibility)),
+                      Visibility(
+                        visible: (gym.status == GymStatusEnum.VERIFIED),
+                        child: IconButton(
+                            padding: EdgeInsets.all(0),
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => GymDetails(gymId: gym.id),
+                                ),
+                              );
+                            },
+                            tooltip: 'view details',
+                            icon: Icon(Icons.visibility)),
+                      ),
                     ],
                   );
                 } else {
@@ -398,9 +377,11 @@ class _GymsTableManagerState extends State<GymsTableManager> {
     try {
       DataPage res = await _climbingGymEndpoint.getAllOwnedGyms();
       List<ClimbingGymDTO> gyms = [];
-      res.content.forEach((gym) {
-        gyms.add(gym);
-      });
+      if (res.content != null) {
+        res.content.forEach((gym) {
+          gyms.add(gym);
+        });
+      }
       return gyms;
     } catch (e, s) {
       print("Exception $e");

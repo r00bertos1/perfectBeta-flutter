@@ -13,6 +13,16 @@ class ClimbingGymWithMaintainersDTO extends ClimbingGymDTO {
       this.maintainerDTO})
       : super(ownerId: ownerId, gymName: gymName, status: status);
 
+  Map<String, dynamic> toJson() {
+    return {
+      "id": this.id,
+      "ownerId": this.ownerId,
+      "gymName": this.gymName,
+      "status": getGymText(this.status),
+      //"gymDetailsDTO": this.gymDetailsDTO,
+    };
+  }
+
   factory ClimbingGymWithMaintainersDTO.fromJson(Map<String, dynamic> json) {
     var list = json['maintainerDTO'] as List;
     List<GymMaintainerDTO> maintainerList =
@@ -22,7 +32,7 @@ class ClimbingGymWithMaintainersDTO extends ClimbingGymDTO {
         id: json['id'],
         ownerId: json['ownerId'],
         gymName: json['gymName'],
-        status: json['status'],
+        status: getGymEnum(json['status']),
         maintainerDTO: maintainerList);
   }
 }

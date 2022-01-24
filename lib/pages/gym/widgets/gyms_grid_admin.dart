@@ -4,6 +4,7 @@ import 'package:flutter/rendering.dart';
 import 'package:perfectBeta/constants/enums.dart';
 import 'package:perfectBeta/dto/pages/page_dto.dart';
 import 'package:perfectBeta/dto/users/user_with_personal_data_access_level_dto.dart';
+import 'package:perfectBeta/pages/gym/widgets/status_switch_button.dart';
 import 'package:perfectBeta/pages/route/my_routes/my_routes_page.dart';
 import 'package:perfectBeta/service.dart';
 import 'package:perfectBeta/constants/style.dart';
@@ -22,9 +23,8 @@ class GymsGridAdmin extends StatefulWidget {
 }
 
 class _GymsGridAdminState extends State<GymsGridAdmin> {
-  bool _isVerified = false;
   UserWithPersonalDataAccessLevelDTO _gymOwner;
-
+  bool _isVerified = false;
   // final ApiClient _client = new ApiClient();
   var _climbingGymEndpoint =
       new ClimbingGymEndpoint(GymsGridAdmin._client.init());
@@ -143,16 +143,11 @@ class _GymsGridAdminState extends State<GymsGridAdmin> {
                             }),
                       ],
                     ),
-                    trailing: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        CustomText(text: _isVerified ? 'Close' : 'Verify'),
-                        IconButton(onPressed: () {
-                                handleGymStatus(data[index].status, data[index].id);
-                            },
-                            tooltip: _isVerified ? 'close gym' : 'verify gym',
-                            icon: _isVerified ? Icon(Icons.block) : Icon(Icons.verified)),
-                      ],
+                    trailing: StatusSwitchButton(
+                      isVerified: _isVerified,
+                      onPressed: () {
+                        handleGymStatus(data[index].status, data[index].id);
+                      }
                     ),
                   ),
                 ],
@@ -164,24 +159,7 @@ class _GymsGridAdminState extends State<GymsGridAdmin> {
     );
   }
 
-  void handleGymStatus(status, gymId) async {
-      if (status == GymStatusEnum.UNVERIFIED || status == GymStatusEnum.CLOSED) {
-        ClimbingGymDTO res = await _climbingGymEndpoint.verifyGym(gymId);
-        if (res.status == GymStatusEnum.VERIFIED) {
-          setState(() {
-            _isVerified = res.status == GymStatusEnum.VERIFIED ? true : false;
-          });
-        }
-      }
-      else if (status == GymStatusEnum.VERIFIED) {
-        ClimbingGymDTO res = await _climbingGymEndpoint.closeGym(gymId);
-        if (res.status == GymStatusEnum.CLOSED) {
-          setState(() {
-            _isVerified = res.status == GymStatusEnum.CLOSED ? false : true;
-          });
-        }
-      }
-  }
+
   Widget _parseGymEnum(data) {
     switch (data) {
       case GymStatusEnum.UNVERIFIED:
@@ -218,6 +196,24 @@ class _GymsGridAdminState extends State<GymsGridAdmin> {
     } catch (e, s) {
       print("Exception $e");
       print("StackTrace $s");
+    }
+  }
+
+  void handleGymStatus(status, gymId) async {
+    if (status == GymStatusEnum.UNVERIFIED || status == GymStatusEnum.CLOSED) {
+      ClimbingGymDTO res = await _climbingGymEndpoint.verifyGym(gymId);
+      if (res.status == GymStatusEnum.VERIFIED) {
+        setState(() {
+          _isVerified = res.status == GymStatusEnum.VERIFIED ? true : false;
+        });
+      }
+    } else if (status == GymStatusEnum.VERIFIED) {
+      ClimbingGymDTO res = await _climbingGymEndpoint.closeGym(gymId);
+      if (res.status == GymStatusEnum.CLOSED) {
+        setState(() {
+          _isVerified = res.status == GymStatusEnum.CLOSED ? false : true;
+        });
+      }
     }
   }
 }

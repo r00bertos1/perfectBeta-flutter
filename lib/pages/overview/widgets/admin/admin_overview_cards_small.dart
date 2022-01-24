@@ -24,7 +24,7 @@ class AdminOverviewCardsSmallScreen extends StatelessWidget {
                     return Column(
                       children: [
                         InfoCardSmall(
-                          title: "Registered users",
+                          title: "Active users",
                           value: Center(
                             child: new CircularProgressIndicator(),
                           ),
@@ -74,7 +74,7 @@ class AdminOverviewCardsSmallScreen extends StatelessWidget {
                       return Column(
                         children: [
                           InfoCardSmall(
-                            title: "Registered users",
+                            title: "Active users",
                             value: CustomText(
                                 text: '$_registeredUsers',
                                 size: 24,

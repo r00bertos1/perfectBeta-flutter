@@ -24,7 +24,7 @@ class AdminOverviewCardsMediumScreen extends StatelessWidget {
                   Row(
                     children: [
                       InfoCard(
-                        title: "Registered users",
+                        title: "Active users",
                         value: "-",
                         onTap: () {},
                         topColor: Colors.orange,
@@ -77,7 +77,7 @@ class AdminOverviewCardsMediumScreen extends StatelessWidget {
                   Row(
                     children: [
                       InfoCard(
-                        title: "Registered users",
+                        title: "Active users",
                         value: "$_registeredUsers",
                         onTap: () {},
                         topColor: Colors.orange,

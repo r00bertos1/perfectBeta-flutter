@@ -1,15 +1,14 @@
-import 'dart:html';
 import 'package:time_machine/time_machine.dart';
 
 class ExceptionDTO {
   String message;
-  HttpStatus httpStatus;
-  ZonedDateTime timestamp;
+  String httpStatus;
+  String timestamp;
   String key;
 
   //ExceptionDTO({this.message, this.httpStatus, this.timestamp});
 
-  ExceptionDTO({this.message, this.httpStatus, this.timestamp, this.key});
+  ExceptionDTO({this.message, this.key, this.httpStatus, this.timestamp});
 
   factory ExceptionDTO.fromJson(Map<String, dynamic> json) {
     return ExceptionDTO(

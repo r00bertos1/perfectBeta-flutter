@@ -20,7 +20,7 @@ class AdminOverviewCardsLargeScreen extends StatelessWidget {
               return Row(
                 children: [
                   InfoCard(
-                    title: "Registered users",
+                    title: "Active users",
                     value: "-",
                     onTap: () {},
                     topColor: Colors.orange,
@@ -64,7 +64,7 @@ class AdminOverviewCardsLargeScreen extends StatelessWidget {
               return Row(
                 children: [
                   InfoCard(
-                    title: "Registered users",
+                    title: "Active users",
                     value: "$_registeredUsers",
                     onTap: () {},
                     topColor: Colors.orange,
