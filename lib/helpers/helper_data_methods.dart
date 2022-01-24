@@ -19,7 +19,7 @@ Future<List<int>> loadUsersData(List<int> values) async {
           values[0] += 1;
 
           user.accessLevels.forEach((level) {
-            if (level.accessLevel == "ADMIN" &&
+            if (level.accessLevel == "ADMINISTRATOR" &&
                 level.isActive == true) {
               values[1] += 1;
             }

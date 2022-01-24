@@ -202,7 +202,7 @@ class RouteEndpoint {
   }
 
     // POST
-  Future<RouteDTO> addRouteToFavourites(int routeID) async {
+  Future<Response> addRouteToFavourites(int routeID) async {
     try {
       //body is a RouteDTO eg.
       // var body =  {
@@ -222,10 +222,10 @@ class RouteEndpoint {
       // };
       Response<String> response =
           await _client.post('/route/$routeID/add-favorite');
-      final jsonResponse = json.decode(response.data);
-      RouteDTO page = new RouteDTO.fromJson(jsonResponse);
+      // final jsonResponse = json.decode(response.data);
+      // RouteDTO page = new RouteDTO.fromJson(jsonResponse);
 
-      return page;
+      return response;
     } on DioError catch (ex) {
       if (ex.response != null) {
         print('Dio error!');

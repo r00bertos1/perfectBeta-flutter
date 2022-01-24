@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import "package:dio/dio.dart";
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
@@ -7,6 +8,7 @@ import 'package:perfectBeta/constants/controllers.dart';
 import 'package:perfectBeta/dto/auth/token_dto.dart';
 import 'package:perfectBeta/api/providers/authentication_endpoint.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
+import 'package:perfectBeta/dto/exception_dto.dart';
 import 'package:perfectBeta/routing/routes.dart';
 import '../storage/secure_storage.dart';
 import 'package:get/get.dart' as nav;
@@ -133,76 +135,48 @@ class ApiInterceptors extends Interceptor {
 
   @override
   void onError(DioError err, ErrorInterceptorHandler handler) async {
-    EasyLoading.showError(
-      'ERROR[${err.response?.statusCode}] => PATH: ${err.requestOptions.path}',
-    );
+    // if (err.response.data['key'] != null) {
+    //   print(
+    //     'ERROR[${err.response?.statusCode}] => PATH: ${err.requestOptions.path} "${err.response.data['key']}"',
+    //   );
     if (err.response == null) {
-      EasyLoading.showError(
-        'ERROR[${err.response?.statusCode}] => PATH: ${err.requestOptions.path} "CONNECTION_ERROR"',
-      );
+      EasyLoading.showError('Unable to connect with Database');
     } else {
       var responseClass = (err.response.statusCode / 100).floor();
-      // if (err.response.data['key'] != null) {
-      //   print(
-      //     'ERROR[${err.response?.statusCode}] => PATH: ${err.requestOptions.path} "${err.response.data['key']}"',
-      //   );
-      // } else
-      if (responseClass == 5) {
-        EasyLoading.showError(
-          'ERROR[${err.response?.statusCode}] => PATH: ${err.requestOptions.path} "SERVER_ERROR"',
-        );
+      String jsonsDataString = err.response?.data.toString();
+      final jsonData = jsonDecode(jsonsDataString);
+      //if (err.response.data['key'] != null) {
+        //final jsonResponse = json.decode(err.response.data);
+        // ExceptionDTO ex = new ExceptionDTO.fromJson(jsonResponse);
+        //EasyLoading.showError(ex.message);
+      //} else
+        if (responseClass == 5) {
+        EasyLoading.showError('An unidentified server error has occurred');
       } else if (responseClass == 4) {
-        if (err.response.statusCode == 401) {
-          if (err.response?.data["key"] == "INVALID_CREDENTIALS") {
-            EasyLoading.showError(
-              'There is no user with this username password combination',
-            );
+        if (err.response?.statusCode == 400) {
+          if (jsonData["message"].toString().contains("duplicate")){
+            EasyLoading.showError('User is already added');
           } else {
-            EasyLoading.showError(
-              'ERROR[${err.response?.statusCode}] => PATH: ${err.requestOptions.path} "UNAUTHENTICATED"',
-            );
+            EasyLoading.showError('Bad Request');
           }
-        } else if (err.response.statusCode == 403) {
-          EasyLoading.showError(
-            'ERROR[${err.response?.statusCode}] => PATH: ${err.requestOptions.path} "UNAUTHORIZED"',
-          );
+        }
+        if (err.response?.statusCode == 401) {
+          if (jsonData["message"] == "INVALID_CREDENTIALS") {
+            EasyLoading.showError(
+              'There is no user with this username password combination');
+          } else {
+            EasyLoading.showError('Unauthenticated');
+          }
+        } else if (err.response?.statusCode == 403) {
+          EasyLoading.showError('Unauthorized');
         } else if (err.response.statusCode == 404) {
-          if (err.response?.data["key"] == "NOT_FOUND") {
-            if (err.response?.data["message"]
-                .toString()
-                .contains("USER_NOT_FOUND")) {
-              EasyLoading.showError(
-                'User not found',
-              );
-            } else {
-              EasyLoading.showError(
-                'Data not found',
-              );
-            }
-          } else if (err.response?.data["key"] == "GYM_NOT_FOUND") {
-              EasyLoading.showError(
-                'Gym not found',
-              );
-          }
-          else {
-            EasyLoading.showError(
-              'ERROR[${err.response?.statusCode}] => PATH: ${err.requestOptions.path} "NOT_FOUND"',
-            );
-          }
-        } else {
-          EasyLoading.showError(
-            'ERROR[${err.response?.statusCode}] => PATH: ${err.requestOptions.path} "SERVER_ERROR"',
-          );
+          EasyLoading.showError('Not found');
         }
       } else {
-        EasyLoading.showError(
-          'ERROR[${err.response?.statusCode}] => PATH: ${err.requestOptions.path} "UNKNOWN_ERROR"',
-        );
+        EasyLoading.showError('An unknown error has occurred');
       }
     }
     handler.next(err);
-    //return err;
-    //return super.onError(err, handler);
   }
 }
 // Future<Response<dynamic>> _retry(RequestOptions requestOptions) async {
