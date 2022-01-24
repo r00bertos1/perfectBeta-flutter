@@ -268,7 +268,6 @@ class ClimbingGymEndpoint {
   // GET
   Future<DataPage> getAllOwnedGyms() async {
     try {
-      //TODO: query params
       Response<String> response = await _client.get('/gym/owned_gyms');
 
       //Decode response data and create new model class
@@ -301,7 +300,6 @@ class ClimbingGymEndpoint {
 
   Future<DataPage> getAllMaintainedGyms() async {
     try {
-      //TODO: query params
       Response<String> response = await _client.get('/gym/maintained_gyms');
 
       //Decode response data and create new model class

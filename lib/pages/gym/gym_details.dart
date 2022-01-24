@@ -11,7 +11,6 @@ import 'package:perfectBeta/dto/users/user_with_personal_data_access_level_dto.d
 import 'package:perfectBeta/pages/gym/widgets/favourite_button.dart';
 import 'package:perfectBeta/pages/gym/widgets/status_switch_button.dart';
 import 'package:perfectBeta/pages/route/add_route/add_route.dart';
-import 'package:perfectBeta/pages/route/my_routes/my_routes_page.dart';
 import 'package:perfectBeta/pages/route/route_details.dart';
 import 'package:perfectBeta/routing/routes.dart';
 import 'package:perfectBeta/service.dart';
@@ -38,6 +37,7 @@ class GymDetails extends StatefulWidget {
 class _GymDetailsState extends State<GymDetails> {
   bool _added = false;
   bool _isVerified = false;
+  int _currentUserId;
 
   var _climbingGymEndpoint = new ClimbingGymEndpoint(GymDetails._client.init());
   var _routeEndpoint = new RouteEndpoint(GymDetails._client.init());
@@ -60,13 +60,16 @@ class _GymDetailsState extends State<GymDetails> {
                     return FutureBuilder<ClimbingGymWithDetailsDTO>(
                         future: _climbingGymEndpoint.getGymById(widget.gymId),
                         builder: (context, snapshot) {
-                          if (snapshot.connectionState == ConnectionState.done) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.done) {
                             if (snapshot.hasError) {
                               return Text("Error");
                             }
                             if (snapshot.hasData) {
                               return RefreshIndicator(
-                                  onRefresh: () {setState(() {});},
+                                  onRefresh: () {
+                                    setState(() {});
+                                  },
                                   child:
                                       _buildGymDetailsListViewAdmin(snapshot));
                             } else {
@@ -89,7 +92,9 @@ class _GymDetailsState extends State<GymDetails> {
                             }
                             if (snapshot.hasData) {
                               return RefreshIndicator(
-                                  onRefresh: () {setState((){});},
+                                  onRefresh: () {
+                                    setState(() {});
+                                  },
                                   child: _buildGymDetailsListViewManager(
                                       snapshot, context));
                             } else {
@@ -112,7 +117,9 @@ class _GymDetailsState extends State<GymDetails> {
                             }
                             if (snapshot.hasData) {
                               return RefreshIndicator(
-                                  onRefresh: () {setState(() {});},
+                                  onRefresh: () {
+                                    setState(() {});
+                                  },
                                   child: _buildGymDetailsListView(snapshot));
                             } else {
                               return Text("No data");
@@ -136,7 +143,9 @@ class _GymDetailsState extends State<GymDetails> {
                             }
                             if (snapshot.hasData) {
                               return RefreshIndicator(
-                                  onRefresh: () {setState(() {});},
+                                  onRefresh: () {
+                                    setState(() {});
+                                  },
                                   child: _buildGymDetailsListView(snapshot));
                             } else {
                               return Text("No data");
@@ -186,7 +195,7 @@ class _GymDetailsState extends State<GymDetails> {
             Container(
               decoration: BoxDecoration(
                 color: Colors.white,
-                border: Border.all(color: active.withOpacity(.4), width: .5),
+                border: Border.all(color: lightGrey.withOpacity(.4), width: .5),
                 boxShadow: [
                   BoxShadow(
                       offset: Offset(0, 6),
@@ -204,9 +213,6 @@ class _GymDetailsState extends State<GymDetails> {
                 children: [
                   Row(
                     children: [
-                      // SizedBox(
-                      //   width: 10,
-                      // ),
                       CustomText(
                         text: "Routes",
                         color: lightGrey,
@@ -240,12 +246,12 @@ class _GymDetailsState extends State<GymDetails> {
                                         ResponsiveWidget.isSmallScreen(context)
                                             ? 20
                                             : 64,
-                                    childAspectRatio:
-                                        ((MediaQuery.of(context).size.width) /
-                                                (MediaQuery.of(context)
-                                                    .size
-                                                    .height)) *
-                                            1.4,
+                                    // childAspectRatio:
+                                    //     ((MediaQuery.of(context).size.width) /
+                                    //             (MediaQuery.of(context)
+                                    //                 .size
+                                    //                 .height)) *
+                                    //         1.4,
                                     crossAxisCount:
                                         ResponsiveWidget.isSmallScreen(context)
                                             ? 2
@@ -303,12 +309,13 @@ class _GymDetailsState extends State<GymDetails> {
                     if (userId.hasError) {
                       return Container();
                     } else if (userId.hasData) {
+                      _currentUserId = userId.data;
                       return Wrap(
                         alignment: WrapAlignment.spaceBetween,
                         direction: Axis.horizontal,
                         children: [
                           Visibility(
-                            visible: userId.data == snapshot.data.ownerId,
+                            visible: _currentUserId == snapshot.data.ownerId,
                             child: IconButton(
                                 padding: EdgeInsets.all(0),
                                 onPressed: () {
@@ -325,7 +332,7 @@ class _GymDetailsState extends State<GymDetails> {
                                 icon: Icon(Icons.person_add)),
                           ),
                           Visibility(
-                            visible: userId.data == snapshot.data.ownerId,
+                            visible: _currentUserId == snapshot.data.ownerId,
                             child: IconButton(
                                 padding: EdgeInsets.all(0),
                                 onPressed: () {
@@ -343,7 +350,9 @@ class _GymDetailsState extends State<GymDetails> {
                         ],
                       );
                     } else {
-                      return SizedBox(width: 1,);
+                      return SizedBox(
+                        width: 1,
+                      );
                     }
                   }),
             ),
@@ -351,7 +360,7 @@ class _GymDetailsState extends State<GymDetails> {
             Container(
               decoration: BoxDecoration(
                 color: Colors.white,
-                border: Border.all(color: active.withOpacity(.4), width: .5),
+                border: Border.all(color: lightGrey.withOpacity(.4), width: .5),
                 boxShadow: [
                   BoxShadow(
                       offset: Offset(0, 6),
@@ -370,9 +379,6 @@ class _GymDetailsState extends State<GymDetails> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      // SizedBox(
-                      //   width: 10,
-                      // ),
                       CustomText(
                         text: "Routes",
                         color: lightGrey,
@@ -407,12 +413,12 @@ class _GymDetailsState extends State<GymDetails> {
                                         ResponsiveWidget.isSmallScreen(context)
                                             ? 20
                                             : 64,
-                                    childAspectRatio:
-                                        ((MediaQuery.of(context).size.width) /
-                                                (MediaQuery.of(context)
-                                                    .size
-                                                    .height)) *
-                                            1.4,
+                                    // childAspectRatio:
+                                    //     ((MediaQuery.of(context).size.width) /
+                                    //             (MediaQuery.of(context)
+                                    //                 .size
+                                    //                 .height)) *
+                                    //         1.4,
                                     crossAxisCount:
                                         ResponsiveWidget.isSmallScreen(context)
                                             ? 2
@@ -469,7 +475,7 @@ class _GymDetailsState extends State<GymDetails> {
             Container(
               decoration: BoxDecoration(
                 color: Colors.white,
-                border: Border.all(color: active.withOpacity(.4), width: .5),
+                border: Border.all(color: lightGrey.withOpacity(.4), width: .5),
                 boxShadow: [
                   BoxShadow(
                       offset: Offset(0, 6),
@@ -480,16 +486,12 @@ class _GymDetailsState extends State<GymDetails> {
               ),
               padding: const EdgeInsets.all(16),
               margin: EdgeInsets.only(bottom: 30, top: 30),
-              //height: MediaQuery.of(context).size.height,
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Row(
                     children: [
-                      // SizedBox(
-                      //   width: 10,
-                      // ),
                       CustomText(
                         text: "Routes",
                         color: lightGrey,
@@ -523,12 +525,12 @@ class _GymDetailsState extends State<GymDetails> {
                                         ResponsiveWidget.isSmallScreen(context)
                                             ? 20
                                             : 64,
-                                    childAspectRatio:
-                                        ((MediaQuery.of(context).size.width) /
-                                                (MediaQuery.of(context)
-                                                    .size
-                                                    .height)) *
-                                            1.4,
+                                    // childAspectRatio:
+                                    //     ((MediaQuery.of(context).size.width) /
+                                    //             (MediaQuery.of(context)
+                                    //                 .size
+                                    //                 .height)) *
+                                    //         1.4,
                                     crossAxisCount:
                                         ResponsiveWidget.isSmallScreen(context)
                                             ? 2
@@ -569,241 +571,236 @@ class _GymDetailsState extends State<GymDetails> {
     String cover = routes.data[index].photos.length > 0
         ? routes.data[index].photos[0].photoUrl
         : "";
-    return Container(
-      child: GridTile(
-        child: GestureDetector(
-          onTap: () => _onRouteClicked(routes.data[index].id, context),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              CachedNetworkImage(
-                imageUrl: cover,
-                fit: BoxFit.cover,
-                placeholder: (context, url) =>
-                    SizedBox(child: Center(child: CircularProgressIndicator())),
-                height: 150,
-                errorWidget: (context, url, error) => Image(
-                    image: AssetImage('assets/images/route-template.jpg')),
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(8),
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          border: Border.all(color: lightGrey.withOpacity(.4), width: .5),
+          boxShadow: [
+            BoxShadow(
+                offset: Offset(0, 6),
+                color: lightGrey.withOpacity(.1),
+                blurRadius: 12)
+          ],
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: GridTile(
+          child: GestureDetector(
+            onTap: () => _onRouteClicked(routes.data[index].climbingGymId, routes.data[index].id, _currentUserId, context),
+            child: CachedNetworkImage(
+              imageUrl: cover,
+              fit: BoxFit.cover,
+              placeholder: (context, url) =>
+                  SizedBox(child: Center(child: CircularProgressIndicator())),
+              //height: 120,
+              errorWidget: (context, url, error) =>
+                  Image(image: AssetImage('assets/images/route-template.jpg')),
+            ),
+          ),
+          footer: GridTileBar(
+            backgroundColor: Colors.black38,
+            //contentPadding: const EdgeInsets.symmetric(horizontal: 32),
+            title: Text(
+              "${routes.data[index].routeName}",
+              overflow: TextOverflow.ellipsis,
+            ),
+            subtitle: RatingBarIndicator(
+              rating: routes.data[index].avgRating,
+              itemBuilder: (context, index) => Icon(
+                Icons.star,
+                color: Colors.amber,
               ),
-              Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                // padding: const EdgeInsets.all(16),
-                children: <Widget>[
-                  ListTile(
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 0),
-                    title: Text(
-                      "${routes.data[index].routeName}",
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    subtitle: RatingBarIndicator(
-                      rating: routes.data[index].avgRating,
-                      itemBuilder: (context, index) => Icon(
-                        Icons.star,
-                        color: Colors.amber,
-                      ),
-                      // itemCount: 5,
-                      itemSize: 15.0,
-                    ),
-                  ),
-                ],
-              ),
-            ],
+              // itemCount: 5,
+              itemSize: 14.0,
+            ),
           ),
         ),
       ),
     );
   }
 
-  Widget buildRouteGridFromSnapshotManager(context, routes, index) => Container(
+  Widget buildRouteGridFromSnapshotManager(
+      context, AsyncSnapshot<List<RouteDTO>> routes, index) {
+    String cover = routes.data[index].photos.length > 0
+        ? routes.data[index].photos[0].photoUrl
+        : "";
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(8),
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          border: Border.all(color: lightGrey.withOpacity(.4), width: .5),
+          boxShadow: [
+            BoxShadow(
+                offset: Offset(0, 6),
+                color: lightGrey.withOpacity(.1),
+                blurRadius: 12)
+          ],
+          borderRadius: BorderRadius.circular(8),
+        ),
         child: GridTile(
           child: GestureDetector(
-            onTap: () => _onRouteClicked(routes.data[index].id, context),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                CachedNetworkImage(
-                  imageUrl: routes.data[index].photos.length > 0
-                      ? "${routes.data[index].photos[0].photoUrl}"
-                      : "test",
-                  fit: BoxFit.cover,
-                  placeholder: (context, url) => CircularProgressIndicator(
-                    color: active,
-                  ),
-                  errorWidget: (context, url, error) => Image(
-                      image: AssetImage('assets/images/route-template.jpg')),
-                ),
-                Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  // padding: const EdgeInsets.all(16),
-                  children: <Widget>[
-                    ListTile(
-                      contentPadding: const EdgeInsets.symmetric(horizontal: 0),
-                      title: Text(
-                        "${routes.data[index].routeName}",
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                      subtitle: RatingBarIndicator(
-                        rating: routes.data[index].avgRating,
-                        itemBuilder: (context, index) => Icon(
-                          Icons.star,
-                          color: Colors.amber,
-                        ),
-                        // itemCount: 5,
-                        itemSize: 15.0,
-                      ),
-                      trailing: Wrap(
-                        //alignment: WrapAlignment.spaceBetween,
-                        //direction: Axis.horizontal,
-                        children: [
-                          // IconButton(
-                          //     iconSize: 18,
-                          //     visualDensity: VisualDensity.compact,
-                          //     padding: EdgeInsets.all(0),
-                          //     onPressed: () {
-                          //       //TODO: Edit route details
-                          //       // Navigator.push(
-                          //       //   context,
-                          //       //   MaterialPageRoute(
-                          //       //     builder: (context) =>
-                          //       //         EditRouteDetailsPage(gymId: gymId),
-                          //       //   ),
-                          //       // );
-                          //     },
-                          //     tooltip: 'edit route details',
-                          //     icon: Icon(Icons.edit)),
-                          IconButton(
-                              //iconSize: 18,
-                              visualDensity: VisualDensity.compact,
-                              padding: EdgeInsets.all(0),
-                              onPressed: () => showDialog<String>(
-                                  context: context,
-                                  builder: (BuildContext context) =>
-                                      AlertDialog(
-                                        title: const Text('Delete route'),
-                                        content: const Text('Are you sure?'),
-                                        actions: <Widget>[
-                                          TextButton(
-                                            onPressed: () =>
-                                                Navigator.pop(context),
-                                            child: CustomText(
-                                                text: 'No',
-                                                weight: FontWeight.w300,
-                                                color: dark),
-                                          ),
-                                          TextButton(
-                                            onPressed: () {
-                                              _handleRouteDelete(
-                                                  context,
-                                                  routes.data[index]
-                                                      .climbingGymId,
-                                                  routes.data[index].id);
-                                            },
-                                            child: CustomText(
-                                                text: 'Yes, delete!',
-                                                color: error),
-                                          ),
-                                        ],
-                                      )),
-                              tooltip: 'delete route',
-                              icon: Icon(Icons.delete)),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ],
+            onTap: () => _onRouteClicked(routes.data[index].climbingGymId, routes.data[index].id, _currentUserId, context),
+            child: CachedNetworkImage(
+              imageUrl: cover,
+              fit: BoxFit.cover,
+              placeholder: (context, url) =>
+                  SizedBox(child: Center(child: CircularProgressIndicator())),
+              //height: 150,
+              errorWidget: (context, url, error) =>
+                  Image(image: AssetImage('assets/images/route-template.jpg')),
             ),
           ),
-        ),
-      );
-
-  Widget buildRouteGridFromSnapshotClimber(context, routes, index) {
-    return Container(
-        child: GridTile(
-          child: GestureDetector(
-            onTap: () => _onRouteClicked(routes.data[index].id, context),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                CachedNetworkImage(
-                  imageUrl: routes.data[index].photos.length > 0
-                      ? "${routes.data[index].photos[0].photoUrl}"
-                      : "test",
-                  fit: BoxFit.cover,
-                  placeholder: (context, url) => CircularProgressIndicator(
-                    color: active,
-                  ),
-                  errorWidget: (context, url, error) => Image(
-                      image: AssetImage('assets/images/route-template.jpg')),
-                ),
-                Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  // padding: const EdgeInsets.all(16),
-                  children: <Widget>[
-                    ListTile(
-                      contentPadding: const EdgeInsets.symmetric(horizontal: 0),
-                      title: Text(
-                        "${routes.data[index].routeName}",
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                      subtitle: RatingBarIndicator(
-                        rating: routes.data[index].avgRating,
-                        itemBuilder: (context, index) => Icon(
-                          Icons.star,
-                          color: Colors.amber,
-                        ),
-                        // itemCount: 5,
-                        itemSize: 15.0,
-                      ),
-                      trailing: FutureBuilder<bool>(
-                        future: _isFavourited(routes.data[index].id),
-                        builder: (context, boolVal) {
-                          if (boolVal.connectionState == ConnectionState.done) {
-                            if (boolVal.hasError) {
-                              return Text("Error");
-                            }
-                            if (boolVal.hasData) {
-                              _added = boolVal.data;
-                              return FavouriteButton(
-                                  isAdded: _added,
-                                  onPressed: () {
-                                handleAddFavourite(routes.data[index].id);
-                              });
-                            } else {
-                              return SizedBox(width: 1);
-                            }
-                          } else
-                            return SizedBox(width: 1);
-
-                        }
-                      ),
-                    ),
-                  ],
-                ),
-              ],
+          footer: GridTileBar(
+            backgroundColor: Colors.black38,
+            //contentPadding: const EdgeInsets.symmetric(horizontal: 32),
+            title: Text(
+              "${routes.data[index].routeName}",
+              overflow: TextOverflow.ellipsis,
             ),
+            subtitle: RatingBarIndicator(
+              rating: routes.data[index].avgRating,
+              itemBuilder: (context, index) => Icon(
+                Icons.star,
+                color: Colors.amber,
+              ),
+              // itemCount: 5,
+              itemSize: 14.0,
+            ),
+            trailing: IconButton(
+              //iconSize: 18,
+                visualDensity: VisualDensity.compact,
+                padding: EdgeInsets.all(0),
+                onPressed: () => showDialog<String>(
+                    context: context,
+                    builder: (BuildContext context) => AlertDialog(
+                      shape:  RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                      title: const Text('Delete route'),
+                      content: const Text('Are you sure?'),
+                      actions: <Widget>[
+                        TextButton(
+                          onPressed: () =>
+                              Navigator.pop(context),
+                          child: CustomText(
+                              text: 'No',
+                              weight: FontWeight.w300,
+                              color: dark),
+                        ),
+                        TextButton(
+                          onPressed: () {
+                            _handleRouteDelete(
+                                context,
+                                routes
+                                    .data[index].climbingGymId,
+                                routes.data[index].id);
+                          },
+                          child: CustomText(
+                              text: 'Yes, delete!',
+                              color: error),
+                        ),
+                      ],
+                    )),
+                tooltip: 'delete route',
+                icon: Icon(Icons.delete)),
           ),
         ),
-      );
+      ),
+    );
   }
 
-  Future<bool> _isFavourited(routeId) async {
+  Widget buildRouteGridFromSnapshotClimber(
+      context, AsyncSnapshot<List<RouteDTO>> routes, index) {
+    String cover = routes.data[index].photos.length > 0
+        ? routes.data[index].photos[0].photoUrl
+        : "";
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(8),
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          border: Border.all(color: lightGrey.withOpacity(.4), width: .5),
+          boxShadow: [
+            BoxShadow(
+                offset: Offset(0, 6),
+                color: lightGrey.withOpacity(.1),
+                blurRadius: 12)
+          ],
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: GridTile(
+          child: GestureDetector(
+            onTap: () => _onRouteClicked(routes.data[index].climbingGymId, routes.data[index].id, _currentUserId, context),
+            child: CachedNetworkImage(
+              imageUrl: cover,
+              fit: BoxFit.cover,
+              placeholder: (context, url) =>
+                  SizedBox(child: Center(child: CircularProgressIndicator())),
+              //height: 150,
+              errorWidget: (context, url, error) =>
+                  Image(image: AssetImage('assets/images/route-template.jpg')),
+            ),
+          ),
+          footer: GridTileBar(
+            backgroundColor: Colors.black38,
+            //contentPadding: const EdgeInsets.symmetric(horizontal: 32),
+            title: Text(
+              "${routes.data[index].routeName}",
+              overflow: TextOverflow.ellipsis,
+            ),
+            subtitle: RatingBarIndicator(
+              rating: routes.data[index].avgRating,
+              itemBuilder: (context, index) => Icon(
+                Icons.star,
+                color: Colors.amber,
+              ),
+              // itemCount: 5,
+              itemSize: 14.0,
+            ),
+            trailing: FutureBuilder<bool>(
+                future: _isFavourited(routes.data[index].id),
+                builder: (context, boolVal) {
+                  if (boolVal.connectionState == ConnectionState.done) {
+                    if (boolVal.hasError) {
+                      return Text("Error");
+                    }
+                    if (boolVal.hasData) {
+                      _added = boolVal.data;
+                      return FavouriteButton(
+                          isAdded: _added,
+                          onPressed: () {
+                            handleAddFavourite(routes.data[index].id, _added);
+                          });
+                    } else {
+                      return SizedBox(width: 1);
+                    }
+                  } else
+                    return SizedBox(width: 1);
+                }),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Future<bool> _isFavourited(int routeId) async {
     try {
-      var res = await _routeEndpoint.addRouteToFavourites(routeId);
-      if(res == null) {
-        return true;
-      } else {
-        return false;
+      DataPage res = await _routeEndpoint.getAllFavourites();
+      bool _isInFavourites = false;
+      if (res.content != null) {
+        res.content.forEach((route) {
+          if (route.id == routeId) {
+            _isInFavourites = true;
+          }
+        });
       }
+      return _isInFavourites;
     } catch (e, s) {
       print("Exception $e");
       print("StackTrace $s");
     }
-
   }
+
   Future<int> _getCurrentUserId() async {
     try {
       UserWithPersonalDataAccessLevelDTO res =
@@ -819,9 +816,11 @@ class _GymDetailsState extends State<GymDetails> {
     try {
       DataPage res = await _routeEndpoint.getAllGymRoutes(gymId);
       List<RouteDTO> routes = [];
-      res.content.forEach((route) {
-        routes.add(route);
-      });
+      if (res.content != null) {
+        res.content.forEach((route) {
+          routes.add(route);
+        });
+      }
       return routes;
     } catch (e, s) {
       print("Exception $e");
@@ -829,11 +828,11 @@ class _GymDetailsState extends State<GymDetails> {
     }
   }
 
-  void _onRouteClicked(int routeId, context) {
+  void _onRouteClicked(int gymId, int routeId, int currentUserId, context) {
     Navigator.push(
       context,
       MaterialPageRoute(
-          builder: (context) => RouteDetailsPage(routeId: routeId)),
+          builder: (context) => RouteDetailsPage(gymId: gymId ,routeId: routeId, currentUserId: currentUserId,)),
     );
   }
 
@@ -847,7 +846,7 @@ class _GymDetailsState extends State<GymDetails> {
     );
   }
 
-  _handleRouteDelete(context, gymId, routeId) async {
+  void _handleRouteDelete(context, gymId, routeId) async {
     try {
       var res = await _routeEndpoint.deleteRoute(gymId, routeId);
       if (res.statusCode == 200) {
@@ -872,7 +871,11 @@ class _GymDetailsState extends State<GymDetails> {
         child: Wrap(
           crossAxisAlignment: WrapCrossAlignment.center,
           children: [
-            Icon(Icons.add, color: Colors.white,),
+            Icon(
+              Icons.add,
+              size: 18,
+              color: Colors.white,
+            ),
             CustomText(
               text: "Add",
               color: Colors.white,
@@ -902,21 +905,24 @@ class _GymDetailsState extends State<GymDetails> {
     }
   }
 
-  //TODO: fix favourites
-  void handleAddFavourite(routeId) async {
-    var add = await _routeEndpoint.addRouteToFavourites(routeId);
-    if(add != null) {
-      if(add.statusCode == 200) {
-        setState(() {
-          _added = true;
-        });
+  void handleAddFavourite(routeId, added) async {
+    if (added) {
+      var res = await _routeEndpoint.removeRouteFromFavourites(routeId);
+      if (res != null) {
+        if (res.statusCode == 200) {
+          setState(() {
+            _added = !_added;
+          });
+        }
       }
     } else {
-      var remove = await _routeEndpoint.removeRouteFromFavourites(routeId);
-      if(remove.statusCode == 200) {
-        setState(() {
-          _added = false;
-        });
+      var res = await _routeEndpoint.addRouteToFavourites(routeId);
+      if (res != null) {
+        if (res.statusCode == 200) {
+          setState(() {
+            _added = !_added;
+          });
+        }
       }
     }
   }

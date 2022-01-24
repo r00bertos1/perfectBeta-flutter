@@ -41,25 +41,32 @@ class _GymsGridAdminState extends State<GymsGridAdmin> {
               return Text("Error");
             }
             if (snapshot.hasData) {
-              return GridView.builder(
-                itemCount: snapshot.data.length,
-                //padding: const EdgeInsets.only(bottom: 20),
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisSpacing:
-                      ResponsiveWidget.isSmallScreen(context) ? 32 : 64,
-                  mainAxisSpacing:
-                      ResponsiveWidget.isSmallScreen(context) ? 32 : 64,
-                  crossAxisCount: ResponsiveWidget.isSmallScreen(context)
-                      ? 1
-                      : ResponsiveWidget.isMediumScreen(context)
-                          ? 2
-                          : ResponsiveWidget.isLargeScreen(context)
-                              ? 3
-                              : 4,
-                ),
-                itemBuilder: (context, index) {
-                  return buildGymGridFromSnapshot(context, snapshot.data, index);
+              return RefreshIndicator(
+                onRefresh: () {
+                  setState(() {});
                 },
+                child: GridView.builder(
+                  itemCount: snapshot.data.length,
+                  padding: const EdgeInsets.only(bottom: 20),
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisSpacing:
+                        ResponsiveWidget.isSmallScreen(context) ? 32 : 64,
+                    mainAxisSpacing:
+                        ResponsiveWidget.isSmallScreen(context) ? 32 : 64,
+                    crossAxisCount: ResponsiveWidget.isSmallScreen(context)
+                        ? 1
+                        : ResponsiveWidget.isMediumScreen(context)
+                            ? 2
+                            : ResponsiveWidget.isLargeScreen(context)
+                                ? 3
+                                : 4,
+                    // childAspectRatio: (MediaQuery.of(context).size.width / 2) /
+                    //     ((MediaQuery.of(context).size.height - kToolbarHeight- 24) / 8),
+                  ),
+                  itemBuilder: (context, index) {
+                    return buildGymGridFromSnapshot(context, snapshot.data, index);
+                  },
+                ),
               );
             } else {
               return Wrap(children: <Widget>[
@@ -82,77 +89,64 @@ class _GymsGridAdminState extends State<GymsGridAdmin> {
 
   Widget buildGymGridFromSnapshot(context,List<ClimbingGymDTO> data,int index) {
     _isVerified = data[index].status == GymStatusEnum.VERIFIED ? true : false;
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        border: Border.all(color: active.withOpacity(.4), width: .5),
-        boxShadow: [
-          BoxShadow(
-              offset: Offset(0, 6),
-              color: lightGrey.withOpacity(.1),
-              blurRadius: 12)
-        ],
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: GridTile(
-        child: GestureDetector(
-          onTap: () => Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => GymDetails(gymId: data[index].id)),
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(10),
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          border: Border.all(color: active.withOpacity(.4), width: .5),
+          boxShadow: [
+            BoxShadow(
+                offset: Offset(0, 6),
+                color: lightGrey.withOpacity(.1),
+                blurRadius: 12)
+          ],
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: GridTile(
+          child: GestureDetector(
+            onTap: () => Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => GymDetails(gymId: data[index].id)),
+            ),
+            child: Image(
+              fit: BoxFit.cover,
+              image: AssetImage('assets/images/gym-template.jpg')),
           ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              CachedNetworkImage(
-                imageUrl:
-                    "https://perfectbeta.s3.eu-north-1.amazonaws.com/photos/logo.png",
-                fit: BoxFit.cover,
-                progressIndicatorBuilder: (context, url, downloadProgress) =>
-                    CircularProgressIndicator(value: downloadProgress.progress),
-                errorWidget: (context, url, error) =>
-                    Image(image: AssetImage('assets/images/gym-template.jpg')),
-              ),
-              Column(
-                mainAxisSize: MainAxisSize.min,
+          footer: GridTileBar(
+            backgroundColor: Colors.black38,
+              //contentPadding: const EdgeInsets.symmetric(horizontal: 32),
+              title: Text("${data[index].gymName}"),
+              subtitle: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  ListTile(
-                    isThreeLine: true,
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 32),
-                    title: Text("${data[index].gymName}"),
-                    subtitle: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        _parseGymEnum(data[index].status),
-                        FutureBuilder<UserWithPersonalDataAccessLevelDTO>(
-                            future: _getGymOwner(
-                                data[index].ownerId),
-                            builder: (context, ownerData) {
-                              if (ownerData.hasError) {
-                                return Text('Error: ${ownerData.error}');
-                              }
-                              if (ownerData.hasData) {
-                                return CustomText(
-                                    text: 'Owner: ' + ownerData.data.login ?? '',
-                                    size: 12,
-                                    weight: FontWeight.w300,
-                                    color: lightGrey);
-                              }
-                              return Container();
-                            }),
-                      ],
-                    ),
-                    trailing: StatusSwitchButton(
-                      isVerified: _isVerified,
-                      onPressed: () {
-                        handleGymStatus(data[index].status, data[index].id);
-                      }
-                    ),
-                  ),
+                children: [
+                  _parseGymEnum(data[index].status),
+                  FutureBuilder<UserWithPersonalDataAccessLevelDTO>(
+                      future: _getGymOwner(
+                          data[index].ownerId),
+                      builder: (context, ownerData) {
+                        if (ownerData.hasError) {
+                          return Text('Error: ${ownerData.error}');
+                        }
+                        if (ownerData.hasData) {
+                          return CustomText(
+                              text: 'Owner: ' + ownerData.data.login ?? '',
+                              size: 12,
+                              weight: FontWeight.w300,
+                              color: lightGrey);
+                        }
+                        return Container();
+                      }),
                 ],
               ),
-            ],
+              trailing: StatusSwitchButton(
+                  textColor: Colors.white,
+                  isVerified: _isVerified,
+                  onPressed: () {
+                    handleGymStatus(data[index].status, data[index].id);
+                  }
+              ),
           ),
         ),
       ),
@@ -189,9 +183,11 @@ class _GymsGridAdminState extends State<GymsGridAdmin> {
     try {
       DataPage res = await _climbingGymEndpoint.getAllGyms();
       List<ClimbingGymDTO> gyms = [];
-      res.content.forEach((gym) {
-        gyms.add(gym);
-      });
+      if (res.content != null) {
+        res.content.forEach((gym) {
+          gyms.add(gym);
+        });
+      }
       return gyms;
     } catch (e, s) {
       print("Exception $e");

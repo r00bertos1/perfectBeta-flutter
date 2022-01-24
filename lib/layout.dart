@@ -40,6 +40,7 @@ class _SiteLayoutState extends State<SiteLayout> {
     return (await showDialog(
       context: context,
       builder: (context) => new AlertDialog(
+        shape:  RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
         title: new Text('Are you sure?'),
         content: new Text('Do you want to exit an App'),
         actions: <Widget>[

@@ -54,7 +54,6 @@ class GymsPage extends StatelessWidget {
                             case 'MANAGER':
                               return GymsTableManager();
                             case 'CLIMBER':
-                              return GymsGrid();
                             default:
                               return GymsGrid();
                           }

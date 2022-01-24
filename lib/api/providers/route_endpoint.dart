@@ -50,7 +50,7 @@ class RouteEndpoint {
 
   // MANAGER
     // PUT
-  Future<RouteDTO> editRouteDetails(int gymId, int routeId, RouteDTO body) async {
+  Future<Response> editRouteDetails(int gymId, int routeId, RouteDTO body) async {
     try {
       //body is RouteDTO eg.
       // var body =  {
@@ -61,9 +61,11 @@ class RouteEndpoint {
       Response<String> response = await _client
           .put('/route/$gymId/edit/$routeId', data: jsonEncode(body));
 
-      final jsonResponse = json.decode(response.data);
-      RouteDTO page = new RouteDTO.fromJson(jsonResponse);
-      return page;
+      // final jsonResponse = json.decode(response.data);
+      // RouteDTO page = new RouteDTO.fromJson(jsonResponse);
+      //return page;
+
+      return response;
     } on DioError catch (ex) {
       if (ex.response != null) {
         print('Dio error!');

@@ -82,6 +82,7 @@ class UserCardsSmallScreen extends StatelessWidget {
             onTap: () => showDialog<String>(
               context: context,
               builder: (BuildContext context) => AlertDialog(
+                shape:  RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                 title: const Text('Delete account'),
                 content: Form(
                   key: _passKey,
@@ -104,8 +105,12 @@ class UserCardsSmallScreen extends StatelessWidget {
                         },
                         controller: _passwordController,
                         obscureText: true,
-                        decoration: InputDecoration(
-                            labelText: "Password",),
+                          decoration: InputDecoration(
+                              errorMaxLines: 4,
+                              labelText: "Password",
+                              hintText: "Enter your password",
+                              border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(20)))
                       ),
                     ],
                   ),

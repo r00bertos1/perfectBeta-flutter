@@ -175,7 +175,7 @@ class _MyRoutesTableState extends State<MyRoutesTable> {
             ),
             DataCell(
               FutureBuilder<ClimbingGymWithDetailsDTO>(
-                  future: _climbingGymEndpoint.getVerifiedGymById(route.id),
+                  future: _climbingGymEndpoint.getVerifiedGymById(route.climbingGymId),
                   builder: (context, snapshot) {
                     if (snapshot.hasError) {
                       return Container();
@@ -242,9 +242,11 @@ class _MyRoutesTableState extends State<MyRoutesTable> {
     try {
       DataPage res = await _routeEndpoint.getAllFavourites();
       List<RouteDTO> routes = [];
-      res.content.forEach((route) {
-        routes.add(route);
-      });
+      if (res.content != null) {
+        res.content.forEach((route) {
+          routes.add(route);
+        });
+      }
       return routes;
     } catch (e, s) {
       print("Exception $e");

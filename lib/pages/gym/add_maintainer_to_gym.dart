@@ -164,6 +164,7 @@ class _AddMaintainerToGymPage extends State<AddMaintainerToGymPage> {
       barrierDismissible: false, // user must tap button!
       builder: (BuildContext context) {
         return AlertDialog(
+          shape:  RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
           title: Text('Maintainers for $gymName'),
           content: SingleChildScrollView(
             child: Container(
