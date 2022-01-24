@@ -33,38 +33,48 @@ class SideMenu extends StatelessWidget {
                 SizedBox(
                   height: 40,
                 ),
-                Row(
-                  children: [
-                    SizedBox(width: _width / 48),
-                    Padding(
-                      padding: const EdgeInsets.only(right: 12),
-                      child: Image.asset("assets/icons/logo.png"),
-                    ),
-                    Flexible(
-                      child: CustomText(
-                        text: "PerfectBeta",
-                        size: 20,
-                        weight: FontWeight.bold,
-                        color: active,
+                GestureDetector(
+                  onTap: () {
+                    Get.offAllNamed(
+                        rootRoute);
+                    menuController.changeActiveItemTo(
+                        overviewPageDisplayName);
+                    navigationController
+                        .navigateTo(rootRoute);
+                  },
+                  child: Row(
+                    children: [
+                      SizedBox(width: _width / 48),
+                      Padding(
+                        padding: const EdgeInsets.only(right: 12),
+                        child: Image.asset("assets/icons/logo.png"),
                       ),
-                    ),
-                    Flexible(
-                      child: FutureBuilder(
-                          future: secStore.getAccessLevel(),
-                          initialData: "Loading ...",
-                          builder: (BuildContext context,
-                              AsyncSnapshot<String> text) {
-                            if (text.hasError) return Container();
-                            return CustomText(
-                              text: text.data.capitalize,
-                              size: 14,
-                              weight: FontWeight.bold,
-                              color: lightGrey,
-                            );
-                          }),
-                    ),
-                    SizedBox(width: _width / 48),
-                  ],
+                      Flexible(
+                        child: CustomText(
+                          text: "PerfectBeta",
+                          size: 20,
+                          weight: FontWeight.bold,
+                          color: active,
+                        ),
+                      ),
+                      Flexible(
+                        child: FutureBuilder(
+                            future: secStore.getAccessLevel(),
+                            initialData: "Loading ...",
+                            builder: (BuildContext context,
+                                AsyncSnapshot<String> text) {
+                              if (text.hasError) return Container();
+                              return CustomText(
+                                text: text.data.capitalize,
+                                size: 14,
+                                weight: FontWeight.bold,
+                                color: lightGrey,
+                              );
+                            }),
+                      ),
+                      SizedBox(width: _width / 48),
+                    ],
+                  ),
                 ),
                 SizedBox(
                   height: 30,
