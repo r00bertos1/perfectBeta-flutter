@@ -49,6 +49,9 @@ dependencies:
   dropdown_below: ^1.0.3
   intl_phone_number_input: ^0.7.0+2
   country_list_pick: ^1.0.1+5
+  carousel_slider: ^4.0.0
+  photo_view: ^0.13.0
+  rating_dialog: ^2.0.3
 
 flutter_icons:
   android: "ic_launcher"
