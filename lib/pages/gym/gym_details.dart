@@ -44,6 +44,11 @@ class _GymDetailsState extends State<GymDetails> {
   var _userEndpoint = new UserEndpoint(GymDetails._client.init());
 
   @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return FutureBuilder(
         future: secStore.getAccessLevel(),
@@ -67,11 +72,12 @@ class _GymDetailsState extends State<GymDetails> {
                             }
                             if (snapshot.hasData) {
                               return RefreshIndicator(
+                                  // ignore: missing_return
                                   onRefresh: () {
                                     setState(() {});
                                   },
                                   child:
-                                      _buildGymDetailsListViewAdmin(snapshot));
+                                      _buildGymDetailsListViewAdmin(snapshot, context));
                             } else {
                               return Text("No data");
                             }
@@ -92,6 +98,7 @@ class _GymDetailsState extends State<GymDetails> {
                             }
                             if (snapshot.hasData) {
                               return RefreshIndicator(
+                                  // ignore: missing_return
                                   onRefresh: () {
                                     setState(() {});
                                   },
@@ -110,6 +117,8 @@ class _GymDetailsState extends State<GymDetails> {
                         future: _climbingGymEndpoint
                             .getVerifiedGymById(widget.gymId),
                         builder: (context, snapshot) {
+                          // print(
+                          //     'Connection state: ${snapshot.connectionState}');
                           if (snapshot.connectionState ==
                               ConnectionState.done) {
                             if (snapshot.hasError) {
@@ -117,17 +126,18 @@ class _GymDetailsState extends State<GymDetails> {
                             }
                             if (snapshot.hasData) {
                               return RefreshIndicator(
+                                // ignore: missing_return
                                   onRefresh: () {
                                     setState(() {});
                                   },
-                                  child: _buildGymDetailsListView(snapshot));
+                                  child: _buildGymDetailsListViewClimber(snapshot, context));
                             } else {
                               return Text("No data");
                             }
                           } else
                             return SizedBox(
                                 child:
-                                    Center(child: CircularProgressIndicator()));
+                                Center(child: CircularProgressIndicator()));
                         });
                   default:
                     return FutureBuilder<ClimbingGymWithDetailsDTO>(
@@ -143,10 +153,11 @@ class _GymDetailsState extends State<GymDetails> {
                             }
                             if (snapshot.hasData) {
                               return RefreshIndicator(
+                                  // ignore: missing_return
                                   onRefresh: () {
                                     setState(() {});
                                   },
-                                  child: _buildGymDetailsListView(snapshot));
+                                  child: _buildGymDetailsListView(snapshot, context));
                             } else {
                               return Text("No data");
                             }
@@ -161,7 +172,7 @@ class _GymDetailsState extends State<GymDetails> {
   }
 
   Widget _buildGymDetailsListViewAdmin(
-      AsyncSnapshot<ClimbingGymWithDetailsDTO> snapshot) {
+      AsyncSnapshot<ClimbingGymWithDetailsDTO> snapshot, context) {
     _isVerified = snapshot.data.status == GymStatusEnum.VERIFIED ? true : false;
     return ListView(
       children: [
@@ -172,122 +183,28 @@ class _GymDetailsState extends State<GymDetails> {
             ListTile(
               contentPadding: const EdgeInsets.symmetric(horizontal: 0),
               isThreeLine: true,
-              title: CustomText(
-                text: snapshot.data.gymName,
-                size: 24,
-                weight: FontWeight.bold,
-              ),
-              subtitle: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                      "${snapshot.data.gymDetailsDTO.street} ${snapshot.data.gymDetailsDTO.number}, ${snapshot.data.gymDetailsDTO.city}, ${snapshot.data.gymDetailsDTO.country}"),
-                  _parseGymEnum(snapshot.data.status),
-                ],
-              ),
-              trailing: StatusSwitchButton(
-                  isVerified: _isVerified,
-                  onPressed: () {
-                    handleGymStatus(snapshot.data.status, snapshot.data.id);
-                  }),
+              title: _gymTitleWidget(snapshot),
+              subtitle: _gymSubtitleWidget(snapshot),
+              trailing: _gymTrailingWidgetAdmin(snapshot, context),
             ),
-            CustomText(text: "${snapshot.data.gymDetailsDTO.description}"),
-            Container(
-              decoration: BoxDecoration(
-                color: Colors.white,
-                border: Border.all(color: lightGrey.withOpacity(.4), width: .5),
-                boxShadow: [
-                  BoxShadow(
-                      offset: Offset(0, 6),
-                      color: lightGrey.withOpacity(.1),
-                      blurRadius: 12)
-                ],
-                borderRadius: BorderRadius.circular(8),
-              ),
-              padding: const EdgeInsets.all(16),
-              margin: EdgeInsets.only(bottom: 30, top: 30),
-              //height: MediaQuery.of(context).size.height,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Row(
-                    children: [
-                      CustomText(
-                        text: "Routes",
-                        color: lightGrey,
-                        weight: FontWeight.bold,
-                      ),
-                    ],
-                  ),
-                  FutureBuilder<List<RouteDTO>>(
-                      future: _loadRoutes(widget.gymId),
-                      builder: (context, routes) {
-                        print('Connection state: ${routes.connectionState}');
-                        if (routes.connectionState == ConnectionState.done) {
-                          if (routes.hasError) {
-                            return Text("Error");
-                          }
-                          if (routes.hasData && routes.data != null) {
-                            return Column(
-                              children: [
-                                GridView.builder(
-                                  physics: NeverScrollableScrollPhysics(),
-                                  shrinkWrap: true,
-                                  itemCount: routes.data.length,
-                                  padding: const EdgeInsets.only(top: 20),
-                                  gridDelegate:
-                                      SliverGridDelegateWithFixedCrossAxisCount(
-                                    crossAxisSpacing:
-                                        ResponsiveWidget.isSmallScreen(context)
-                                            ? 20
-                                            : 64,
-                                    mainAxisSpacing:
-                                        ResponsiveWidget.isSmallScreen(context)
-                                            ? 20
-                                            : 64,
-                                    // childAspectRatio:
-                                    //     ((MediaQuery.of(context).size.width) /
-                                    //             (MediaQuery.of(context)
-                                    //                 .size
-                                    //                 .height)) *
-                                    //         1.4,
-                                    crossAxisCount:
-                                        ResponsiveWidget.isSmallScreen(context)
-                                            ? 2
-                                            : ResponsiveWidget.isMediumScreen(
-                                                    context)
-                                                ? 3
-                                                : ResponsiveWidget
-                                                        .isLargeScreen(context)
-                                                    ? 4
-                                                    : 5,
-                                  ),
-                                  itemBuilder: (context, index) {
-                                    return buildRouteGridFromSnapshot(
-                                        context, routes, index);
-                                  },
-                                ),
-                              ],
-                            );
-                          } else {
-                            return Container();
-                          }
-                        } else
-                          return SizedBox(
-                              child:
-                                  Center(child: CircularProgressIndicator()));
-                      })
-                ],
-              ),
-            )
+            SizedBox(
+              height: 10,
+            ),
+            _gymDescriptionWidget(snapshot),
+            SizedBox(
+              height: 20,
+            ),
+            _gymRoutesWidget(snapshot, context),
+
           ],
         ),
       ],
     );
   }
 
-  Widget _buildGymDetailsListViewManager(snapshot, context) {
+  Widget _buildGymDetailsListViewManager(
+      AsyncSnapshot<ClimbingGymWithDetailsDTO> snapshot, context) {
+    _isVerified = snapshot.data.status == GymStatusEnum.VERIFIED ? true : false;
     return ListView(
       children: [
         Column(
@@ -296,165 +213,29 @@ class _GymDetailsState extends State<GymDetails> {
           children: <Widget>[
             ListTile(
               contentPadding: const EdgeInsets.symmetric(horizontal: 0),
-              title: CustomText(
-                text: snapshot.data.gymName,
-                size: 24,
-                weight: FontWeight.bold,
-              ),
-              subtitle: Text(
-                  "${snapshot.data.gymDetailsDTO.street} ${snapshot.data.gymDetailsDTO.number}, ${snapshot.data.gymDetailsDTO.city}, ${snapshot.data.gymDetailsDTO.country}"),
-              trailing: FutureBuilder<int>(
-                  future: _getCurrentUserId(),
-                  builder: (context, userId) {
-                    if (userId.hasError) {
-                      return Container();
-                    } else if (userId.hasData) {
-                      _currentUserId = userId.data;
-                      return Wrap(
-                        alignment: WrapAlignment.spaceBetween,
-                        direction: Axis.horizontal,
-                        children: [
-                          Visibility(
-                            visible: _currentUserId == snapshot.data.ownerId,
-                            child: IconButton(
-                                padding: EdgeInsets.all(0),
-                                onPressed: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) =>
-                                          AddMaintainerToGymPage(
-                                              gymId: widget.gymId),
-                                    ),
-                                  );
-                                },
-                                tooltip: 'add maintainer to gym',
-                                icon: Icon(Icons.person_add)),
-                          ),
-                          Visibility(
-                            visible: _currentUserId == snapshot.data.ownerId,
-                            child: IconButton(
-                                padding: EdgeInsets.all(0),
-                                onPressed: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => EditGymDetailsPage(
-                                          gymId: widget.gymId),
-                                    ),
-                                  ).then((_) => setState(() {}));
-                                },
-                                tooltip: 'edit gym details',
-                                icon: Icon(Icons.edit)),
-                          ),
-                        ],
-                      );
-                    } else {
-                      return SizedBox(
-                        width: 1,
-                      );
-                    }
-                  }),
+              isThreeLine: true,
+              title: _gymTitleWidget(snapshot),
+              subtitle: _gymSubtitleWidget(snapshot),
+              trailing: _gymTrailingWidgetManager(snapshot, context),
             ),
-            CustomText(text: "${snapshot.data.gymDetailsDTO.description}"),
-            Container(
-              decoration: BoxDecoration(
-                color: Colors.white,
-                border: Border.all(color: lightGrey.withOpacity(.4), width: .5),
-                boxShadow: [
-                  BoxShadow(
-                      offset: Offset(0, 6),
-                      color: lightGrey.withOpacity(.1),
-                      blurRadius: 12)
-                ],
-                borderRadius: BorderRadius.circular(8),
-              ),
-              padding: const EdgeInsets.all(16),
-              margin: EdgeInsets.only(bottom: 30, top: 30),
-              //height: MediaQuery.of(context).size.height,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      CustomText(
-                        text: "Routes",
-                        color: lightGrey,
-                        weight: FontWeight.bold,
-                      ),
-                      _buildAddRouteButton(context)
-                    ],
-                  ),
-                  FutureBuilder<List<RouteDTO>>(
-                      future: _loadRoutes(widget.gymId),
-                      builder: (context, routes) {
-                        print('Connection state: ${routes.connectionState}');
-                        if (routes.connectionState == ConnectionState.done) {
-                          if (routes.hasError) {
-                            return Text("Error");
-                          }
-                          if (routes.hasData && routes.data != null) {
-                            return Column(
-                              children: [
-                                GridView.builder(
-                                  physics: NeverScrollableScrollPhysics(),
-                                  shrinkWrap: true,
-                                  itemCount: routes.data.length,
-                                  padding: const EdgeInsets.only(top: 20),
-                                  gridDelegate:
-                                      SliverGridDelegateWithFixedCrossAxisCount(
-                                    crossAxisSpacing:
-                                        ResponsiveWidget.isSmallScreen(context)
-                                            ? 20
-                                            : 64,
-                                    mainAxisSpacing:
-                                        ResponsiveWidget.isSmallScreen(context)
-                                            ? 20
-                                            : 64,
-                                    // childAspectRatio:
-                                    //     ((MediaQuery.of(context).size.width) /
-                                    //             (MediaQuery.of(context)
-                                    //                 .size
-                                    //                 .height)) *
-                                    //         1.4,
-                                    crossAxisCount:
-                                        ResponsiveWidget.isSmallScreen(context)
-                                            ? 2
-                                            : ResponsiveWidget.isMediumScreen(
-                                                    context)
-                                                ? 3
-                                                : ResponsiveWidget
-                                                        .isLargeScreen(context)
-                                                    ? 4
-                                                    : 5,
-                                  ),
-                                  itemBuilder: (context, index) {
-                                    return buildRouteGridFromSnapshotManager(
-                                        context, routes, index);
-                                  },
-                                ),
-                              ],
-                            );
-                          } else {
-                            return Container();
-                          }
-                        } else
-                          return SizedBox(
-                              child:
-                                  Center(child: CircularProgressIndicator()));
-                      })
-                ],
-              ),
-            )
+            SizedBox(
+              height: 10,
+            ),
+            _gymDescriptionWidget(snapshot),
+            SizedBox(
+              height: 20,
+            ),
+            _gymRoutesWidgetManager(snapshot, context),
+
           ],
         ),
       ],
     );
   }
 
-  Widget _buildGymDetailsListView(snapshot) {
+  Widget _buildGymDetailsListView(
+      AsyncSnapshot<ClimbingGymWithDetailsDTO> snapshot, context) {
+    _isVerified = snapshot.data.status == GymStatusEnum.VERIFIED ? true : false;
     return ListView(
       children: [
         Column(
@@ -463,103 +244,49 @@ class _GymDetailsState extends State<GymDetails> {
           children: <Widget>[
             ListTile(
               contentPadding: const EdgeInsets.symmetric(horizontal: 0),
-              title: CustomText(
-                text: snapshot.data.gymName,
-                size: 24,
-                weight: FontWeight.bold,
-              ),
-              subtitle: Text(
-                  "${snapshot.data.gymDetailsDTO.street} ${snapshot.data.gymDetailsDTO.number}, ${snapshot.data.gymDetailsDTO.city}, ${snapshot.data.gymDetailsDTO.country}"),
+              isThreeLine: true,
+              title: _gymTitleWidget(snapshot),
+              subtitle: _gymSubtitleWidget(snapshot),
             ),
-            CustomText(text: "${snapshot.data.gymDetailsDTO.description}"),
-            Container(
-              decoration: BoxDecoration(
-                color: Colors.white,
-                border: Border.all(color: lightGrey.withOpacity(.4), width: .5),
-                boxShadow: [
-                  BoxShadow(
-                      offset: Offset(0, 6),
-                      color: lightGrey.withOpacity(.1),
-                      blurRadius: 12)
-                ],
-                borderRadius: BorderRadius.circular(8),
-              ),
-              padding: const EdgeInsets.all(16),
-              margin: EdgeInsets.only(bottom: 30, top: 30),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Row(
-                    children: [
-                      CustomText(
-                        text: "Routes",
-                        color: lightGrey,
-                        weight: FontWeight.bold,
-                      ),
-                    ],
-                  ),
-                  FutureBuilder<List<RouteDTO>>(
-                      future: _loadRoutes(widget.gymId),
-                      builder: (context, routes) {
-                        print('Connection state: ${routes.connectionState}');
-                        if (routes.connectionState == ConnectionState.done) {
-                          if (routes.hasError) {
-                            return Text("Error");
-                          }
-                          if (routes.hasData && routes.data != null) {
-                            return Column(
-                              children: [
-                                GridView.builder(
-                                  physics: NeverScrollableScrollPhysics(),
-                                  shrinkWrap: true,
-                                  itemCount: routes.data.length,
-                                  padding: const EdgeInsets.only(top: 20),
-                                  gridDelegate:
-                                      SliverGridDelegateWithFixedCrossAxisCount(
-                                    crossAxisSpacing:
-                                        ResponsiveWidget.isSmallScreen(context)
-                                            ? 20
-                                            : 64,
-                                    mainAxisSpacing:
-                                        ResponsiveWidget.isSmallScreen(context)
-                                            ? 20
-                                            : 64,
-                                    // childAspectRatio:
-                                    //     ((MediaQuery.of(context).size.width) /
-                                    //             (MediaQuery.of(context)
-                                    //                 .size
-                                    //                 .height)) *
-                                    //         1.4,
-                                    crossAxisCount:
-                                        ResponsiveWidget.isSmallScreen(context)
-                                            ? 2
-                                            : ResponsiveWidget.isMediumScreen(
-                                                    context)
-                                                ? 3
-                                                : ResponsiveWidget
-                                                        .isLargeScreen(context)
-                                                    ? 4
-                                                    : 5,
-                                  ),
-                                  itemBuilder: (context, index) {
-                                    return buildRouteGridFromSnapshotClimber(
-                                        context, routes, index);
-                                  },
-                                ),
-                              ],
-                            );
-                          } else {
-                            return Container();
-                          }
-                        } else
-                          return SizedBox(
-                              child:
-                                  Center(child: CircularProgressIndicator()));
-                      })
-                ],
-              ),
-            )
+            SizedBox(
+              height: 10,
+            ),
+            _gymDescriptionWidget(snapshot),
+            SizedBox(
+              height: 20,
+            ),
+            _gymRoutesWidget(snapshot, context),
+
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _buildGymDetailsListViewClimber(
+      AsyncSnapshot<ClimbingGymWithDetailsDTO> snapshot, context) {
+    _isVerified = snapshot.data.status == GymStatusEnum.VERIFIED ? true : false;
+    return ListView(
+      children: [
+        Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            ListTile(
+              contentPadding: const EdgeInsets.symmetric(horizontal: 0),
+              isThreeLine: true,
+              title: _gymTitleWidget(snapshot),
+              subtitle: _gymSubtitleWidget(snapshot),
+            ),
+            SizedBox(
+              height: 10,
+            ),
+            _gymDescriptionWidget(snapshot),
+            SizedBox(
+              height: 20,
+            ),
+            _gymRoutesWidgetClimber(snapshot, context),
+
           ],
         ),
       ],
@@ -587,7 +314,8 @@ class _GymDetailsState extends State<GymDetails> {
         ),
         child: GridTile(
           child: GestureDetector(
-            onTap: () => _onRouteClicked(routes.data[index].climbingGymId, routes.data[index].id, _currentUserId, context),
+            onTap: () => _onRouteClicked(routes.data[index].climbingGymId,
+                routes.data[index].id, _currentUserId, context),
             child: CachedNetworkImage(
               imageUrl: cover,
               fit: BoxFit.cover,
@@ -641,7 +369,8 @@ class _GymDetailsState extends State<GymDetails> {
         ),
         child: GridTile(
           child: GestureDetector(
-            onTap: () => _onRouteClicked(routes.data[index].climbingGymId, routes.data[index].id, _currentUserId, context),
+            onTap: () => _onRouteClicked(routes.data[index].climbingGymId,
+                routes.data[index].id, _currentUserId, context),
             child: CachedNetworkImage(
               imageUrl: cover,
               fit: BoxFit.cover,
@@ -669,38 +398,36 @@ class _GymDetailsState extends State<GymDetails> {
               itemSize: 14.0,
             ),
             trailing: IconButton(
-              //iconSize: 18,
+                //iconSize: 18,
                 visualDensity: VisualDensity.compact,
                 padding: EdgeInsets.all(0),
                 onPressed: () => showDialog<String>(
                     context: context,
                     builder: (BuildContext context) => AlertDialog(
-                      shape:  RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                      title: const Text('Delete route'),
-                      content: const Text('Are you sure?'),
-                      actions: <Widget>[
-                        TextButton(
-                          onPressed: () =>
-                              Navigator.pop(context),
-                          child: CustomText(
-                              text: 'No',
-                              weight: FontWeight.w300,
-                              color: dark),
-                        ),
-                        TextButton(
-                          onPressed: () {
-                            _handleRouteDelete(
-                                context,
-                                routes
-                                    .data[index].climbingGymId,
-                                routes.data[index].id);
-                          },
-                          child: CustomText(
-                              text: 'Yes, delete!',
-                              color: error),
-                        ),
-                      ],
-                    )),
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10)),
+                          title: const Text('Delete route'),
+                          content: const Text('Are you sure?'),
+                          actions: <Widget>[
+                            TextButton(
+                              onPressed: () => Navigator.pop(context),
+                              child: CustomText(
+                                  text: 'No',
+                                  weight: FontWeight.w300,
+                                  color: dark),
+                            ),
+                            TextButton(
+                              onPressed: () {
+                                _handleRouteDelete(
+                                    context,
+                                    routes.data[index].climbingGymId,
+                                    routes.data[index].id);
+                              },
+                              child: CustomText(
+                                  text: 'Yes, delete!', color: error),
+                            ),
+                          ],
+                        )),
                 tooltip: 'delete route',
                 icon: Icon(Icons.delete)),
           ),
@@ -730,7 +457,8 @@ class _GymDetailsState extends State<GymDetails> {
         ),
         child: GridTile(
           child: GestureDetector(
-            onTap: () => _onRouteClicked(routes.data[index].climbingGymId, routes.data[index].id, _currentUserId, context),
+            onTap: () => _onRouteClicked(routes.data[index].climbingGymId,
+                routes.data[index].id, _currentUserId, context),
             child: CachedNetworkImage(
               imageUrl: cover,
               fit: BoxFit.cover,
@@ -805,6 +533,7 @@ class _GymDetailsState extends State<GymDetails> {
     try {
       UserWithPersonalDataAccessLevelDTO res =
           await _userEndpoint.getUserPersonalDataAccessLevel();
+      _currentUserId = res.id;
       return res.id;
     } catch (e, s) {
       print("Exception $e");
@@ -829,10 +558,15 @@ class _GymDetailsState extends State<GymDetails> {
   }
 
   void _onRouteClicked(int gymId, int routeId, int currentUserId, context) {
+    print('CURRENT USER ' + currentUserId.toString());
     Navigator.push(
       context,
       MaterialPageRoute(
-          builder: (context) => RouteDetailsPage(gymId: gymId ,routeId: routeId, currentUserId: currentUserId,)),
+          builder: (context) => RouteDetailsPage(
+                gymId: gymId,
+                routeId: routeId,
+                currentUserId: currentUserId,
+              )),
     );
   }
 
@@ -937,4 +671,355 @@ class _GymDetailsState extends State<GymDetails> {
         return CustomText(text: "Closed", color: error);
     }
   }
+
+  Widget _gymTitleWidget(snapshot) => CustomText(
+    text: snapshot.data.gymName,
+    size: 24,
+    weight: FontWeight.bold,
+  );
+
+  Widget _gymSubtitleWidget(snapshot) => Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      Text(
+          "${snapshot.data.gymDetailsDTO.street} ${snapshot.data.gymDetailsDTO.number}, ${snapshot.data.gymDetailsDTO.city}, ${snapshot.data.gymDetailsDTO.country}"),
+      _parseGymEnum(snapshot.data.status),
+    ],
+  );
+
+  Widget _gymTrailingWidgetAdmin(snapshot, context) => StatusSwitchButton(
+      isVerified: _isVerified,
+      onPressed: () {
+        handleGymStatus(snapshot.data.status, snapshot.data.id);
+      });
+
+  Widget _gymTrailingWidgetManager(snapshot, context) => FutureBuilder<int>(
+      future: _getCurrentUserId(),
+      builder: (context, userId) {
+        if (userId.hasError) {
+          return Container();
+        } else if (userId.hasData) {
+          _currentUserId = userId.data;
+          print('FIRST CURRNET' +_currentUserId.toString());
+          return Wrap(
+            alignment: WrapAlignment.spaceBetween,
+            direction: Axis.horizontal,
+            children: [
+              Visibility(
+                visible: _currentUserId == snapshot.data.ownerId,
+                child: IconButton(
+                    padding: EdgeInsets.all(0),
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              AddMaintainerToGymPage(
+                                  gymId: widget.gymId),
+                        ),
+                      );
+                    },
+                    tooltip: 'add maintainer to gym',
+                    icon: Icon(Icons.person_add)),
+              ),
+              Visibility(
+                visible: _currentUserId == snapshot.data.ownerId,
+                child: IconButton(
+                    padding: EdgeInsets.all(0),
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => EditGymDetailsPage(
+                              gymId: widget.gymId),
+                        ),
+                      ).then((_) => setState(() {}));
+                    },
+                    tooltip: 'edit gym details',
+                    icon: Icon(Icons.edit)),
+              ),
+            ],
+          );
+        } else {
+          return SizedBox(
+            width: 1,
+          );
+        }
+      });
+
+  Widget _gymDescriptionWidget(snapshot) => Container(
+    width: double.maxFinite,
+    decoration: BoxDecoration(
+      color: Colors.white,
+      border: Border.all(color: lightGrey.withOpacity(.4), width: .5),
+      boxShadow: [
+        BoxShadow(
+            offset: Offset(0, 6),
+            color: lightGrey.withOpacity(.1),
+            blurRadius: 12)
+      ],
+      borderRadius: BorderRadius.circular(8),
+    ),
+    padding: const EdgeInsets.all(16),
+    child: Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        CustomText(
+          text: "Description",
+          size: 20,
+          weight: FontWeight.bold,
+        ),
+        CustomText(text: "${snapshot.data.gymDetailsDTO.description}"),
+      ],
+    ),
+  );
+
+  Widget _gymRoutesWidget(snapshot, context) => Container(
+    decoration: BoxDecoration(
+      color: Colors.white,
+      border: Border.all(color: lightGrey.withOpacity(.4), width: .5),
+      boxShadow: [
+        BoxShadow(
+            offset: Offset(0, 6),
+            color: lightGrey.withOpacity(.1),
+            blurRadius: 12)
+      ],
+      borderRadius: BorderRadius.circular(8),
+    ),
+    padding: const EdgeInsets.all(16),
+    child: Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        CustomText(
+          text: "Routes",
+          size: 20,
+          weight: FontWeight.bold,
+        ),
+        FutureBuilder<List<RouteDTO>>(
+            future: _loadRoutes(widget.gymId),
+            builder: (context, routes) {
+              print('Connection state: ${routes.connectionState}');
+              if (routes.connectionState == ConnectionState.done) {
+                if (routes.hasError) {
+                  return Text("Error");
+                }
+                if (routes.hasData && routes.data != null) {
+                  return Column(
+                    children: [
+                      GridView.builder(
+                        physics: NeverScrollableScrollPhysics(),
+                        shrinkWrap: true,
+                        itemCount: routes.data.length,
+                        padding: const EdgeInsets.only(top: 20),
+                        gridDelegate:
+                        SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisSpacing:
+                          ResponsiveWidget.isSmallScreen(context)
+                              ? 20
+                              : 64,
+                          mainAxisSpacing:
+                          ResponsiveWidget.isSmallScreen(context)
+                              ? 20
+                              : 64,
+                          crossAxisCount:
+                          ResponsiveWidget.isSmallScreen(context)
+                              ? 2
+                              : ResponsiveWidget.isMediumScreen(
+                              context)
+                              ? 3
+                              : ResponsiveWidget
+                              .isLargeScreen(context)
+                              ? 4
+                              : 5,
+                        ),
+                        itemBuilder: (context, index) {
+                          return buildRouteGridFromSnapshot(
+                              context, routes, index);
+                        },
+                      ),
+                    ],
+                  );
+                } else {
+                  return Container();
+                }
+              } else
+                return SizedBox(
+                    child:
+                    Center(child: CircularProgressIndicator()));
+            })
+      ],
+    ),
+  );
+
+  Widget _gymRoutesWidgetManager(snapshot, context) => Container(
+    decoration: BoxDecoration(
+      color: Colors.white,
+      border: Border.all(color: lightGrey.withOpacity(.4), width: .5),
+      boxShadow: [
+        BoxShadow(
+            offset: Offset(0, 6),
+            color: lightGrey.withOpacity(.1),
+            blurRadius: 12)
+      ],
+      borderRadius: BorderRadius.circular(8),
+    ),
+    padding: const EdgeInsets.all(16),
+    margin: EdgeInsets.only(bottom: 30, top: 30),
+    //height: MediaQuery.of(context).size.height,
+    child: Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            CustomText(
+              text: "Routes",
+              size: 20,
+              weight: FontWeight.bold,
+            ),
+            _buildAddRouteButton(context)
+          ],
+        ),
+        FutureBuilder<List<RouteDTO>>(
+            future: _loadRoutes(widget.gymId),
+            builder: (context, routes) {
+              print('Connection state: ${routes.connectionState}');
+              if (routes.connectionState == ConnectionState.done) {
+                if (routes.hasError) {
+                  return Text("Error");
+                }
+                if (routes.hasData && routes.data != null) {
+                  return Column(
+                    children: [
+                      GridView.builder(
+                        physics: NeverScrollableScrollPhysics(),
+                        shrinkWrap: true,
+                        itemCount: routes.data.length,
+                        padding: const EdgeInsets.only(top: 20),
+                        gridDelegate:
+                        SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisSpacing:
+                          ResponsiveWidget.isSmallScreen(context)
+                              ? 20
+                              : 64,
+                          mainAxisSpacing:
+                          ResponsiveWidget.isSmallScreen(context)
+                              ? 20
+                              : 64,
+                          // childAspectRatio:
+                          //     ((MediaQuery.of(context).size.width) /
+                          //             (MediaQuery.of(context)
+                          //                 .size
+                          //                 .height)) *
+                          //         1.4,
+                          crossAxisCount:
+                          ResponsiveWidget.isSmallScreen(context)
+                              ? 2
+                              : ResponsiveWidget.isMediumScreen(
+                              context)
+                              ? 3
+                              : ResponsiveWidget
+                              .isLargeScreen(context)
+                              ? 4
+                              : 5,
+                        ),
+                        itemBuilder: (context, index) {
+                          return buildRouteGridFromSnapshotManager(
+                              context, routes, index);
+                        },
+                      ),
+                    ],
+                  );
+                } else {
+                  return Container();
+                }
+              } else
+                return SizedBox(
+                    child:
+                    Center(child: CircularProgressIndicator()));
+            })
+      ],
+    ),
+  );
+
+  Widget _gymRoutesWidgetClimber(snapshot, context) => Container(
+    decoration: BoxDecoration(
+      color: Colors.white,
+      border: Border.all(color: lightGrey.withOpacity(.4), width: .5),
+      boxShadow: [
+        BoxShadow(
+            offset: Offset(0, 6),
+            color: lightGrey.withOpacity(.1),
+            blurRadius: 12)
+      ],
+      borderRadius: BorderRadius.circular(8),
+    ),
+    padding: const EdgeInsets.all(16),
+    child: Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        CustomText(
+          text: "Routes",
+          size: 20,
+          weight: FontWeight.bold,
+        ),
+        FutureBuilder<List<RouteDTO>>(
+            future: _loadRoutes(widget.gymId),
+            builder: (context, routes) {
+              print('Connection state: ${routes.connectionState}');
+              if (routes.connectionState == ConnectionState.done) {
+                if (routes.hasError) {
+                  return Text("Error");
+                }
+                if (routes.hasData && routes.data != null) {
+                  return Column(
+                    children: [
+                      GridView.builder(
+                        physics: NeverScrollableScrollPhysics(),
+                        shrinkWrap: true,
+                        itemCount: routes.data.length,
+                        padding: const EdgeInsets.only(top: 20),
+                        gridDelegate:
+                        SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisSpacing:
+                          ResponsiveWidget.isSmallScreen(context)
+                              ? 20
+                              : 64,
+                          mainAxisSpacing:
+                          ResponsiveWidget.isSmallScreen(context)
+                              ? 20
+                              : 64,
+                          crossAxisCount:
+                          ResponsiveWidget.isSmallScreen(context)
+                              ? 2
+                              : ResponsiveWidget.isMediumScreen(
+                              context)
+                              ? 3
+                              : ResponsiveWidget
+                              .isLargeScreen(context)
+                              ? 4
+                              : 5,
+                        ),
+                        itemBuilder: (context, index) {
+                          return buildRouteGridFromSnapshotClimber(
+                              context, routes, index);
+                        },
+                      ),
+                    ],
+                  );
+                } else {
+                  return Container();
+                }
+              } else
+                return SizedBox(
+                    child:
+                    Center(child: CircularProgressIndicator()));
+            })
+      ],
+    ),
+  );
 }

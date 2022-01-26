@@ -1,6 +1,7 @@
 import 'package:data_table_2/data_table_2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:perfectBeta/api/api_client.dart';
 import 'package:perfectBeta/api/providers/climbing_gym_endpoint.dart';
@@ -73,7 +74,7 @@ class _MyRoutesTableState extends State<MyRoutesTable> {
         columnSpacing: 12,
         horizontalMargin: 12,
         //border: TableBorder.all(),
-        //minWidth: ResponsiveWidget.isSmallScreen(context) ? 400 : 600,
+        minWidth: ResponsiveWidget.isSmallScreen(context) ? 500 : 600,
         columns: _createColumns(list),
         rows: _createRows(list),
         sortColumnIndex: _currentSortColumn,
@@ -84,7 +85,7 @@ class _MyRoutesTableState extends State<MyRoutesTable> {
     return [
       DataColumn2(
         label: Text("Route name"),
-        //size: ColumnSize.L,
+        size: ColumnSize.L,
         onSort: (columnIndex, _) {
           setState(() {
             _currentSortColumn = columnIndex;
@@ -99,7 +100,7 @@ class _MyRoutesTableState extends State<MyRoutesTable> {
       ),
       DataColumn2(
         label: Text('Gym'),
-        //size: ColumnSize.S,
+        size: ColumnSize.L,
         onSort: (columnIndex, _) {
           setState(() {
             _currentSortColumn = columnIndex;
@@ -114,7 +115,7 @@ class _MyRoutesTableState extends State<MyRoutesTable> {
       ),
       DataColumn2(
         label: Text('Difficulty'),
-        //size: ColumnSize.S,
+        size: ColumnSize.S,
         onSort: (columnIndex, _) {
           setState(() {
             _currentSortColumn = columnIndex;
@@ -129,7 +130,7 @@ class _MyRoutesTableState extends State<MyRoutesTable> {
       ),
       DataColumn2(
         label: Text('Rating'),
-        //size: ColumnSize.M,
+        size: ColumnSize.M,
         onSort: (columnIndex, _) {
           setState(() {
             _currentSortColumn = columnIndex;
@@ -141,6 +142,10 @@ class _MyRoutesTableState extends State<MyRoutesTable> {
             _isSortAsc = !_isSortAsc;
           });
         },
+      ),
+      DataColumn2(
+        label: Text('Actions'),
+        size: ColumnSize.S,
       ),
     ];
   }
@@ -168,7 +173,7 @@ class _MyRoutesTableState extends State<MyRoutesTable> {
                   context,
                   MaterialPageRoute(
                     builder: (context) =>
-                        RouteDetailsPage(routeId: route.climbingGymId),
+                        RouteDetailsPage(routeId: route.id),
                   ),
                 );
               },
@@ -208,7 +213,7 @@ class _MyRoutesTableState extends State<MyRoutesTable> {
                   context,
                   MaterialPageRoute(
                     builder: (context) =>
-                        RouteDetailsPage(routeId: route.climbingGymId),
+                        RouteDetailsPage(routeId: route.id),
                   ),
                 );
               },
@@ -228,10 +233,18 @@ class _MyRoutesTableState extends State<MyRoutesTable> {
                   context,
                   MaterialPageRoute(
                     builder: (context) =>
-                        RouteDetailsPage(routeId: route.climbingGymId),
+                        RouteDetailsPage(routeId: route.id),
                   ),
                 );
               },
+            ),
+            DataCell(
+              IconButton(
+                  visualDensity: VisualDensity.compact,
+                  padding: EdgeInsets.all(0),
+                  onPressed: () => _handleRouteDelete(context, route.id),
+                  tooltip: 'delete route from favourites',
+                  icon: Icon(Icons.delete)),
             ),
           ]));
     });
@@ -248,6 +261,19 @@ class _MyRoutesTableState extends State<MyRoutesTable> {
         });
       }
       return routes;
+    } catch (e, s) {
+      print("Exception $e");
+      print("StackTrace $s");
+    }
+  }
+
+  void _handleRouteDelete(context, routeId) async {
+    try {
+      var res = await _routeEndpoint.removeRouteFromFavourites(routeId);
+      if (res.statusCode == 200) {
+        EasyLoading.showSuccess('Route removed!');
+        setState(() {});
+      }
     } catch (e, s) {
       print("Exception $e");
       print("StackTrace $s");

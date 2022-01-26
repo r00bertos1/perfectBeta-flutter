@@ -34,6 +34,7 @@ class _EditRouteDetailsPageState extends State<EditRouteDetailsPage> {
   @override
   void initState() {
     super.initState();
+    _loadRouteDetails();
   }
 
   @override
@@ -91,7 +92,7 @@ class _EditRouteDetailsPageState extends State<EditRouteDetailsPage> {
                     },
                     controller: _routeNameController,
                     decoration: InputDecoration(
-                        errorMaxLines: 4,
+                        errorMaxLines: 3,
                         labelText: "Route Name",
                         hintText: "Enter route name",
                         border: OutlineInputBorder(
@@ -111,6 +112,7 @@ class _EditRouteDetailsPageState extends State<EditRouteDetailsPage> {
                     },
                     controller: _difficultyController,
                     decoration: InputDecoration(
+                      errorMaxLines: 3,
                         labelText: "Difficulty",
                         hintText: "Enter route difficulty",
                         border: OutlineInputBorder(
@@ -134,7 +136,7 @@ class _EditRouteDetailsPageState extends State<EditRouteDetailsPage> {
                     maxLines: null,
                     controller: _descriptionController,
                     decoration: InputDecoration(
-                        errorMaxLines: 4,
+                        errorMaxLines: 3,
                         labelText: "Description",
                         hintText: "Enter gym description",
                         border: OutlineInputBorder(
@@ -179,12 +181,20 @@ class _EditRouteDetailsPageState extends State<EditRouteDetailsPage> {
     );
   }
 
+  void _loadRouteDetails() {
+    _routeNameController.text = widget.routeData.routeName;
+    _difficultyController.text = widget.routeData.difficulty;
+    _descriptionController.text = widget.routeData.description;
+  }
+
   Future<void> _handleRouteDetailsChange() async {
     RouteDTO routeData = new RouteDTO(
+        id: widget.routeData.id,
         routeName: _routeNameController.text.trim(),
         difficulty: _difficultyController.text.trim(),
         description: _descriptionController.text.trim(),
-        //holdsDetails: ,
+        climbingGymId: widget.routeData.climbingGymId,
+        holdsDetails: widget.routeData.holdsDetails,
         //photos:
         );
     var res = await _routeEndpoint.editRouteDetails(widget.routeData.climbingGymId, widget.routeData.id, routeData);

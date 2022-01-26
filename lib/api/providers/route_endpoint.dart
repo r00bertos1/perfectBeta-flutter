@@ -48,6 +48,39 @@ class RouteEndpoint {
     }
   }
 
+  Future<List<RatingDTO>> getRouteRatings(int routeId) async {
+    try {
+      Response<String> response = await _client.get('/route/rates/$routeId', options: Options(headers: {"requiresToken" : false}));
+
+      //Decode response data and create new model class
+      final jsonResponse = json.decode(response.data) as List;
+      //List<RatingDTO> ratingsList = jsonResponse.map((rating) => RatingDTO.fromJson(rating)).toList();
+      List<RatingDTO> ratingsList = jsonResponse.map((rating) => RatingDTO.fromJson(rating)).toList();
+      //List<RatingDTO> ratingsList = jsonResponse.map((rating) => RatingDTO.fromJson(rating)).toList();
+
+      return ratingsList;
+    } on DioError catch (ex) {
+      // The request was made and the server responded with a status code
+      // that falls out of the range of 2xx and is also not 304.
+      if (ex.response != null) {
+        print('Dio error!');
+        print('STATUS: ${ex.response?.statusCode}');
+        print('DATA: ${ex.response?.data}');
+        print('HEADERS: ${ex.response?.headers}');
+      } else {
+        // Error due to setting up or sending the request
+        print('Error sending request!');
+        print(ex.message);
+        // Assuming there will be an errorMessage property in the JSON object
+        String errorMessage = json.decode(ex.response.toString())["message"];
+        throw new Exception(errorMessage);
+      }
+    } catch (e, s) {
+      print("Exception $e");
+      print("StackTrace $s");
+    }
+  }
+
   // MANAGER
     // PUT
   Future<Response> editRouteDetails(int gymId, int routeId, RouteDTO body) async {
@@ -246,7 +279,7 @@ class RouteEndpoint {
     }
   }
 
-  Future<RouteDTO> addRatingToRoute(int routeID, RatingDTO body) async {
+  Future<Response> addRatingToRoute(int routeID, RatingDTO body) async {
     try {
       //body is a RatingDTO eg.
       // var body =  {
@@ -254,10 +287,11 @@ class RouteEndpoint {
       // "comment": "great!"
       // };
       Response<String> response = await _client.post('/route/$routeID/rate', data: jsonEncode(body));
-      final jsonResponse = json.decode(response.data);
-      RouteDTO page = new RouteDTO.fromJson(jsonResponse);
+      // final jsonResponse = json.decode(response.data);
+      // RouteDTO page = new RouteDTO.fromJson(jsonResponse);
 
-      return page;
+      //return page;
+      return response;
     } on DioError catch (ex) {
       if (ex.response != null) {
         print('Dio error!');

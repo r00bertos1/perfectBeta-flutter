@@ -143,7 +143,7 @@ class ApiInterceptors extends Interceptor {
       EasyLoading.showError('Unable to connect with Database');
     } else {
       var responseClass = (err.response.statusCode / 100).floor();
-      String jsonsDataString = err.response?.data.toString();
+      String jsonsDataString = err.response?.data.toString().replaceAll("\n","");
       final jsonData = jsonDecode(jsonsDataString);
       //if (err.response.data['key'] != null) {
         //final jsonResponse = json.decode(err.response.data);
@@ -161,7 +161,7 @@ class ApiInterceptors extends Interceptor {
           }
         }
         if (err.response?.statusCode == 401) {
-          if (jsonData["message"] == "INVALID_CREDENTIALS") {
+          if (jsonData["key"] == "INVALID_CREDENTIALS") {
             EasyLoading.showError(
               'There is no user with this username password combination');
           } else {
