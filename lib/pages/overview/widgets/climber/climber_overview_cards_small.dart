@@ -4,27 +4,27 @@ import 'package:perfectBeta/widgets/custom_text.dart';
 import '../info_card_small.dart';
 import 'package:perfectBeta/helpers/helper_data_methods.dart';
 
-class AdminOverviewCardsSmallScreen extends StatelessWidget {
+class ClimberOverviewCardsSmallScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     double _width = MediaQuery.of(context).size.width;
-    int _registeredUsers;
-    int _admins;
-    int _managers;
-    int _climbers;
-    List<int> userCount = [0,0,0,0];
+    int _gyms;
+    int _routes;
+    int _reviews;
+    int _favs;
+    List<int> climberDataCount = [0,0,0,0];
 
     return Container(
         height: 400,
         child: FutureBuilder(
-            future: loadUsersData(userCount),
-            builder: (context, usersData) {
-                switch (usersData.connectionState) {
+            future: loadGymsAndRoutesDataClimber(climberDataCount),
+            builder: (context, climberData) {
+                switch (climberData.connectionState) {
                   case ConnectionState.waiting:
                     return Column(
                       children: [
                         InfoCardSmall(
-                          title: "Active users",
+                          title: "Verified gyms",
                           value: Center(
                             child: new CircularProgressIndicator(),
                           ),
@@ -35,7 +35,7 @@ class AdminOverviewCardsSmallScreen extends StatelessWidget {
                           height: _width / 64,
                         ),
                         InfoCardSmall(
-                          title: "Climbers",
+                          title: "Routes",
                           value: Center(
                             child: new CircularProgressIndicator(),
                           ),
@@ -45,7 +45,7 @@ class AdminOverviewCardsSmallScreen extends StatelessWidget {
                           height: _width / 64,
                         ),
                         InfoCardSmall(
-                          title: "Managers",
+                          title: "Your reviews",
                           value: Center(
                             child: new CircularProgressIndicator(),
                           ),
@@ -55,7 +55,7 @@ class AdminOverviewCardsSmallScreen extends StatelessWidget {
                           height: _width / 64,
                         ),
                         InfoCardSmall(
-                          title: "Admins",
+                          title: "Liked routes",
                           value: Center(
                             child: new CircularProgressIndicator(),
                           ),
@@ -64,19 +64,19 @@ class AdminOverviewCardsSmallScreen extends StatelessWidget {
                       ],
                     );
                   default:
-                    if (usersData.hasError)
-                      return new Text('Error: ${usersData.error}');
+                    if (climberData.hasError)
+                      return new Text('Error: ${climberData.error}');
                     else
-                      _registeredUsers = usersData.data[0];
-                      _admins = usersData.data[1];
-                      _managers = usersData.data[2];
-                      _climbers = usersData.data[3];
+                    _gyms = climberData.data[0];
+                    _routes = climberData.data[1];
+                    _reviews = climberData.data[2];
+                    _favs = climberData.data[3];
                       return Column(
                         children: [
                           InfoCardSmall(
-                            title: "Active users",
+                            title: "Verified gyms",
                             value: CustomText(
-                                text: '$_registeredUsers',
+                                text: '$_gyms',
                                 size: 24,
                                 weight: FontWeight.bold,
                                 color: active),
@@ -87,9 +87,9 @@ class AdminOverviewCardsSmallScreen extends StatelessWidget {
                             height: _width / 64,
                           ),
                           InfoCardSmall(
-                            title: "Climbers",
+                            title: "Routes",
                             value: CustomText(
-                                text: '$_climbers',
+                                text: '$_routes',
                                 size: 24,
                                 weight: FontWeight.bold,
                                 color: dark),
@@ -99,9 +99,9 @@ class AdminOverviewCardsSmallScreen extends StatelessWidget {
                             height: _width / 64,
                           ),
                           InfoCardSmall(
-                            title: "Managers",
+                            title: "Your reviews",
                             value: CustomText(
-                                text: '$_managers',
+                                text: '$_reviews',
                                 size: 24,
                                 weight: FontWeight.bold,
                                 color: dark),
@@ -111,9 +111,9 @@ class AdminOverviewCardsSmallScreen extends StatelessWidget {
                             height: _width / 64,
                           ),
                           InfoCardSmall(
-                            title: "Admins",
+                            title: "Liked routes",
                             value: CustomText(
-                                text: '$_admins',
+                                text: '$_favs',
                                 size: 24,
                                 weight: FontWeight.bold,
                                 color: dark),

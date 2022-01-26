@@ -1,19 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:perfectBeta/api/api_client.dart';
 import 'package:perfectBeta/api/providers/authentication_endpoint.dart';
-import 'package:perfectBeta/dto/auth/token_dto.dart';
 import 'package:perfectBeta/helpers/reponsiveness.dart';
 import 'package:perfectBeta/constants/controllers.dart';
-import 'package:perfectBeta/pages/overview/widgets/available_drivers_table.dart';
 import 'package:perfectBeta/pages/overview/widgets/admin/admin_overview_cards_large.dart';
 import 'package:perfectBeta/pages/overview/widgets/admin/admin_overview_cards_medium.dart';
 import 'package:perfectBeta/pages/overview/widgets/admin/admin_overview_cards_small.dart';
-import 'package:perfectBeta/pages/overview/widgets/revenue_section_large.dart';
+import 'package:perfectBeta/pages/overview/widgets/anonim/overview_cards_large.dart';
+import 'package:perfectBeta/pages/overview/widgets/anonim/overview_cards_medium.dart';
+import 'package:perfectBeta/pages/overview/widgets/anonim/overview_cards_small.dart';
+import 'package:perfectBeta/pages/overview/widgets/climber/climber_overview_cards_large.dart';
+import 'package:perfectBeta/pages/overview/widgets/climber/climber_overview_cards_medium.dart';
+import 'package:perfectBeta/pages/overview/widgets/climber/climber_overview_cards_small.dart';
+import 'package:perfectBeta/pages/overview/widgets/manager/manager_overview_cards_large.dart';
+import 'package:perfectBeta/pages/overview/widgets/manager/manager_overview_cards_medium.dart';
+import 'package:perfectBeta/pages/overview/widgets/manager/manager_overview_cards_small.dart';
 import 'package:perfectBeta/storage/secure_storage.dart';
 import 'package:perfectBeta/widgets/custom_text.dart';
 import 'package:get/get.dart';
-
-import 'widgets/revenue_section_small.dart';
 
 class OverviewPage extends StatelessWidget {
   static ApiClient _client = new ApiClient();
@@ -69,19 +73,53 @@ class OverviewPage extends StatelessWidget {
                                       AdminOverviewCardsLargeScreen()
                                   else
                                     AdminOverviewCardsSmallScreen(),
-                                  // if (!ResponsiveWidget.isSmallScreen(context))
-                                  //   RevenueSectionLarge()
-                                  // else
-                                  //   RevenueSectionSmall(),
-                                  // AvailableDriversTable(),
                                 ],
                               );
                             case 'MANAGER':
-                              return Text('MANAGER');
+                              return Column(
+                                children: [
+                                  if (ResponsiveWidget.isHugeScreen(context))
+                                    ManagerOverviewCardsLargeScreen()
+                                  else if (ResponsiveWidget.isLargeScreen(context) ||
+                                      ResponsiveWidget.isMediumScreen(context))
+                                    if (ResponsiveWidget.isCustomSize(context))
+                                      ManagerOverviewCardsMediumScreen()
+                                    else
+                                      ManagerOverviewCardsLargeScreen()
+                                  else
+                                    ManagerOverviewCardsSmallScreen(),
+                                ],
+                              );
                             case 'CLIMBER':
-                              return Text('CLIMBER');
+                              return Column(
+                                children: [
+                                  if (ResponsiveWidget.isHugeScreen(context))
+                                    ClimberOverviewCardsLargeScreen()
+                                  else if (ResponsiveWidget.isLargeScreen(context) ||
+                                      ResponsiveWidget.isMediumScreen(context))
+                                    if (ResponsiveWidget.isCustomSize(context))
+                                      ClimberOverviewCardsMediumScreen()
+                                    else
+                                      ClimberOverviewCardsLargeScreen()
+                                  else
+                                    ClimberOverviewCardsSmallScreen(),
+                                ],
+                              );
                             default:
-                              return Text('default');
+                              return Column(
+                                children: [
+                                  if (ResponsiveWidget.isHugeScreen(context))
+                                    OverviewCardsLargeScreen()
+                                  else if (ResponsiveWidget.isLargeScreen(context) ||
+                                      ResponsiveWidget.isMediumScreen(context))
+                                    if (ResponsiveWidget.isCustomSize(context))
+                                      OverviewCardsMediumScreen()
+                                    else
+                                      OverviewCardsLargeScreen()
+                                  else
+                                    OverviewCardsSmallScreen(),
+                                ],
+                              );
                           }
                     }
                   }),

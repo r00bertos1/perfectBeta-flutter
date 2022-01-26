@@ -2,25 +2,25 @@ import 'package:flutter/material.dart';
 import 'package:perfectBeta/helpers/helper_data_methods.dart';
 import 'package:perfectBeta/pages/overview/widgets/info_card.dart';
 
-class AdminOverviewCardsLargeScreen extends StatelessWidget {
+class ManagerOverviewCardsLargeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     double _width = MediaQuery.of(context).size.width;
-    int _registeredUsers;
-    int _admins;
-    int _managers;
-    int _climbers;
-    List<int> userCount = [0,0,0,0];
+    int _gyms;
+    int _owned;
+    int _maintained;
+    int _routes;
+    List<int> managerDataCount = [0,0,0,0];
 
     return FutureBuilder(
-        future: loadUsersData(userCount),
-        builder: (context, usersData) {
-          switch (usersData.connectionState) {
+        future: loadGymsAndRoutesDataManager(managerDataCount),
+        builder: (context, managerData) {
+          switch (managerData.connectionState) {
             case ConnectionState.waiting:
               return Row(
                 children: [
                   InfoCard(
-                    title: "Active users",
+                    title: "Verified gyms",
                     value: "-",
                     onTap: () {},
                     topColor: Colors.orange,
@@ -29,7 +29,7 @@ class AdminOverviewCardsLargeScreen extends StatelessWidget {
                     width: _width / 64,
                   ),
                   InfoCard(
-                    title: "Climbers",
+                    title: "Routes in owned gyms",
                     value: "-",
                     topColor: Colors.lightGreen,
                     onTap: () {},
@@ -38,7 +38,7 @@ class AdminOverviewCardsLargeScreen extends StatelessWidget {
                     width: _width / 64,
                   ),
                   InfoCard(
-                    title: "Managers",
+                    title: "Owned gyms",
                     value: "-",
                     topColor: Colors.redAccent,
                     onTap: () {},
@@ -47,25 +47,25 @@ class AdminOverviewCardsLargeScreen extends StatelessWidget {
                     width: _width / 64,
                   ),
                   InfoCard(
-                    title: "Admins",
+                    title: "Maintained gyms",
                     value: "-",
                     onTap: () {},
                   ),
                 ],
               );
             default:
-              if (usersData.hasError)
-                return new Text('Error: ${usersData.error}');
+              if (managerData.hasError)
+                return new Text('Error: ${managerData.error}');
               else
-                _registeredUsers = usersData.data[0];
-              _admins = usersData.data[1];
-              _managers = usersData.data[2];
-              _climbers = usersData.data[3];
+                _gyms = managerData.data[0];
+              _owned = managerData.data[1];
+              _maintained = managerData.data[2];
+              _routes = managerData.data[3];
               return Row(
                 children: [
                   InfoCard(
-                    title: "Active users",
-                    value: "$_registeredUsers",
+                    title: "Verified gyms",
+                    value: "$_gyms",
                     onTap: () {},
                     topColor: Colors.orange,
                   ),
@@ -73,8 +73,8 @@ class AdminOverviewCardsLargeScreen extends StatelessWidget {
                     width: _width / 64,
                   ),
                   InfoCard(
-                    title: "Climbers",
-                    value: "$_climbers",
+                    title: "Routes in owned gyms",
+                    value: "$_routes",
                     topColor: Colors.lightGreen,
                     onTap: () {},
                   ),
@@ -82,8 +82,8 @@ class AdminOverviewCardsLargeScreen extends StatelessWidget {
                     width: _width / 64,
                   ),
                   InfoCard(
-                    title: "Managers",
-                    value: "$_managers",
+                    title: "Owned gyms",
+                    value: "$_owned",
                     topColor: Colors.redAccent,
                     onTap: () {},
                   ),
@@ -91,8 +91,8 @@ class AdminOverviewCardsLargeScreen extends StatelessWidget {
                     width: _width / 64,
                   ),
                   InfoCard(
-                    title: "Admins",
-                    value: "$_admins",
+                    title: "Maintained gyms",
+                    value: "$_maintained",
                     onTap: () {},
                   ),
                 ],
