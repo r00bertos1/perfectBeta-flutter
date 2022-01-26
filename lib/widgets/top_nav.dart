@@ -58,7 +58,7 @@ AppBar topNavigationBar(BuildContext context, GlobalKey<ScaffoldState> key) =>
                   return _buildUserTopBar(context);
                 }
               } else {
-                return CircularProgressIndicator();
+                return CircularProgressIndicator.adaptive();
               }
             }),
       ],
@@ -134,7 +134,7 @@ Widget _buildUserTopBar(context) {
                   weight: FontWeight.bold,
                 );
               } else {
-                return CircularProgressIndicator();
+                return CircularProgressIndicator.adaptive();
               }
             }),
       ),

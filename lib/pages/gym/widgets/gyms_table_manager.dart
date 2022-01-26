@@ -183,7 +183,7 @@ class _GymsTableManagerState extends State<GymsTableManager> {
           //             padding: EdgeInsets.symmetric(vertical: 16),
           //             child: CustomText(text: "${snapshot.data.login}"));
           //       } else {
-          //         return CircularProgressIndicator();
+          //         return CircularProgressIndicator.adaptive();
           //       }
           //     }),
         ),
@@ -265,7 +265,7 @@ class _GymsTableManagerState extends State<GymsTableManager> {
                     ],
                   );
                 } else {
-                  return CircularProgressIndicator();
+                  return CircularProgressIndicator.adaptive();
                 }
               }),
         ),

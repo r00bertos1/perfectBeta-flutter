@@ -137,7 +137,7 @@ class _StepTwo extends State<StepTwo> {
 //       }
 //
 //       // By default, show a loading spinner.
-//       return CircularProgressIndicator();
+//       return CircularProgressIndicator.adaptive();
 //     },
 //   );
 // }
@@ -209,7 +209,7 @@ class _StepTwo extends State<StepTwo> {
           }
 
           // By default, show a loading spinner.
-          return CircularProgressIndicator();
+          return CircularProgressIndicator.adaptive();
         });
   }
 
@@ -264,7 +264,7 @@ class _StepTwo extends State<StepTwo> {
 //         return Text('${snapshot.error}');
 //       }
 //
-//       return const CircularProgressIndicator();
+//       return const CircularProgressIndicator.adaptive();
 //     },
 //   );
 // }

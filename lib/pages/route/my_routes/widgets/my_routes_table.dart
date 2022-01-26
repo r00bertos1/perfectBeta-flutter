@@ -191,7 +191,7 @@ class _MyRoutesTableState extends State<MyRoutesTable> {
                           padding: EdgeInsets.symmetric(vertical: 16),
                           child: CustomText(text: "${snapshot.data.gymName}"));
                     } else {
-                      return CircularProgressIndicator();
+                      return CircularProgressIndicator.adaptive();
                     }
                   }),
               onTap: () {

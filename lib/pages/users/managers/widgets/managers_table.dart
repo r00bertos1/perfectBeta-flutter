@@ -175,7 +175,7 @@ class _ManagersTableState extends State<ManagersTable> {
                     _showDetails(context, user);
                   },
                 ),
-                DataCell(Switch(
+                DataCell(Switch.adaptive(
                   onChanged: (bool value) {
                     toggleSwitch(value, user);
                   },

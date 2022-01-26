@@ -384,7 +384,7 @@ class _AddStepsState extends State<AddSteps> {
                           //   print(snapshot.connectionState);
                           //
                           //   if (snapshot.connectionState == ConnectionState.waiting) {
-                          //     return CircularProgressIndicator();
+                          //     return CircularProgressIndicator.adaptive();
                           //   }
                           //   if (snapshot.hasError) {
                           //     return const Text('Error');
@@ -440,7 +440,7 @@ class _AddStepsState extends State<AddSteps> {
                           // }
                           //
                           // // By default, show a loading spinner.
-                          // return CircularProgressIndicator();
+                          // return CircularProgressIndicator.adaptive();
                         )
                   ],
                 ),
@@ -734,9 +734,9 @@ class _AddStepsState extends State<AddSteps> {
             return Text('${snapshot.error}');
           }
 
-          return const CircularProgressIndicator();
+          return const CircularProgressIndicator.adaptive();
           // if (snapshot.connectionState == ConnectionState.waiting) {
-          //   return CircularProgressIndicator();
+          //   return CircularProgressIndicator.adaptive();
           // }
           // if (snapshot.hasError) {
           //   return const Text('Error');
@@ -790,7 +790,7 @@ class _AddStepsState extends State<AddSteps> {
           // }
           //
           // // By default, show a loading spinner.
-          // return CircularProgressIndicator();
+          // return CircularProgressIndicator.adaptive();
         });
   }
 

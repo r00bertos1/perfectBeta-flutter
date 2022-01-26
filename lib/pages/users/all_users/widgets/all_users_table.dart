@@ -174,7 +174,7 @@ class _AllUsersTableState extends State<AllUsersTable> {
                 _showDetails(context, user);
               },
             ),
-            DataCell(Switch(
+            DataCell(Switch.adaptive(
               onChanged: (bool value) {
                 toggleSwitch(value, user.id);
               },

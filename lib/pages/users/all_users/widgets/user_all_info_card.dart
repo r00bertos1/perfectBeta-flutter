@@ -148,7 +148,7 @@ class _UserAllInfoCardState extends State<UserAllInfoCard>{
         mainAxisSize: MainAxisSize.min,
         children: [
           Text('Active'),
-          Switch(
+          Switch.adaptive(
             onChanged: (bool value) {
               toggleSwitch(value, data.id);
             },
