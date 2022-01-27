@@ -13,7 +13,6 @@
 | Package  | Version |
 | ------------- | ------------- |
 | google_fonts  | `2.1.0`  |
-| charts_flutter  | `(install from repo)`  |
 | get  | `4.1.4`  |
 | data_table_2  | `2.0.3`  |
 | http  | `0.13.4`  |
@@ -27,7 +26,11 @@
 | flutter_rating_bar  | `4.0.0`  |
 | image_picker  | `0.8.4+4`  |
 | image_picker_web  | `any`  |
-| time_machine  | `0.9.16`  |
+| dropdown_below  | `1.0.3`  |
+| intl_phone_number_input  | `0.7.0+2`  |
+| carousel_slider  | `4.0.0`  |
+| photo_view  | `0.13.0`  |
+| rating_dialog  | `2.0.3`  |
 
 ## Installation and run
 
