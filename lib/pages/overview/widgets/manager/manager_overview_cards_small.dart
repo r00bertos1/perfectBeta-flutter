@@ -26,7 +26,7 @@ class ManagerOverviewCardsSmallScreen extends StatelessWidget {
                         InfoCardSmall(
                           title: "Verified gyms",
                           value: Center(
-                            child: new CircularProgressIndicator(),
+                            child: new CircularProgressIndicator.adaptive(),
                           ),
                           onTap: () {},
                           isActive: true,
@@ -37,7 +37,7 @@ class ManagerOverviewCardsSmallScreen extends StatelessWidget {
                         InfoCardSmall(
                           title: "Owned gyms",
                           value: Center(
-                            child: new CircularProgressIndicator(),
+                            child: new CircularProgressIndicator.adaptive(),
                           ),
                           onTap: () {},
                         ),
@@ -47,7 +47,7 @@ class ManagerOverviewCardsSmallScreen extends StatelessWidget {
                         InfoCardSmall(
                           title: "Maintained gyms",
                           value: Center(
-                            child: new CircularProgressIndicator(),
+                            child: new CircularProgressIndicator.adaptive(),
                           ),
                           onTap: () {},
                         ),
@@ -57,7 +57,7 @@ class ManagerOverviewCardsSmallScreen extends StatelessWidget {
                         InfoCardSmall(
                           title: "Routes in owned gyms",
                           value: Center(
-                            child: new CircularProgressIndicator(),
+                            child: new CircularProgressIndicator.adaptive(),
                           ),
                           onTap: () {},
                         ),

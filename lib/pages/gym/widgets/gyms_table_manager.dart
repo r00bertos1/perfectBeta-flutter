@@ -300,7 +300,7 @@ class _GymsTableManagerState extends State<GymsTableManager> {
               return _createDataTable(list);
             } else {
               return SizedBox(
-                  child: Center(child: CircularProgressIndicator()));
+                  child: Center(child: CircularProgressIndicator.adaptive()));
             }
           }),
     );
@@ -336,7 +336,7 @@ class _GymsTableManagerState extends State<GymsTableManager> {
               return _createDataTable(list);
             } else {
               return SizedBox(
-                  child: Center(child: CircularProgressIndicator()));
+                  child: Center(child: CircularProgressIndicator.adaptive()));
             }
           }),
     );

@@ -61,7 +61,7 @@ class _MyRoutesTableState extends State<MyRoutesTable> {
               return _createDataTable(list);
             } else {
               return SizedBox(
-                  child: Center(child: CircularProgressIndicator()));
+                  child: Center(child: CircularProgressIndicator.adaptive()));
             }
           }),
     );

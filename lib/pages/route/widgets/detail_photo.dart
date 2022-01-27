@@ -47,7 +47,7 @@ class _DetailPhotoState extends State<DetailPhoto> {
             //       child: Container(
             //           width: 32,
             //           height: 32,
-            //           child: new CircularProgressIndicator())),
+            //           child: new CircularProgressIndicator.adaptive())),
             //   errorWidget: (context, url, error) => Icon(Icons.error),
             // ),
             ),

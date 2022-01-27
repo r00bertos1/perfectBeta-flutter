@@ -65,8 +65,7 @@ class _GymDetailsState extends State<GymDetails> {
                     return FutureBuilder<ClimbingGymWithDetailsDTO>(
                         future: _climbingGymEndpoint.getGymById(widget.gymId),
                         builder: (context, snapshot) {
-                          if (snapshot.connectionState ==
-                              ConnectionState.done) {
+                          if (snapshot.connectionState == ConnectionState.done) {
                             if (snapshot.hasError) {
                               return Text("Error");
                             }
@@ -76,23 +75,18 @@ class _GymDetailsState extends State<GymDetails> {
                                   onRefresh: () {
                                     setState(() {});
                                   },
-                                  child:
-                                      _buildGymDetailsListViewAdmin(snapshot, context));
+                                  child: _buildGymDetailsListViewAdmin(snapshot, context));
                             } else {
                               return Text("No data");
                             }
                           } else
-                            return SizedBox(
-                                child:
-                                    Center(child: CircularProgressIndicator()));
+                            return SizedBox(child: Center(child: CircularProgressIndicator.adaptive()));
                         });
                   case 'MANAGER':
                     return FutureBuilder<ClimbingGymWithDetailsDTO>(
-                        future: _climbingGymEndpoint
-                            .getVerifiedGymById(widget.gymId),
+                        future: _climbingGymEndpoint.getVerifiedGymById(widget.gymId),
                         builder: (context, snapshot) {
-                          if (snapshot.connectionState ==
-                              ConnectionState.done) {
+                          if (snapshot.connectionState == ConnectionState.done) {
                             if (snapshot.hasError) {
                               return Text("Error");
                             }
@@ -102,31 +96,24 @@ class _GymDetailsState extends State<GymDetails> {
                                   onRefresh: () {
                                     setState(() {});
                                   },
-                                  child: _buildGymDetailsListViewManager(
-                                      snapshot, context));
+                                  child: _buildGymDetailsListViewManager(snapshot, context));
                             } else {
                               return Text("No data");
                             }
                           } else
-                            return SizedBox(
-                                child:
-                                    Center(child: CircularProgressIndicator()));
+                            return SizedBox(child: Center(child: CircularProgressIndicator.adaptive()));
                         });
                   case 'CLIMBER':
                     return FutureBuilder<ClimbingGymWithDetailsDTO>(
-                        future: _climbingGymEndpoint
-                            .getVerifiedGymById(widget.gymId),
+                        future: _climbingGymEndpoint.getVerifiedGymById(widget.gymId),
                         builder: (context, snapshot) {
-                          // print(
-                          //     'Connection state: ${snapshot.connectionState}');
-                          if (snapshot.connectionState ==
-                              ConnectionState.done) {
+                          if (snapshot.connectionState == ConnectionState.done) {
                             if (snapshot.hasError) {
                               return Text("Error");
                             }
                             if (snapshot.hasData) {
                               return RefreshIndicator(
-                                // ignore: missing_return
+                                  // ignore: missing_return
                                   onRefresh: () {
                                     setState(() {});
                                   },
@@ -135,19 +122,13 @@ class _GymDetailsState extends State<GymDetails> {
                               return Text("No data");
                             }
                           } else
-                            return SizedBox(
-                                child:
-                                Center(child: CircularProgressIndicator()));
+                            return SizedBox(child: Center(child: CircularProgressIndicator.adaptive()));
                         });
                   default:
                     return FutureBuilder<ClimbingGymWithDetailsDTO>(
-                        future: _climbingGymEndpoint
-                            .getVerifiedGymById(widget.gymId),
+                        future: _climbingGymEndpoint.getVerifiedGymById(widget.gymId),
                         builder: (context, snapshot) {
-                          // print(
-                          //     'Connection state: ${snapshot.connectionState}');
-                          if (snapshot.connectionState ==
-                              ConnectionState.done) {
+                          if (snapshot.connectionState == ConnectionState.done) {
                             if (snapshot.hasError) {
                               return Text("Error");
                             }
@@ -162,17 +143,14 @@ class _GymDetailsState extends State<GymDetails> {
                               return Text("No data");
                             }
                           } else
-                            return SizedBox(
-                                child:
-                                    Center(child: CircularProgressIndicator()));
+                            return SizedBox(child: Center(child: CircularProgressIndicator.adaptive()));
                         });
                 }
           }
         });
   }
 
-  Widget _buildGymDetailsListViewAdmin(
-      AsyncSnapshot<ClimbingGymWithDetailsDTO> snapshot, context) {
+  Widget _buildGymDetailsListViewAdmin(AsyncSnapshot<ClimbingGymWithDetailsDTO> snapshot, context) {
     _isVerified = snapshot.data.status == GymStatusEnum.VERIFIED ? true : false;
     return ListView(
       children: [
@@ -195,15 +173,13 @@ class _GymDetailsState extends State<GymDetails> {
               height: 20,
             ),
             _gymRoutesWidget(snapshot, context),
-
           ],
         ),
       ],
     );
   }
 
-  Widget _buildGymDetailsListViewManager(
-      AsyncSnapshot<ClimbingGymWithDetailsDTO> snapshot, context) {
+  Widget _buildGymDetailsListViewManager(AsyncSnapshot<ClimbingGymWithDetailsDTO> snapshot, context) {
     _isVerified = snapshot.data.status == GymStatusEnum.VERIFIED ? true : false;
     return ListView(
       children: [
@@ -226,15 +202,13 @@ class _GymDetailsState extends State<GymDetails> {
               height: 20,
             ),
             _gymRoutesWidgetManager(snapshot, context),
-
           ],
         ),
       ],
     );
   }
 
-  Widget _buildGymDetailsListView(
-      AsyncSnapshot<ClimbingGymWithDetailsDTO> snapshot, context) {
+  Widget _buildGymDetailsListView(AsyncSnapshot<ClimbingGymWithDetailsDTO> snapshot, context) {
     _isVerified = snapshot.data.status == GymStatusEnum.VERIFIED ? true : false;
     return ListView(
       children: [
@@ -256,15 +230,13 @@ class _GymDetailsState extends State<GymDetails> {
               height: 20,
             ),
             _gymRoutesWidget(snapshot, context),
-
           ],
         ),
       ],
     );
   }
 
-  Widget _buildGymDetailsListViewClimber(
-      AsyncSnapshot<ClimbingGymWithDetailsDTO> snapshot, context) {
+  Widget _buildGymDetailsListViewClimber(AsyncSnapshot<ClimbingGymWithDetailsDTO> snapshot, context) {
     _isVerified = snapshot.data.status == GymStatusEnum.VERIFIED ? true : false;
     return ListView(
       children: [
@@ -286,44 +258,32 @@ class _GymDetailsState extends State<GymDetails> {
               height: 20,
             ),
             _gymRoutesWidgetClimber(snapshot, context),
-
           ],
         ),
       ],
     );
   }
 
-  Widget buildRouteGridFromSnapshot(
-      context, AsyncSnapshot<List<RouteDTO>> routes, index) {
-    String cover = routes.data[index].photos.length > 0
-        ? routes.data[index].photos[0].photoUrl
-        : "";
+  Widget buildRouteGridFromSnapshot(context, AsyncSnapshot<List<RouteDTO>> routes, index) {
+    String cover = routes.data[index].photos.length > 0 ? routes.data[index].photos[0].photoUrl : "";
     return ClipRRect(
       borderRadius: BorderRadius.circular(8),
       child: Container(
         decoration: BoxDecoration(
           color: Colors.white,
           border: Border.all(color: lightGrey.withOpacity(.4), width: .5),
-          boxShadow: [
-            BoxShadow(
-                offset: Offset(0, 6),
-                color: lightGrey.withOpacity(.1),
-                blurRadius: 12)
-          ],
+          boxShadow: [BoxShadow(offset: Offset(0, 6), color: lightGrey.withOpacity(.1), blurRadius: 12)],
           borderRadius: BorderRadius.circular(8),
         ),
         child: GridTile(
           child: GestureDetector(
-            onTap: () => _onRouteClicked(routes.data[index].climbingGymId,
-                routes.data[index].id, _currentUserId, context),
+            onTap: () => _onRouteClicked(routes.data[index].climbingGymId, routes.data[index].id, _currentUserId, context),
             child: CachedNetworkImage(
               imageUrl: cover,
               fit: BoxFit.cover,
-              placeholder: (context, url) =>
-                  SizedBox(child: Center(child: CircularProgressIndicator())),
+              placeholder: (context, url) => SizedBox(child: Center(child: CircularProgressIndicator.adaptive())),
               //height: 120,
-              errorWidget: (context, url, error) =>
-                  Image(image: AssetImage('assets/images/route-template.jpg')),
+              errorWidget: (context, url, error) => Image(image: AssetImage('assets/images/route-template.jpg')),
             ),
           ),
           footer: GridTileBar(
@@ -348,37 +308,26 @@ class _GymDetailsState extends State<GymDetails> {
     );
   }
 
-  Widget buildRouteGridFromSnapshotManager(
-      context, AsyncSnapshot<List<RouteDTO>> routes, index) {
-    String cover = routes.data[index].photos.length > 0
-        ? routes.data[index].photos[0].photoUrl
-        : "";
+  Widget buildRouteGridFromSnapshotManager(context, AsyncSnapshot<List<RouteDTO>> routes, index) {
+    String cover = routes.data[index].photos.length > 0 ? routes.data[index].photos[0].photoUrl : "";
     return ClipRRect(
       borderRadius: BorderRadius.circular(8),
       child: Container(
         decoration: BoxDecoration(
           color: Colors.white,
           border: Border.all(color: lightGrey.withOpacity(.4), width: .5),
-          boxShadow: [
-            BoxShadow(
-                offset: Offset(0, 6),
-                color: lightGrey.withOpacity(.1),
-                blurRadius: 12)
-          ],
+          boxShadow: [BoxShadow(offset: Offset(0, 6), color: lightGrey.withOpacity(.1), blurRadius: 12)],
           borderRadius: BorderRadius.circular(8),
         ),
         child: GridTile(
           child: GestureDetector(
-            onTap: () => _onRouteClicked(routes.data[index].climbingGymId,
-                routes.data[index].id, _currentUserId, context),
+            onTap: () => _onRouteClicked(routes.data[index].climbingGymId, routes.data[index].id, _currentUserId, context),
             child: CachedNetworkImage(
               imageUrl: cover,
               fit: BoxFit.cover,
-              placeholder: (context, url) =>
-                  SizedBox(child: Center(child: CircularProgressIndicator())),
+              placeholder: (context, url) => SizedBox(child: Center(child: CircularProgressIndicator.adaptive())),
               //height: 150,
-              errorWidget: (context, url, error) =>
-                  Image(image: AssetImage('assets/images/route-template.jpg')),
+              errorWidget: (context, url, error) => Image(image: AssetImage('assets/images/route-template.jpg')),
             ),
           ),
           footer: GridTileBar(
@@ -404,27 +353,19 @@ class _GymDetailsState extends State<GymDetails> {
                 onPressed: () => showDialog<String>(
                     context: context,
                     builder: (BuildContext context) => AlertDialog(
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10)),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                           title: const Text('Delete route'),
                           content: const Text('Are you sure?'),
                           actions: <Widget>[
                             TextButton(
                               onPressed: () => Navigator.pop(context),
-                              child: CustomText(
-                                  text: 'No',
-                                  weight: FontWeight.w300,
-                                  color: dark),
+                              child: CustomText(text: 'No', weight: FontWeight.w300, color: dark),
                             ),
                             TextButton(
                               onPressed: () {
-                                _handleRouteDelete(
-                                    context,
-                                    routes.data[index].climbingGymId,
-                                    routes.data[index].id);
+                                _handleRouteDelete(context, routes.data[index].climbingGymId, routes.data[index].id);
                               },
-                              child: CustomText(
-                                  text: 'Yes, delete!', color: error),
+                              child: CustomText(text: 'Yes, delete!', color: error),
                             ),
                           ],
                         )),
@@ -436,37 +377,26 @@ class _GymDetailsState extends State<GymDetails> {
     );
   }
 
-  Widget buildRouteGridFromSnapshotClimber(
-      context, AsyncSnapshot<List<RouteDTO>> routes, index) {
-    String cover = routes.data[index].photos.length > 0
-        ? routes.data[index].photos[0].photoUrl
-        : "";
+  Widget buildRouteGridFromSnapshotClimber(context, AsyncSnapshot<List<RouteDTO>> routes, index) {
+    String cover = routes.data[index].photos.length > 0 ? routes.data[index].photos[0].photoUrl : "";
     return ClipRRect(
       borderRadius: BorderRadius.circular(8),
       child: Container(
         decoration: BoxDecoration(
           color: Colors.white,
           border: Border.all(color: lightGrey.withOpacity(.4), width: .5),
-          boxShadow: [
-            BoxShadow(
-                offset: Offset(0, 6),
-                color: lightGrey.withOpacity(.1),
-                blurRadius: 12)
-          ],
+          boxShadow: [BoxShadow(offset: Offset(0, 6), color: lightGrey.withOpacity(.1), blurRadius: 12)],
           borderRadius: BorderRadius.circular(8),
         ),
         child: GridTile(
           child: GestureDetector(
-            onTap: () => _onRouteClicked(routes.data[index].climbingGymId,
-                routes.data[index].id, _currentUserId, context),
+            onTap: () => _onRouteClicked(routes.data[index].climbingGymId, routes.data[index].id, _currentUserId, context),
             child: CachedNetworkImage(
               imageUrl: cover,
               fit: BoxFit.cover,
-              placeholder: (context, url) =>
-                  SizedBox(child: Center(child: CircularProgressIndicator())),
+              placeholder: (context, url) => SizedBox(child: Center(child: CircularProgressIndicator.adaptive())),
               //height: 150,
-              errorWidget: (context, url, error) =>
-                  Image(image: AssetImage('assets/images/route-template.jpg')),
+              errorWidget: (context, url, error) => Image(image: AssetImage('assets/images/route-template.jpg')),
             ),
           ),
           footer: GridTileBar(
@@ -531,8 +461,7 @@ class _GymDetailsState extends State<GymDetails> {
 
   Future<int> _getCurrentUserId() async {
     try {
-      UserWithPersonalDataAccessLevelDTO res =
-          await _userEndpoint.getUserPersonalDataAccessLevel();
+      UserWithPersonalDataAccessLevelDTO res = await _userEndpoint.getUserPersonalDataAccessLevel();
       _currentUserId = res.id;
       return res.id;
     } catch (e, s) {
@@ -558,7 +487,6 @@ class _GymDetailsState extends State<GymDetails> {
   }
 
   void _onRouteClicked(int gymId, int routeId, int currentUserId, context) {
-    print('CURRENT USER ' + currentUserId.toString());
     Navigator.push(
       context,
       MaterialPageRoute(
@@ -598,8 +526,7 @@ class _GymDetailsState extends State<GymDetails> {
     return InkWell(
       onTap: () => _handleAddRoute(context, widget.gymId),
       child: Container(
-        decoration: BoxDecoration(
-            color: active, borderRadius: BorderRadius.circular(20)),
+        decoration: BoxDecoration(color: active, borderRadius: BorderRadius.circular(20)),
         alignment: Alignment.center,
         padding: EdgeInsets.symmetric(vertical: 10, horizontal: 14),
         child: Wrap(
@@ -673,19 +600,19 @@ class _GymDetailsState extends State<GymDetails> {
   }
 
   Widget _gymTitleWidget(snapshot) => CustomText(
-    text: snapshot.data.gymName,
-    size: 24,
-    weight: FontWeight.bold,
-  );
+        text: snapshot.data.gymName,
+        size: 24,
+        weight: FontWeight.bold,
+      );
 
   Widget _gymSubtitleWidget(snapshot) => Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-      Text(
-          "${snapshot.data.gymDetailsDTO.street} ${snapshot.data.gymDetailsDTO.number}, ${snapshot.data.gymDetailsDTO.city}, ${snapshot.data.gymDetailsDTO.country}"),
-      _parseGymEnum(snapshot.data.status),
-    ],
-  );
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+              "${snapshot.data.gymDetailsDTO.street} ${snapshot.data.gymDetailsDTO.number}, ${snapshot.data.gymDetailsDTO.city}, ${snapshot.data.gymDetailsDTO.country}"),
+          _parseGymEnum(snapshot.data.status),
+        ],
+      );
 
   Widget _gymTrailingWidgetAdmin(snapshot, context) => StatusSwitchButton(
       isVerified: _isVerified,
@@ -700,7 +627,6 @@ class _GymDetailsState extends State<GymDetails> {
           return Container();
         } else if (userId.hasData) {
           _currentUserId = userId.data;
-          print('FIRST CURRNET' +_currentUserId.toString());
           return Wrap(
             alignment: WrapAlignment.spaceBetween,
             direction: Axis.horizontal,
@@ -713,9 +639,7 @@ class _GymDetailsState extends State<GymDetails> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) =>
-                              AddMaintainerToGymPage(
-                                  gymId: widget.gymId),
+                          builder: (context) => AddMaintainerToGymPage(gymId: widget.gymId),
                         ),
                       );
                     },
@@ -730,8 +654,7 @@ class _GymDetailsState extends State<GymDetails> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => EditGymDetailsPage(
-                              gymId: widget.gymId),
+                          builder: (context) => EditGymDetailsPage(gymId: widget.gymId),
                         ),
                       ).then((_) => setState(() {}));
                     },
@@ -748,278 +671,219 @@ class _GymDetailsState extends State<GymDetails> {
       });
 
   Widget _gymDescriptionWidget(snapshot) => Container(
-    width: double.maxFinite,
-    decoration: BoxDecoration(
-      color: Colors.white,
-      border: Border.all(color: lightGrey.withOpacity(.4), width: .5),
-      boxShadow: [
-        BoxShadow(
-            offset: Offset(0, 6),
-            color: lightGrey.withOpacity(.1),
-            blurRadius: 12)
-      ],
-      borderRadius: BorderRadius.circular(8),
-    ),
-    padding: const EdgeInsets.all(16),
-    child: Column(
-      mainAxisAlignment: MainAxisAlignment.start,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        CustomText(
-          text: "Description",
-          size: 20,
-          weight: FontWeight.bold,
+        width: double.maxFinite,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          border: Border.all(color: lightGrey.withOpacity(.4), width: .5),
+          boxShadow: [BoxShadow(offset: Offset(0, 6), color: lightGrey.withOpacity(.1), blurRadius: 12)],
+          borderRadius: BorderRadius.circular(8),
         ),
-        CustomText(text: "${snapshot.data.gymDetailsDTO.description}"),
-      ],
-    ),
-  );
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            CustomText(
+              text: "Description",
+              size: 20,
+              weight: FontWeight.bold,
+            ),
+            CustomText(text: "${snapshot.data.gymDetailsDTO.description}"),
+          ],
+        ),
+      );
 
   Widget _gymRoutesWidget(snapshot, context) => Container(
-    decoration: BoxDecoration(
-      color: Colors.white,
-      border: Border.all(color: lightGrey.withOpacity(.4), width: .5),
-      boxShadow: [
-        BoxShadow(
-            offset: Offset(0, 6),
-            color: lightGrey.withOpacity(.1),
-            blurRadius: 12)
-      ],
-      borderRadius: BorderRadius.circular(8),
-    ),
-    padding: const EdgeInsets.all(16),
-    child: Column(
-      mainAxisAlignment: MainAxisAlignment.start,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        CustomText(
-          text: "Routes",
-          size: 20,
-          weight: FontWeight.bold,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          border: Border.all(color: lightGrey.withOpacity(.4), width: .5),
+          boxShadow: [BoxShadow(offset: Offset(0, 6), color: lightGrey.withOpacity(.1), blurRadius: 12)],
+          borderRadius: BorderRadius.circular(8),
         ),
-        FutureBuilder<List<RouteDTO>>(
-            future: _loadRoutes(widget.gymId),
-            builder: (context, routes) {
-              print('Connection state: ${routes.connectionState}');
-              if (routes.connectionState == ConnectionState.done) {
-                if (routes.hasError) {
-                  return Text("Error");
-                }
-                if (routes.hasData && routes.data != null) {
-                  return Column(
-                    children: [
-                      GridView.builder(
-                        physics: NeverScrollableScrollPhysics(),
-                        shrinkWrap: true,
-                        itemCount: routes.data.length,
-                        padding: const EdgeInsets.only(top: 20),
-                        gridDelegate:
-                        SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisSpacing:
-                          ResponsiveWidget.isSmallScreen(context)
-                              ? 20
-                              : 64,
-                          mainAxisSpacing:
-                          ResponsiveWidget.isSmallScreen(context)
-                              ? 20
-                              : 64,
-                          crossAxisCount:
-                          ResponsiveWidget.isSmallScreen(context)
-                              ? 2
-                              : ResponsiveWidget.isMediumScreen(
-                              context)
-                              ? 3
-                              : ResponsiveWidget
-                              .isLargeScreen(context)
-                              ? 4
-                              : 5,
-                        ),
-                        itemBuilder: (context, index) {
-                          return buildRouteGridFromSnapshot(
-                              context, routes, index);
-                        },
-                      ),
-                    ],
-                  );
-                } else {
-                  return Container();
-                }
-              } else
-                return SizedBox(
-                    child:
-                    Center(child: CircularProgressIndicator()));
-            })
-      ],
-    ),
-  );
-
-  Widget _gymRoutesWidgetManager(snapshot, context) => Container(
-    decoration: BoxDecoration(
-      color: Colors.white,
-      border: Border.all(color: lightGrey.withOpacity(.4), width: .5),
-      boxShadow: [
-        BoxShadow(
-            offset: Offset(0, 6),
-            color: lightGrey.withOpacity(.1),
-            blurRadius: 12)
-      ],
-      borderRadius: BorderRadius.circular(8),
-    ),
-    padding: const EdgeInsets.all(16),
-    margin: EdgeInsets.only(bottom: 30, top: 30),
-    //height: MediaQuery.of(context).size.height,
-    child: Column(
-      mainAxisAlignment: MainAxisAlignment.start,
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             CustomText(
               text: "Routes",
               size: 20,
               weight: FontWeight.bold,
             ),
-            _buildAddRouteButton(context)
+            FutureBuilder<List<RouteDTO>>(
+                future: _loadRoutes(widget.gymId),
+                builder: (context, routes) {
+                  //print('Connection state: ${routes.connectionState}');
+                  if (routes.connectionState == ConnectionState.done) {
+                    if (routes.hasError) {
+                      return Text("Error");
+                    }
+                    if (routes.hasData && routes.data != null) {
+                      return Column(
+                        children: [
+                          GridView.builder(
+                            physics: NeverScrollableScrollPhysics(),
+                            shrinkWrap: true,
+                            itemCount: routes.data.length,
+                            padding: const EdgeInsets.only(top: 20),
+                            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisSpacing: ResponsiveWidget.isSmallScreen(context) ? 20 : 64,
+                              mainAxisSpacing: ResponsiveWidget.isSmallScreen(context) ? 20 : 64,
+                              crossAxisCount: ResponsiveWidget.isSmallScreen(context)
+                                  ? 2
+                                  : ResponsiveWidget.isMediumScreen(context)
+                                      ? 3
+                                      : ResponsiveWidget.isLargeScreen(context)
+                                          ? 4
+                                          : 5,
+                            ),
+                            itemBuilder: (context, index) {
+                              return buildRouteGridFromSnapshot(context, routes, index);
+                            },
+                          ),
+                        ],
+                      );
+                    } else {
+                      return Container();
+                    }
+                  } else
+                    return SizedBox(child: Center(child: CircularProgressIndicator.adaptive()));
+                })
           ],
         ),
-        FutureBuilder<List<RouteDTO>>(
-            future: _loadRoutes(widget.gymId),
-            builder: (context, routes) {
-              print('Connection state: ${routes.connectionState}');
-              if (routes.connectionState == ConnectionState.done) {
-                if (routes.hasError) {
-                  return Text("Error");
-                }
-                if (routes.hasData && routes.data != null) {
-                  return Column(
-                    children: [
-                      GridView.builder(
-                        physics: NeverScrollableScrollPhysics(),
-                        shrinkWrap: true,
-                        itemCount: routes.data.length,
-                        padding: const EdgeInsets.only(top: 20),
-                        gridDelegate:
-                        SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisSpacing:
-                          ResponsiveWidget.isSmallScreen(context)
-                              ? 20
-                              : 64,
-                          mainAxisSpacing:
-                          ResponsiveWidget.isSmallScreen(context)
-                              ? 20
-                              : 64,
-                          // childAspectRatio:
-                          //     ((MediaQuery.of(context).size.width) /
-                          //             (MediaQuery.of(context)
-                          //                 .size
-                          //                 .height)) *
-                          //         1.4,
-                          crossAxisCount:
-                          ResponsiveWidget.isSmallScreen(context)
-                              ? 2
-                              : ResponsiveWidget.isMediumScreen(
-                              context)
-                              ? 3
-                              : ResponsiveWidget
-                              .isLargeScreen(context)
-                              ? 4
-                              : 5,
-                        ),
-                        itemBuilder: (context, index) {
-                          return buildRouteGridFromSnapshotManager(
-                              context, routes, index);
-                        },
-                      ),
-                    ],
-                  );
-                } else {
-                  return Container();
-                }
-              } else
-                return SizedBox(
-                    child:
-                    Center(child: CircularProgressIndicator()));
-            })
-      ],
-    ),
-  );
+      );
+
+  Widget _gymRoutesWidgetManager(snapshot, context) => Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          border: Border.all(color: lightGrey.withOpacity(.4), width: .5),
+          boxShadow: [BoxShadow(offset: Offset(0, 6), color: lightGrey.withOpacity(.1), blurRadius: 12)],
+          borderRadius: BorderRadius.circular(8),
+        ),
+        padding: const EdgeInsets.all(16),
+        margin: EdgeInsets.only(bottom: 30, top: 30),
+        //height: MediaQuery.of(context).size.height,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                CustomText(
+                  text: "Routes",
+                  size: 20,
+                  weight: FontWeight.bold,
+                ),
+                _buildAddRouteButton(context)
+              ],
+            ),
+            FutureBuilder<List<RouteDTO>>(
+                future: _loadRoutes(widget.gymId),
+                builder: (context, routes) {
+                  print('Connection state: ${routes.connectionState}');
+                  if (routes.connectionState == ConnectionState.done) {
+                    if (routes.hasError) {
+                      return Text("Error");
+                    }
+                    if (routes.hasData && routes.data != null) {
+                      return Column(
+                        children: [
+                          GridView.builder(
+                            physics: NeverScrollableScrollPhysics(),
+                            shrinkWrap: true,
+                            itemCount: routes.data.length,
+                            padding: const EdgeInsets.only(top: 20),
+                            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisSpacing: ResponsiveWidget.isSmallScreen(context) ? 20 : 64,
+                              mainAxisSpacing: ResponsiveWidget.isSmallScreen(context) ? 20 : 64,
+                              // childAspectRatio:
+                              //     ((MediaQuery.of(context).size.width) /
+                              //             (MediaQuery.of(context)
+                              //                 .size
+                              //                 .height)) *
+                              //         1.4,
+                              crossAxisCount: ResponsiveWidget.isSmallScreen(context)
+                                  ? 2
+                                  : ResponsiveWidget.isMediumScreen(context)
+                                      ? 3
+                                      : ResponsiveWidget.isLargeScreen(context)
+                                          ? 4
+                                          : 5,
+                            ),
+                            itemBuilder: (context, index) {
+                              return buildRouteGridFromSnapshotManager(context, routes, index);
+                            },
+                          ),
+                        ],
+                      );
+                    } else {
+                      return Container();
+                    }
+                  } else
+                    return SizedBox(child: Center(child: CircularProgressIndicator.adaptive()));
+                })
+          ],
+        ),
+      );
 
   Widget _gymRoutesWidgetClimber(snapshot, context) => Container(
-    decoration: BoxDecoration(
-      color: Colors.white,
-      border: Border.all(color: lightGrey.withOpacity(.4), width: .5),
-      boxShadow: [
-        BoxShadow(
-            offset: Offset(0, 6),
-            color: lightGrey.withOpacity(.1),
-            blurRadius: 12)
-      ],
-      borderRadius: BorderRadius.circular(8),
-    ),
-    padding: const EdgeInsets.all(16),
-    child: Column(
-      mainAxisAlignment: MainAxisAlignment.start,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        CustomText(
-          text: "Routes",
-          size: 20,
-          weight: FontWeight.bold,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          border: Border.all(color: lightGrey.withOpacity(.4), width: .5),
+          boxShadow: [BoxShadow(offset: Offset(0, 6), color: lightGrey.withOpacity(.1), blurRadius: 12)],
+          borderRadius: BorderRadius.circular(8),
         ),
-        FutureBuilder<List<RouteDTO>>(
-            future: _loadRoutes(widget.gymId),
-            builder: (context, routes) {
-              print('Connection state: ${routes.connectionState}');
-              if (routes.connectionState == ConnectionState.done) {
-                if (routes.hasError) {
-                  return Text("Error");
-                }
-                if (routes.hasData && routes.data != null) {
-                  return Column(
-                    children: [
-                      GridView.builder(
-                        physics: NeverScrollableScrollPhysics(),
-                        shrinkWrap: true,
-                        itemCount: routes.data.length,
-                        padding: const EdgeInsets.only(top: 20),
-                        gridDelegate:
-                        SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisSpacing:
-                          ResponsiveWidget.isSmallScreen(context)
-                              ? 20
-                              : 64,
-                          mainAxisSpacing:
-                          ResponsiveWidget.isSmallScreen(context)
-                              ? 20
-                              : 64,
-                          crossAxisCount:
-                          ResponsiveWidget.isSmallScreen(context)
-                              ? 2
-                              : ResponsiveWidget.isMediumScreen(
-                              context)
-                              ? 3
-                              : ResponsiveWidget
-                              .isLargeScreen(context)
-                              ? 4
-                              : 5,
-                        ),
-                        itemBuilder: (context, index) {
-                          return buildRouteGridFromSnapshotClimber(
-                              context, routes, index);
-                        },
-                      ),
-                    ],
-                  );
-                } else {
-                  return Container();
-                }
-              } else
-                return SizedBox(
-                    child:
-                    Center(child: CircularProgressIndicator()));
-            })
-      ],
-    ),
-  );
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            CustomText(
+              text: "Routes",
+              size: 20,
+              weight: FontWeight.bold,
+            ),
+            FutureBuilder<List<RouteDTO>>(
+                future: _loadRoutes(widget.gymId),
+                builder: (context, routes) {
+                  print('Connection state: ${routes.connectionState}');
+                  if (routes.connectionState == ConnectionState.done) {
+                    if (routes.hasError) {
+                      return Text("Error");
+                    }
+                    if (routes.hasData && routes.data != null) {
+                      return Column(
+                        children: [
+                          GridView.builder(
+                            physics: NeverScrollableScrollPhysics(),
+                            shrinkWrap: true,
+                            itemCount: routes.data.length,
+                            padding: const EdgeInsets.only(top: 20),
+                            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisSpacing: ResponsiveWidget.isSmallScreen(context) ? 20 : 64,
+                              mainAxisSpacing: ResponsiveWidget.isSmallScreen(context) ? 20 : 64,
+                              crossAxisCount: ResponsiveWidget.isSmallScreen(context)
+                                  ? 2
+                                  : ResponsiveWidget.isMediumScreen(context)
+                                      ? 3
+                                      : ResponsiveWidget.isLargeScreen(context)
+                                          ? 4
+                                          : 5,
+                            ),
+                            itemBuilder: (context, index) {
+                              return buildRouteGridFromSnapshotClimber(context, routes, index);
+                            },
+                          ),
+                        ],
+                      );
+                    } else {
+                      return Container();
+                    }
+                  } else
+                    return SizedBox(child: Center(child: CircularProgressIndicator.adaptive()));
+                })
+          ],
+        ),
+      );
 }

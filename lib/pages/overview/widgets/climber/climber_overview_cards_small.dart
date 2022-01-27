@@ -26,7 +26,7 @@ class ClimberOverviewCardsSmallScreen extends StatelessWidget {
                         InfoCardSmall(
                           title: "Verified gyms",
                           value: Center(
-                            child: new CircularProgressIndicator(),
+                            child: new CircularProgressIndicator.adaptive(),
                           ),
                           onTap: () {},
                           isActive: true,
@@ -37,7 +37,7 @@ class ClimberOverviewCardsSmallScreen extends StatelessWidget {
                         InfoCardSmall(
                           title: "Routes",
                           value: Center(
-                            child: new CircularProgressIndicator(),
+                            child: new CircularProgressIndicator.adaptive(),
                           ),
                           onTap: () {},
                         ),
@@ -47,7 +47,7 @@ class ClimberOverviewCardsSmallScreen extends StatelessWidget {
                         InfoCardSmall(
                           title: "Your reviews",
                           value: Center(
-                            child: new CircularProgressIndicator(),
+                            child: new CircularProgressIndicator.adaptive(),
                           ),
                           onTap: () {},
                         ),
@@ -57,7 +57,7 @@ class ClimberOverviewCardsSmallScreen extends StatelessWidget {
                         InfoCardSmall(
                           title: "Liked routes",
                           value: Center(
-                            child: new CircularProgressIndicator(),
+                            child: new CircularProgressIndicator.adaptive(),
                           ),
                           onTap: () {},
                         ),

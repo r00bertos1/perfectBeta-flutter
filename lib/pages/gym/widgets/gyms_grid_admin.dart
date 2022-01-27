@@ -82,7 +82,7 @@ class _GymsGridAdminState extends State<GymsGridAdmin> {
               ]);
             }
           } else
-            return SizedBox(child: Center(child: CircularProgressIndicator()));
+            return SizedBox(child: Center(child: CircularProgressIndicator.adaptive()));
         });
   }
 

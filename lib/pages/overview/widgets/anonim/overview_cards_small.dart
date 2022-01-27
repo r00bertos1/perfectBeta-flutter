@@ -24,7 +24,7 @@ class OverviewCardsSmallScreen extends StatelessWidget {
                         InfoCardSmall(
                           title: "Verified gyms",
                           value: Center(
-                            child: new CircularProgressIndicator(),
+                            child: new CircularProgressIndicator.adaptive(),
                           ),
                           onTap: () {},
                           isActive: true,
@@ -35,7 +35,7 @@ class OverviewCardsSmallScreen extends StatelessWidget {
                         InfoCardSmall(
                           title: "Routes",
                           value: Center(
-                            child: new CircularProgressIndicator(),
+                            child: new CircularProgressIndicator.adaptive(),
                           ),
                           onTap: () {},
                         ),

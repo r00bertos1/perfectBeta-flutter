@@ -26,7 +26,7 @@ class AdminOverviewCardsSmallScreen extends StatelessWidget {
                         InfoCardSmall(
                           title: "Active users",
                           value: Center(
-                            child: new CircularProgressIndicator(),
+                            child: new CircularProgressIndicator.adaptive(),
                           ),
                           onTap: () {},
                           isActive: true,
@@ -37,7 +37,7 @@ class AdminOverviewCardsSmallScreen extends StatelessWidget {
                         InfoCardSmall(
                           title: "Climbers",
                           value: Center(
-                            child: new CircularProgressIndicator(),
+                            child: new CircularProgressIndicator.adaptive(),
                           ),
                           onTap: () {},
                         ),
@@ -47,7 +47,7 @@ class AdminOverviewCardsSmallScreen extends StatelessWidget {
                         InfoCardSmall(
                           title: "Managers",
                           value: Center(
-                            child: new CircularProgressIndicator(),
+                            child: new CircularProgressIndicator.adaptive(),
                           ),
                           onTap: () {},
                         ),
@@ -57,7 +57,7 @@ class AdminOverviewCardsSmallScreen extends StatelessWidget {
                         InfoCardSmall(
                           title: "Admins",
                           value: Center(
-                            child: new CircularProgressIndicator(),
+                            child: new CircularProgressIndicator.adaptive(),
                           ),
                           onTap: () {},
                         ),

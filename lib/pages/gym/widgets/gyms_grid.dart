@@ -66,7 +66,7 @@ class GymsGrid extends StatelessWidget {
               return Text("No data");
             }
           } else
-            return SizedBox(child: Center(child: CircularProgressIndicator()));
+            return SizedBox(child: Center(child: CircularProgressIndicator.adaptive()));
         });
   }
 
