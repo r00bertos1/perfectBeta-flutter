@@ -14,23 +14,29 @@ class CloudEndpoint {
 
   // ANONIM
   // POST
-  Future<List<Uri>> uploadFile(map) async {
+  Future<Response> uploadFile(files) async {
     try {
-      var formData = FormData.fromMap(map);
       // map with a list of imagePaths eg.
       // {
       //   'files': '${imagePathList}',
       // }
-      Response<String> response = await _client.post('/info',
-          data: formData, options: Options(headers: {"requiresToken": false}));
+      List<dynamic> _documents = [];
 
-      var linksList = response.data as List<String>;
-      List<Uri> res = List<Uri>.from(linksList.map((item) => Uri.parse(item)));
-      return res;
+      for(int i=0; i< files.length; i++ ){
+        var path = files[i].path;
+        _documents.add(await MultipartFile.fromFile(path,
+            filename: path.split('/').last));
+      }
 
-      // return jsonResponse
-      //     .map((item) => new ClimbingGymDTO.fromJson(item))
-      //     .toList();
+      var formData = FormData.fromMap({'files': _documents});
+
+
+      Response<String> response = await _client.post('/image/upload',
+          data: formData);
+
+      // var linksList = response.data as List<String>;
+      //List<Uri> res = List<Uri>.from(linksList.map((item) => Uri.parse(item)));
+      return response;
 
     } on DioError catch (ex) {
       if (ex.response != null) {

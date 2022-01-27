@@ -54,7 +54,7 @@ class _ManagersTableState extends State<ManagersTable> {
               return _createDataTable(list);
             } else {
               return SizedBox(
-                  child: Center(child: CircularProgressIndicator()));
+                  child: Center(child: CircularProgressIndicator.adaptive()));
             }
           }),
     );

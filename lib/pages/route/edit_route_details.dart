@@ -29,7 +29,6 @@ class _EditRouteDetailsPageState extends State<EditRouteDetailsPage> {
   final _routeNameController = TextEditingController();
   final _difficultyController = TextEditingController();
   final _descriptionController = TextEditingController();
-  //TODO: holds and photos add to edit route
 
   @override
   void initState() {

@@ -1,5 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
+import 'package:dio/adapter.dart';
 import "package:dio/dio.dart";
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
@@ -29,6 +31,12 @@ class ApiClient {
     _tokenDio.options = _dio.options;
     //_dio.interceptors.add(ApiInterceptors());
     _dio.interceptors.add(ApiInterceptors());
+    (_dio.httpClientAdapter as DefaultHttpClientAdapter).onHttpClientCreate =
+        // ignore: missing_return
+        (HttpClient client) {
+      client.badCertificateCallback =
+          (X509Certificate cert, String host, int port) => true;
+    };
     // _dio.interceptors.add(QueuedInterceptorsWrapper(
     //   onRequest: (options, handler) async {
     //     print('send request：path:${options.path}，baseURL:${options.baseUrl}');
@@ -71,11 +79,14 @@ class ApiInterceptors extends Interceptor {
   void onRequest(
       RequestOptions options, RequestInterceptorHandler handler) async {
     print('REQUEST[${options.method}] => PATH: ${options.path}');
-    EasyLoading.show(status: 'loading...');
+    // EasyLoading.show(status: 'loading...');
 
-    ApiClient _client = new ApiClient();
-    // final ApiClient _client = new ApiClient();
-    var _authenticationEndpoint = new AuthenticationEndpoint(_client.init());
+    //ApiClient _client = new ApiClient();
+    //var _authenticationEndpoint = new AuthenticationEndpoint(_client.init());
+    BaseOptions dioOptions = BaseOptions(
+      baseUrl: 'https://perfectbeta-spring-boot-tls-pyclimb.apps.okd.cti.p.lodz.pl/api',
+    );
+    var _authenticationEndpoint = new AuthenticationEndpoint(new Dio(dioOptions));
 
     if (options.headers.containsKey("requiresToken")) {
       options.headers.remove("requiresToken");
@@ -114,7 +125,7 @@ class ApiInterceptors extends Interceptor {
   void onResponse(Response response, ResponseInterceptorHandler handler) async {
     print(
         'RESPONSE[${response.statusCode}] => PATH: ${response.requestOptions.path}');
-    EasyLoading.dismiss();
+    // EasyLoading.dismiss();
     // if (response.headers.value("verifyToken") != null) {
     //   //if the header is present, then compare it with the Shared Prefs key
     //   SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -143,6 +154,9 @@ class ApiInterceptors extends Interceptor {
       EasyLoading.showError('Unable to connect with Database');
     } else {
       var responseClass = (err.response.statusCode / 100).floor();
+      print('DATA==========');
+      print(err.response.data);
+      print('DATA==========');
       String jsonsDataString = err.response?.data.toString().replaceAll("\n","");
       final jsonData = jsonDecode(jsonsDataString);
       //if (err.response.data['key'] != null) {
@@ -168,7 +182,12 @@ class ApiInterceptors extends Interceptor {
             EasyLoading.showError('Unauthenticated');
           }
         } else if (err.response?.statusCode == 403) {
+          if (jsonData["message"] == "GYM_NOT_VERIFIED_EXCEPTION: Gym must be verified before that operation") {
+            EasyLoading.showError(
+                'Gym must be verified before that operation');
+          } else {
           EasyLoading.showError('Unauthorized');
+          }
         } else if (err.response.statusCode == 404) {
           EasyLoading.showError('Not found');
         }

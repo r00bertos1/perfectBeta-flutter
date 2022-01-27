@@ -276,16 +276,18 @@ class _AuthenticationPage extends State<AuthenticationPage> {
         username: _loginController.text.trim(),
         password: _passwordController.text.trim());
     var res = await _authenticationEndpoint.authenticate(authData);
-    if (res.statusCode == 200) {
-      Get.offAllNamed(rootRoute);
-      menuController.changeActiveItemTo(overviewPageDisplayName);
-    } else {
-      print(res.statusCode);
+    if (res != null) {
+      if (res.statusCode == 200) {
+        Get.offAllNamed(rootRoute);
+        menuController.changeActiveItemTo(overviewPageDisplayName);
+      } else {
+        print(res.statusCode);
+      }
     }
   }
 
-  void _handleAuthenticationAnonim() {
-    var res = _authenticationEndpoint.authenticateAnonim();
+  Future<void> _handleAuthenticationAnonim() async {
+    var res = await _authenticationEndpoint.authenticateAnonim();
     if (res) {
       Get.offAllNamed(rootRoute);
       menuController.changeActiveItemTo(overviewPageDisplayName);

@@ -131,10 +131,10 @@ class _RouteDetailsPageState extends State<RouteDetailsPage> {
             SizedBox(
               height: 20,
             ),
-            _holdsWidget(snapshot),
-            SizedBox(
-              height: 20,
-            ),
+            // _holdsWidget(snapshot),
+            // SizedBox(
+            //   height: 20,
+            // ),
             _ratingsWidgetManager(snapshot, context),
           ],
         ),
@@ -167,10 +167,10 @@ class _RouteDetailsPageState extends State<RouteDetailsPage> {
             SizedBox(
               height: 20,
             ),
-            _holdsWidget(snapshot),
-            SizedBox(
-              height: 20,
-            ),
+            // _holdsWidget(snapshot),
+            // SizedBox(
+            //   height: 20,
+            // ),
             _ratingsWidgetClimber(snapshot, context),
           ],
         ),
@@ -201,10 +201,10 @@ class _RouteDetailsPageState extends State<RouteDetailsPage> {
             SizedBox(
               height: 20,
             ),
-            _holdsWidget(snapshot),
-            SizedBox(
-              height: 20,
-            ),
+            // _holdsWidget(snapshot),
+            // SizedBox(
+            //   height: 20,
+            // ),
             _ratingsWidget(snapshot, context),
           ],
         ),
@@ -217,13 +217,15 @@ class _RouteDetailsPageState extends State<RouteDetailsPage> {
       DataPage res = await _routeEndpoint.getAllGymRoutes(gymId);
       photoList.clear();
       RouteDTO _selectedRoute;
-      if (res.content != null) {
-        res.content.forEach((route) {
-          if (route.id == routeId) {
-            _selectedRoute = route;
-            route.photos.forEach((photo) => photoList.add(photo.photoUrl));
-          }
-        });
+      if (res != null) {
+        if (res.content != null) {
+          res.content.forEach((route) {
+            if (route.id == routeId) {
+              _selectedRoute = route;
+              route.photos.forEach((photo) => photoList.add(photo.photoUrl));
+            }
+          });
+        }
       }
       return _selectedRoute;
     } catch (e, s) {
@@ -247,7 +249,7 @@ class _RouteDetailsPageState extends State<RouteDetailsPage> {
         //     builder: (context) => GymDetails(gymId: gymId),
         //   ),
         // );
-        setState(() {});
+        //setState(() {});
       }
       return false;
     } catch (e, s) {
@@ -269,7 +271,7 @@ class _RouteDetailsPageState extends State<RouteDetailsPage> {
         //     builder: (context) => GymDetails(gymId: gymId),
         //   ),
         // );
-        setState(() {});
+        //setState(() {});
       }
       return false;
     } catch (e, s) {
@@ -347,7 +349,7 @@ class _RouteDetailsPageState extends State<RouteDetailsPage> {
 
   Widget _buildAddRateButton(context) {
     return InkWell(
-      onTap: _showRatingAppDialog,
+      onTap: () => _showRatingAppDialog(),
       child: Container(
         decoration: BoxDecoration(
             color: active, borderRadius: BorderRadius.circular(20)),
@@ -408,10 +410,12 @@ class _RouteDetailsPageState extends State<RouteDetailsPage> {
     try {
       RatingDTO ratingDTO = new RatingDTO(rate: response.rating, comment: response.comment);
       var res = await _routeEndpoint.addRatingToRoute(routeId, ratingDTO);
-      if (res.statusCode == 200) {
-        EasyLoading.showSuccess('Rating added!');
-        setState(() {});
-        //Navigator.of(context).pop();
+      if (res != null) {
+        if (res.statusCode == 200) {
+          EasyLoading.showSuccess('Rating added!');
+          setState(() {});
+          //Navigator.of(context).pop();
+        }
       }
     } catch (e, s) {
       print("Exception $e");
@@ -430,7 +434,7 @@ class _RouteDetailsPageState extends State<RouteDetailsPage> {
           loadingBuilder: (context, child, loadingProgress) =>
               (loadingProgress == null)
                   ? child
-                  : SizedBox(child: Center(child: CircularProgressIndicator())),
+                  : SizedBox(child: Center(child: CircularProgressIndicator.adaptive())),
           errorBuilder: (context, error, stackTrace) => Image(
             image: AssetImage('assets/images/route-template.jpg'),
             height: MediaQuery.of(context).size.height,
@@ -451,7 +455,7 @@ class _RouteDetailsPageState extends State<RouteDetailsPage> {
           loadingBuilder: (context, child, loadingProgress) =>
               (loadingProgress == null)
                   ? child
-                  : SizedBox(child: Center(child: CircularProgressIndicator())),
+                  : SizedBox(child: Center(child: CircularProgressIndicator.adaptive())),
           errorBuilder: (context, error, stackTrace) => Image(
             image: AssetImage('assets/images/route-template.jpg'),
             height: MediaQuery.of(context).size.height,

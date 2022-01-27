@@ -4,11 +4,11 @@ import 'package:dio/dio.dart';
 import 'package:perfectBeta/dto/pages/page_dto.dart';
 import 'package:perfectBeta/dto/routes/rating_dto.dart';
 import 'package:perfectBeta/dto/routes/route_dto.dart';
+import 'package:perfectBeta/dto/holds/hold.dart';
 
 import '../api_client.dart';
 
 class RouteEndpoint {
-  //Dio _client = new ApiClient().init();
   Dio _client;
   RouteEndpoint(this._client);
 
@@ -118,7 +118,7 @@ class RouteEndpoint {
   }
 
     // POST
-  Future<RouteDTO> addWallToGym(RouteDTO body) async {
+  Future<Response> addWallToGym(RouteDTO body) async {
     try {
       //body is a RouteDTO eg.
       // var body =  {
@@ -139,9 +139,10 @@ class RouteEndpoint {
       Response<String> response =
           await _client.post('/route/add', data: jsonEncode(body));
 
-      final jsonResponse = json.decode(response.data);
-      RouteDTO page = new RouteDTO.fromJson(jsonResponse);
-      return page;
+      // final jsonResponse = json.decode(response.data);
+      // RouteDTO page = new RouteDTO.fromJson(jsonResponse);
+      //return page;
+      return response;
     } on DioError catch (ex) {
       if (ex.response != null) {
         print('Dio error!');

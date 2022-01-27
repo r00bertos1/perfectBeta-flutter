@@ -120,7 +120,7 @@ class _UserInfoCardSmallState extends State<UserInfoCardSmall> {
                           ),
                         );
                       } else {
-                        return SizedBox(child: Center(child: CircularProgressIndicator()));
+                        return SizedBox(child: Center(child: CircularProgressIndicator.adaptive()));
                       }
                     }),
               ],

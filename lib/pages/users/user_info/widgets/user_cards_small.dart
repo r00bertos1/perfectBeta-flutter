@@ -16,7 +16,6 @@ import 'package:get/get.dart';
 import '../change_email.dart';
 import 'function_card_small.dart';
 
-
 class UserCardsSmallScreen extends StatelessWidget {
   final _passKey = GlobalKey<FormState>();
   //API
@@ -31,7 +30,7 @@ class UserCardsSmallScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     double _width = MediaQuery.of(context).size.width;
 
-    return  Container(
+    return Container(
       height: 400,
       child: Column(
         children: [
@@ -39,11 +38,11 @@ class UserCardsSmallScreen extends StatelessWidget {
             title: "Edit personal information",
             icon: Icons.info,
             onTap: () =>
-            //     Navigator.push(
-            //   context, //PasswordChangePage
-            //   MaterialPageRoute(builder: (context) => ChangePersonalDataPage()),
-            // ),
-            Navigator.pushReplacement(
+                //     Navigator.push(
+                //   context, //PasswordChangePage
+                //   MaterialPageRoute(builder: (context) => ChangePersonalDataPage()),
+                // ),
+                Navigator.pushReplacement(
               context,
               MaterialPageRoute(
                 builder: (context) => ChangePersonalDataPage(),
@@ -76,13 +75,13 @@ class UserCardsSmallScreen extends StatelessWidget {
             height: _width / 64,
           ),
           FunctionCardSmall(
-            alignment:  Alignment.bottomCenter,
+            alignment: Alignment.bottomCenter,
             title: "Delete account",
             icon: Icons.remove_circle,
             onTap: () => showDialog<String>(
               context: context,
               builder: (BuildContext context) => AlertDialog(
-                shape:  RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                 title: const Text('Delete account'),
                 content: Form(
                   key: _passKey,
@@ -91,34 +90,31 @@ class UserCardsSmallScreen extends StatelessWidget {
                     children: [
                       const Text('Your account will be removed. Are you sure?'),
                       TextFormField(
-                        validator: (value) {
-                          // Minimum eight characters, at least one uppercase letter, one lowercase letter, one number and one special character:
-                          String pattern =
-                              r'(^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,32}$)';
-                          RegExp regExp = new RegExp(pattern);
-                          if (value == null || value.isEmpty) {
-                            return 'Please enter your account password';
-                          } else if (!regExp.hasMatch(value)) {
-                            return 'Please enter your account password';
-                          }
-                          return null;
-                        },
-                        controller: _passwordController,
-                        obscureText: true,
+                          validator: (value) {
+                            // Minimum eight characters, at least one uppercase letter, one lowercase letter, one number and one special character:
+                            String pattern = r'(^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,32}$)';
+                            RegExp regExp = new RegExp(pattern);
+                            if (value == null || value.isEmpty) {
+                              return 'Please enter your account password';
+                            } else if (!regExp.hasMatch(value)) {
+                              return 'Please enter your account password';
+                            }
+                            return null;
+                          },
+                          controller: _passwordController,
+                          obscureText: true,
                           decoration: InputDecoration(
                               errorMaxLines: 4,
                               labelText: "Password",
                               hintText: "Enter your password",
-                              border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(20)))
-                      ),
+                              border: OutlineInputBorder(borderRadius: BorderRadius.circular(20)))),
                     ],
                   ),
                 ),
                 actions: <Widget>[
                   TextButton(
                     onPressed: () => Navigator.pop(context),
-                    child: CustomText(text: 'No',weight: FontWeight.w300, color: dark),
+                    child: CustomText(text: 'No', weight: FontWeight.w300, color: dark),
                   ),
                   TextButton(
                     onPressed: () {
@@ -142,19 +138,17 @@ class UserCardsSmallScreen extends StatelessWidget {
   Future<void> _handleUserDelete(context) async {
     UserWithPersonalDataAccessLevelDTO userData = await _userEndpoint.getUserPersonalDataAccessLevel();
 
-    PasswordDTO password = new PasswordDTO(
-        password: _passwordController.text.trim());
+    PasswordDTO password = new PasswordDTO(password: _passwordController.text.trim());
     _passwordController.clear();
     var res = await _userEndpoint.deleteUser(userData.id, password);
-    if (res.statusCode == 200) {
-      Get.offAllNamed(
-          authenticationPageRoute);
-      // menuController.changeActiveItemTo(
-      //     overviewPageDisplayName);
-    }
-    else {
+    if (res != null) {
+      if (res.statusCode == 200) {
+        Get.offAllNamed(authenticationPageRoute);
+        // menuController.changeActiveItemTo(
+        //     overviewPageDisplayName);
+      }
+    } else {
       EasyLoading.showError('Error' + res.statusMessage);
     }
   }
-
 }

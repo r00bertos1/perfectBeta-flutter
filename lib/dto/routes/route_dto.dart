@@ -31,21 +31,36 @@ class RouteDTO {
   //   this.photos,
   // });
 
+  // Map<String, dynamic> toJson() {
+  //   return {
+  //     "id": this.id,
+  //     "routeName": this.routeName,
+  //     "difficulty": this.difficulty,
+  //     "description": this.description,
+  //     "holdsDetails": this.holdsDetails,
+  //     "avgRating": this.avgRating,
+  //     "climbingGymId": this.climbingGymId,
+  //     //"photos": this.photos,
+  //   };
+  // }
+
   Map<String, dynamic> toJson() {
-    return {
-      "id": this.id,
-      "routeName": this.routeName,
-      "difficulty": this.difficulty,
-      "description": this.description,
-      "holdsDetails": this.holdsDetails,
-      "avgRating": this.avgRating,
-      "climbingGymId": this.climbingGymId,
-      "photos": this.photos,
-    };
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['id'] = this.id;
+    data['routeName'] = this.routeName;
+    data['difficulty'] = this.difficulty;
+    data['description'] = this.description;
+    data['holdsDetails'] = this.holdsDetails;
+    data['avgRating'] = this.avgRating;
+    data['climbingGymId'] = this.climbingGymId;
+    if (this.photos != null) {
+      data['photos'] = this.photos.map((v) => v.toJson()).toList();
+    }
+    return data;
   }
+
   factory RouteDTO.fromJson(Map<String, dynamic> json) {
     var list = json['photos'] as List;
-    print(list.runtimeType);
     List<PhotoDTO> photosList = list.map((i) => PhotoDTO.fromJson(i)).toList();
 
     return RouteDTO(
