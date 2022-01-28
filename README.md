@@ -9,6 +9,9 @@
 * [Android Studio >= 4.1.1](https://developer.android.com/studio)
 * [Google Chrome 96.0.4664.110](https://www.google.com/intl/pl_pl/chrome/) (for web development)
 
+### Optional
+* [Docker](https://docs.docker.com/get-docker/) (for running application in a container)
+
 ### Packages
 | Package  | Version |
 | ------------- | ------------- |
@@ -61,6 +64,27 @@ flutter run lib/main.dart
 ## Mobile application
 You can also download **perfectBeta.apk** file and install it on your mobile device
 
+## Docker integration
+You can run an application inside a Docker Container
+
+### 1. Build the Container
+Change Directories into the root project folder
+Run the command 
+````
+docker build . -t <IMAGE_TAG>
+````
+where **<IMAGE_TAG>** is a name of an image
+
+### 2. Run the Container
+To run the container enter command
+````
+docker run -i -p 8080:<PORT> -td <IMAGE_TAG>
+````
+where **<PORT>** is a port specified inside Dockerfile and server/server.sh. Default port is **4040**
+
+### 3. Access the App
+App is now running on selected port. You can access is eg. by browser
+  
 ## Help
 [Flutter online documentation](https://flutter.dev/docs), which offers tutorials,
 samples, guidance on mobile development, and a full API reference.
