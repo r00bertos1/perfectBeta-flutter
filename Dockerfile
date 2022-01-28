@@ -31,7 +31,7 @@ RUN flutter pub get
 RUN flutter build web
 
 # Document the exposed port
-EXPOSE 4040
+EXPOSE 2137
 
 # Set the server startup script as executable
 RUN ["chmod", "+x", "/usr/local/bin/app/server/server.sh"]
