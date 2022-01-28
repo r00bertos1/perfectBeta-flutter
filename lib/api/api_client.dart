@@ -1,19 +1,17 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:io';
 import 'package:dio/adapter.dart';
 import "package:dio/dio.dart";
-import 'package:flutter/cupertino.dart';
+import 'dart:io';
+import 'package:flutter/foundation.dart';
+import 'dart:io' as IO;
 import 'package:flutter_easyloading/flutter_easyloading.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:perfectBeta/constants/controllers.dart';
-import 'package:perfectBeta/dto/auth/token_dto.dart';
 import 'package:perfectBeta/api/providers/authentication_endpoint.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
-import 'package:perfectBeta/dto/exception_dto.dart';
 import 'package:perfectBeta/routing/routes.dart';
 import '../storage/secure_storage.dart';
 import 'package:get/get.dart' as nav;
+
 
 class ApiClient {
   Dio init() {
@@ -26,20 +24,23 @@ class ApiClient {
     _dio.options.headers['Content-Type'] = 'application/json';
     _dio.options.headers['Access-Control-Allow-Credentials'] = true;
     _dio.options.headers['Access-Control-Allow-Origin'] = '*';
+    _dio.options.headers['Access-Control-Allow-Headers'] = '*';
+    _dio.options.headers['Access-Control-Allow-Methods'] = '*';
+
     // _dio.options.headers['Access-Control-Allow-Headers'] = 'Origin,Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,locale';
     // _dio.options.headers['Access-Control-Allow-Methods'] = 'POST, GET, PUT, DELETE, OPTIONS';
     _tokenDio.options = _dio.options;
     //_dio.interceptors.add(ApiInterceptors());
     _dio.interceptors.add(ApiInterceptors());
-    //_dio.options.
-    // (_dio.httpClientAdapter as DefaultHttpClientAdapter).onHttpClientCreate  = (client) {
-    //   client.badCertificateCallback=(X509Certificate cert, String host, int port){
-    //     //if(cert.pem==PEM){ // Verify the certificate
-    //       return true;
-    //     //}
-    //     //return false;
-    //   };
-    // };
+
+    if(!kIsWeb){
+      (_dio.httpClientAdapter as DefaultHttpClientAdapter).onHttpClientCreate =
+          (IO.HttpClient client) {
+        client.badCertificateCallback =
+            (X509Certificate cert, String host, int port) => true;
+        return client;
+      };
+    }
     return _dio;
   }
 }

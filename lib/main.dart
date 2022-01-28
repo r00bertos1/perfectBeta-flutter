@@ -15,7 +15,7 @@ import 'package:perfectBeta/routing/http_overwrites.dart';
 import 'routing/routes.dart';
 
 void main() {
-  HttpOverrides.global = MyHttpOverrides();
+  //HttpOverrides.global = MyHttpOverrides();
   Get.put(MenuController());
   Get.put(NavigationController());
   Get.put(AccessLevelController());
