@@ -83,7 +83,7 @@ docker run -i -p 8080:<PORT> -td <IMAGE_TAG>
 where **<PORT>** is a port specified inside *Dockerfile* and *server/server.sh*. Default port is **4040**
 
 ### 3. Access the App
-App is now running on selected port. You can access is eg. by browser
+App is now running on selected port. You can access is eg. by web browser.
   
 ## Help
 [Flutter online documentation](https://flutter.dev/docs), which offers tutorials,
