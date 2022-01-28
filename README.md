@@ -58,6 +58,9 @@ flutter pub get
 flutter run lib/main.dart
 ````
 
+## Mobile application
+You can also download **perfectBeta.apk** file and install it on your mobile device
+
 ## Help
 [Flutter online documentation](https://flutter.dev/docs), which offers tutorials,
 samples, guidance on mobile development, and a full API reference.

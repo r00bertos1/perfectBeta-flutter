@@ -31,14 +31,14 @@ class ApiClient {
     //_dio.interceptors.add(ApiInterceptors());
     _dio.interceptors.add(ApiInterceptors());
 
-    if(!kIsWeb){
-      (_dio.httpClientAdapter as DefaultHttpClientAdapter).onHttpClientCreate =
-          (IO.HttpClient client) {
-        client.badCertificateCallback =
-            (X509Certificate cert, String host, int port) => true;
-        return client;
-      };
-    }
+    // if(!kIsWeb){
+    //   (_dio.httpClientAdapter as DefaultHttpClientAdapter).onHttpClientCreate =
+    //       (IO.HttpClient client) {
+    //     client.badCertificateCallback =
+    //         (X509Certificate cert, String host, int port) => true;
+    //     return client;
+    //   };
+    // }
     return _dio;
   }
 }
