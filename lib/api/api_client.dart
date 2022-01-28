@@ -27,8 +27,6 @@ class ApiClient {
     _dio.options.headers['Access-Control-Allow-Headers'] = '*';
     _dio.options.headers['Access-Control-Allow-Methods'] = '*';
 
-    // _dio.options.headers['Access-Control-Allow-Headers'] = 'Origin,Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,locale';
-    // _dio.options.headers['Access-Control-Allow-Methods'] = 'POST, GET, PUT, DELETE, OPTIONS';
     _tokenDio.options = _dio.options;
     //_dio.interceptors.add(ApiInterceptors());
     _dio.interceptors.add(ApiInterceptors());
