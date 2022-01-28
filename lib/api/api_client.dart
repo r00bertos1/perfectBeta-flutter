@@ -31,35 +31,15 @@ class ApiClient {
     _tokenDio.options = _dio.options;
     //_dio.interceptors.add(ApiInterceptors());
     _dio.interceptors.add(ApiInterceptors());
-    (_dio.httpClientAdapter as DefaultHttpClientAdapter).onHttpClientCreate =
-        // ignore: missing_return
-        (HttpClient client) {
-      client.badCertificateCallback =
-          (X509Certificate cert, String host, int port) => true;
-    };
-    // _dio.interceptors.add(QueuedInterceptorsWrapper(
-    //   onRequest: (options, handler) async {
-    //     print('send request：path:${options.path}，baseURL:${options.baseUrl}');
-    //     SharedPreferences prefs = await SharedPreferences.getInstance();
-    //     var token = prefs.get("token");
-    //     if (token == null) {
-    //       print('no token，request token firstly...');
-    //       await _tokenDio.post('/auth/authenticate').then((res) {
-    //         TokenDTO tokenDTO;
-    //         options.headers['Authorization'] = 'Bearer ${token}';
-    //         print('request token succeed, value: ' + res.data['data']['token']);
-    //         print(
-    //             'continue to perform request：path:${options.path}，baseURL:${options.path}');
-    //         handler.next(options);
-    //       }).catchError((error, stackTrace) {
-    //         handler.reject(error, true);
-    //       });
-    //     } else {
-    //       options.headers['Authorization'] = 'Bearer ${token}';
-    //       return handler.next(options);
-    //     }
-    //   },
-    // ));
+    //_dio.options.
+    // (_dio.httpClientAdapter as DefaultHttpClientAdapter).onHttpClientCreate  = (client) {
+    //   client.badCertificateCallback=(X509Certificate cert, String host, int port){
+    //     //if(cert.pem==PEM){ // Verify the certificate
+    //       return true;
+    //     //}
+    //     //return false;
+    //   };
+    // };
     return _dio;
   }
 }

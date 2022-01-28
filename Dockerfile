@@ -37,4 +37,4 @@ EXPOSE 2137
 RUN ["chmod", "+x", "/usr/local/bin/app/server/server.sh"]
 
 # Start the web server
-ENTRYPOINT [ "/usr/local/bin/app/server/server.sh" ]
+ENTRYPOINT [ "sh", "/usr/local/bin/app/server/server.sh" ]
