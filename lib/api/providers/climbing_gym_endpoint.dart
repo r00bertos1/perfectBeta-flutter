@@ -17,15 +17,12 @@ class ClimbingGymEndpoint {
   // GET
   Future<DataPage> getVerifiedGyms() async {
     try {
-      //final response = await _client.get('/gym/verified/all');
       Response<String> response = await _client.get('/gym/verified/all',
           options: Options(headers: {"requiresToken": false}));
-      //print(response.data);
 
       //Decode response data and create new model class
       final jsonResponse = json.decode(response.data);
       DataPage page = new DataPage.fromJson(jsonResponse);
-      //print('PAGE' + page.toString());
 
       return page;
     } on DioError catch (ex) {
