@@ -1,14 +1,19 @@
+import 'package:perfectBeta/service.dart';
+import 'dart:convert';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_easyloading/flutter_easyloading.dart';
-import 'package:perfectBeta/api/providers/route_endpoint.dart';
-import 'package:perfectBeta/constants/controllers.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:perfectBeta/constants/enums.dart';
 import 'package:perfectBeta/constants/style.dart';
+import 'package:perfectBeta/model/gyms/climbing_gym_dto.dart';
+import 'package:perfectBeta/model/holds/holds_details_dto.dart';
 import 'package:perfectBeta/model/pages/page_dto.dart';
-import 'package:perfectBeta/pages/route/add_route/add_route.dart';
-import 'package:perfectBeta/routing/routes.dart';
+import 'package:perfectBeta/model/users/data/access_level_dto.dart';
+import 'package:perfectBeta/pages/users/all_users/widgets/user_all_info_card.dart';
 import 'package:perfectBeta/widgets/custom_text.dart';
 import '../main.dart';
+import 'dart:io';
+import 'handlers.dart';
 
 //API
 var _routeEndpoint = new RouteEndpoint(getIt.get());
@@ -23,26 +28,6 @@ Widget parseGymEnum(GymStatusEnum data) {
       return CustomText(text: "Closed", color: error);
   }
   return SizedBox.shrink();
-}
-
-Future<bool> handleAddFavourite(int routeId, bool added) async {
-  if (added) {
-    var res = await _routeEndpoint.removeRouteFromFavourites(routeId);
-    if (res != null) {
-      if (res.statusCode == 200) {
-        return true;
-      }
-    }
-    return false;
-  } else {
-    var res = await _routeEndpoint.addRouteToFavourites(routeId);
-    if (res != null) {
-      if (res.statusCode == 200) {
-        return true;
-      }
-    }
-    return false;
-  }
 }
 
 Future<bool> isFavourited(int routeId) async {
@@ -63,27 +48,58 @@ Future<bool> isFavourited(int routeId) async {
   }
 }
 
-void handleAddRoute(BuildContext context, int gymId) {
-  menuController.changeActiveItemTo(addRoutePageDisplayName);
-  Navigator.push(
-    context,
-    MaterialPageRoute(
-      builder: (context) => AddRoutePage(gymId: gymId),
-    ),
+Future<HoldsDetailsDTO> getHoldDataFromImage(imageFile) async {
+  BaseOptions dioOptions = BaseOptions(
+    connectTimeout: 100000,
+    receiveTimeout: 100000,
   );
-}
-
-Future<bool> handleRouteDelete(BuildContext context, int gymId, int routeId) async {
+  var _pythonEndpoint = new PythonEndpoint(new Dio(dioOptions));
   try {
-    var res = await _routeEndpoint.deleteRoute(gymId, routeId);
-    if (res.statusCode == 200) {
-      EasyLoading.showSuccess('Route removed!');
-      Navigator.pop(context);
-      return true;
+    HoldsDetailsDTO holdsData;
+    var res = await _pythonEndpoint.scanImage(imageFile);
+    if (res != null) {
+      if (res.statusCode == 200) {
+        final jsonResponse = json.decode(res.data);
+        holdsData = new HoldsDetailsDTO.fromJson(jsonResponse);
+      }
     }
-    return false;
+    return holdsData;
   } catch (e, s) {
     print("Exception $e");
     print("StackTrace $s");
   }
+}
+
+List<DropdownMenuItem<String>> putGymsIntoDropdown(List<ClimbingGymDTO> mergedGyms) {
+  List<DropdownMenuItem<String>> gymItems = [];
+  mergedGyms.forEach((mergedGym) {
+    gymItems.add(DropdownMenuItem(
+        child: Text(
+          "${mergedGym.gymName}",
+          overflow: TextOverflow.ellipsis,
+        ),
+        value: '${mergedGym.id}'));
+  });
+  return gymItems;
+}
+
+Future<List<String>> getLinksListFromAllImages(imageList, fileList) async {
+  //Add converted image with holds to _fileList
+  for (XFile image in imageList) {
+    var imagesTemporary = File(image.path);
+    fileList.add(imagesTemporary);
+  }
+  var list = await handleImagesUpload(fileList);
+  return list;
+}
+
+String getAccessLevelsString(List<AccessLevelDTO> levels) {
+  String accessLevelsString = '';
+
+  levels.forEach((level) {
+    if (level.isActive == true) {
+      accessLevelsString += level.accessLevel.toCapitalized() + ' ';
+    }
+  });
+  return accessLevelsString.trim();
 }

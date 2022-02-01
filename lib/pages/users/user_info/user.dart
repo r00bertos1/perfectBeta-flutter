@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:perfectBeta/helpers/reponsiveness.dart';
 import 'package:perfectBeta/pages/users/user_info/widgets/user_cards_small.dart';
 import 'package:perfectBeta/pages/users/user_info/widgets/user_info_card_small.dart';
 

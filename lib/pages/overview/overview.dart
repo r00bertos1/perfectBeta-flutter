@@ -1,7 +1,4 @@
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:perfectBeta/api/api_client.dart';
-import 'package:perfectBeta/api/providers/authentication_endpoint.dart';
 import 'package:perfectBeta/helpers/reponsiveness.dart';
 import 'package:perfectBeta/constants/controllers.dart';
 import 'package:perfectBeta/pages/overview/widgets/admin/admin_overview_cards_large.dart';
@@ -19,7 +16,6 @@ import 'package:perfectBeta/pages/overview/widgets/manager/manager_overview_card
 import 'package:perfectBeta/storage/secure_storage.dart';
 import 'package:perfectBeta/widgets/custom_text.dart';
 import 'package:get/get.dart';
-import '../../main.dart';
 
 class OverviewPage extends StatelessWidget {
   @override

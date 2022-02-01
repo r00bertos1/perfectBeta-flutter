@@ -1,12 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_easyloading/flutter_easyloading.dart';
-import 'package:perfectBeta/api/providers/user_endpoint.dart';
 import 'package:perfectBeta/constants/style.dart';
-import 'package:perfectBeta/model/users/data/change_password_dto.dart';
-import 'package:perfectBeta/storage/user_secure_storage.dart';
+import 'package:perfectBeta/helpers/handlers.dart';
 import 'package:perfectBeta/widgets/custom_text.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '../../../main.dart';
 
 class ChangePasswordPage extends StatefulWidget {
   const ChangePasswordPage({Key key}) : super(key: key);
@@ -17,13 +13,8 @@ class ChangePasswordPage extends StatefulWidget {
 
 class _ChangePasswordPage extends State<ChangePasswordPage> {
   final _changePasswordFormKey = GlobalKey<FormState>();
-
-  //API
-  var _userEndpoint = new UserEndpoint(getIt.get());
-
   final _oldPasswordController = TextEditingController();
   final _newPasswordController = TextEditingController();
-  //bool _isChecked = false;
 
   @override
   Widget build(BuildContext context) {
@@ -124,7 +115,7 @@ class _ChangePasswordPage extends State<ChangePasswordPage> {
                   InkWell(
                     onTap: () async {
                       if (_changePasswordFormKey.currentState.validate()) {
-                        _handlePasswordChange();
+                        handlePasswordChange(context, _oldPasswordController.text.trim(), _newPasswordController.text.trim());
                       }
                     },
                     child: Container(
@@ -149,24 +140,5 @@ class _ChangePasswordPage extends State<ChangePasswordPage> {
     );
   }
 
-  Future<void> _handlePasswordChange() async {
-    // login
-    ChangePasswordDTO passwordData = new ChangePasswordDTO(
-        oldPassword: _oldPasswordController.text.trim(), newPassword: _newPasswordController.text.trim());
-    var res = await _userEndpoint.changePassword(passwordData);
-    try {
-      if (res.statusCode == 200) {
-        var _rememberMe = await UserSecureStorage.getRememberMe() ?? false;
-        if (_rememberMe) {
-          await UserSecureStorage.setPassword(
-              _newPasswordController.text.trim());
-        }
-        Navigator.of(context).pop();
-        EasyLoading.showSuccess('Password was successfully changed!');
-      }
-    } catch (e, s) {
-      print("Exception $e");
-      print("StackTrace $s");
-    }
-  }
+
 }

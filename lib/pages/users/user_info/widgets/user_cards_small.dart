@@ -1,27 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_easyloading/flutter_easyloading.dart';
-import 'package:perfectBeta/api/api_client.dart';
-import 'package:perfectBeta/api/providers/authentication_endpoint.dart';
-import 'package:perfectBeta/api/providers/user_endpoint.dart';
-import 'package:perfectBeta/constants/controllers.dart';
 import 'package:perfectBeta/constants/style.dart';
-import 'package:perfectBeta/model/users/data/password_dto.dart';
-import 'package:perfectBeta/model/users/user_with_personal_data_access_level_dto.dart';
-import 'package:perfectBeta/pages/authentication/registration.dart';
+import 'package:perfectBeta/helpers/handlers.dart';
 import 'package:perfectBeta/pages/users/user_info/change_password.dart';
 import 'package:perfectBeta/pages/users/user_info/change_personal_data.dart';
-import 'package:perfectBeta/routing/routes.dart';
 import 'package:perfectBeta/widgets/custom_text.dart';
-import 'package:get/get.dart';
-import '../../../../main.dart';
 import '../change_email.dart';
 import 'function_card_small.dart';
 
 class UserCardsSmallScreen extends StatelessWidget {
   final _passKey = GlobalKey<FormState>();
-
-  //API
-  var _userEndpoint = UserEndpoint(getIt.get());
 
   final _passwordController = TextEditingController();
 
@@ -65,7 +52,10 @@ class UserCardsSmallScreen extends StatelessWidget {
           FunctionCardSmall(
             title: "Change email address",
             icon: Icons.email,
-            onTap: () => Navigator.push(
+            onTap: () =>
+              // Get.toNamed(changeEmailPageRoute),
+              // navigationController.navigateTo(changeEmailPageRoute)}
+            Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => ChangeEmailPage()),
             ),
@@ -119,7 +109,7 @@ class UserCardsSmallScreen extends StatelessWidget {
                     onPressed: () {
                       if (_passKey.currentState.validate()) {
                         Navigator.pop(context);
-                        _handleUserDelete(context);
+                        handleUserDelete(_passwordController);
                       }
                     },
                     child: CustomText(text: 'Yes, delete!', color: error),
@@ -132,22 +122,5 @@ class UserCardsSmallScreen extends StatelessWidget {
         ],
       ),
     );
-  }
-
-  Future<void> _handleUserDelete(context) async {
-    UserWithPersonalDataAccessLevelDTO userData = await _userEndpoint.getUserPersonalDataAccessLevel();
-
-    PasswordDTO password = new PasswordDTO(password: _passwordController.text.trim());
-    _passwordController.clear();
-    var res = await _userEndpoint.deleteUser(userData.id, password);
-    if (res != null) {
-      if (res.statusCode == 200) {
-        Get.offAllNamed(authenticationPageRoute);
-        // menuController.changeActiveItemTo(
-        //     overviewPageDisplayName);
-      }
-    } else {
-      EasyLoading.showError('Error' + res.statusMessage);
-    }
   }
 }

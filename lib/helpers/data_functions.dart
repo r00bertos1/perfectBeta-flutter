@@ -1,6 +1,4 @@
-import 'package:perfectBeta/api/providers/climbing_gym_endpoint.dart';
-import 'package:perfectBeta/api/providers/route_endpoint.dart';
-import 'package:perfectBeta/api/providers/user_endpoint.dart';
+import 'package:perfectBeta/service.dart';
 import 'package:perfectBeta/model/gyms/climbing_gym_dto.dart';
 import 'package:perfectBeta/model/pages/page_dto.dart';
 import 'package:perfectBeta/model/routes/rating_dto.dart';
@@ -192,5 +190,112 @@ Future<List<int>> loadGymsAndRoutesDataManager(List<int> values) async {
     print("StackTrace $s");
   }
 }
+
+Future<List<RouteDTO>> loadFavouriteRoutes() async {
+  try {
+    DataPage res = await _routeEndpoint.getAllFavourites();
+    List<RouteDTO> routes = [];
+    if (res.content != null) {
+      res.content.forEach((route) {
+        routes.add(route);
+      });
+    }
+    return routes;
+  } catch (e, s) {
+    print("Exception $e");
+    print("StackTrace $s");
+  }
+}
+
+Future<List<ClimbingGymDTO>> loadMaintainedGyms() async {
+  try {
+    DataPage res = await _climbingGymEndpoint.getAllMaintainedGyms();
+    List<ClimbingGymDTO> gyms = [];
+    if (res.content != null) {
+      res.content.forEach((gym) {
+        gyms.add(gym);
+      });
+    }
+    return gyms;
+  } catch (e, s) {
+    print("Exception $e");
+    print("StackTrace $s");
+  }
+}
+
+Future<List<ClimbingGymDTO>> loadOwnedGyms() async {
+  try {
+    DataPage res = await _climbingGymEndpoint.getAllOwnedGyms();
+    List<ClimbingGymDTO> gyms = [];
+    if (res.content != null) {
+      res.content.forEach((gym) {
+        gyms.add(gym);
+      });
+    }
+    return gyms;
+  } catch (e, s) {
+    print("Exception $e");
+    print("StackTrace $s");
+  }
+}
+
+Future<List<ClimbingGymDTO>> loadGyms() async {
+  try {
+    DataPage res = await _climbingGymEndpoint.getAllGyms();
+    List<ClimbingGymDTO> gyms = [];
+    if (res.content != null) {
+      res.content.forEach((gym) {
+        gyms.add(gym);
+      });
+    }
+    return gyms;
+  } catch (e, s) {
+    print("Exception $e");
+    print("StackTrace $s");
+  }
+}
+
+Future<List<ClimbingGymDTO>> getMaintainedAndOwnedGyms() async {
+  try {
+    List<ClimbingGymDTO> mergedList = [];
+    DataPage maintained = await _climbingGymEndpoint.getAllMaintainedGyms();
+    List<ClimbingGymDTO> maintainedList = maintained.content;
+    DataPage owned = await _climbingGymEndpoint.getAllOwnedGyms();
+    List<ClimbingGymDTO> ownedList = owned.content;
+    if (maintainedList != null && ownedList == null) {
+      mergedList.addAll(maintainedList);
+    } else if (maintainedList == null && ownedList != null) {
+      mergedList.addAll(ownedList);
+    } else if (maintainedList != null && ownedList != null) {
+      mergedList.addAll(maintainedList);
+      for (ClimbingGymDTO ownedGym in ownedList) {
+        for (ClimbingGymDTO maintainedGym in maintainedList) {
+          if (ownedGym.id != maintainedGym.id) {
+            mergedList.add(ownedGym);
+          }
+        }
+      }
+    }
+    return mergedList;
+  } catch (e, s) {
+    print("Exception $e");
+    print("StackTrace $s");
+  }
+}
+
+Future<List<UserWithPersonalDataAccessLevelDTO>> loadUsersWithPersonalDataAccessLevel() async {
+  try {
+    DataPage res = await _userEndpoint.getAllUsers();
+    List<UserWithPersonalDataAccessLevelDTO> users = [];
+    res.content.forEach((user) {
+      users.add(user);
+    });
+    return users;
+  } catch (e, s) {
+    print("Exception $e");
+    print("StackTrace $s");
+  }
+}
+
 
 

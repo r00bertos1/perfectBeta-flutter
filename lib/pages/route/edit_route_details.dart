@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -141,14 +142,6 @@ class _EditRouteDetailsPageState extends State<EditRouteDetailsPage> {
                   SizedBox(
                     height: 15,
                   ),
-                  //TODO: HOLD DETALIS TABLE
-                  // SizedBox(
-                  //   height: 15,
-                  // ),
-                  //TODO: PICTURES DELETABLE
-                  // SizedBox(
-                  //   height: 15,
-                  // ),
                   InkWell(
                     onTap: () async {
                       if (_editRouteDetailsFormKey.currentState.validate()) {
@@ -197,11 +190,6 @@ class _EditRouteDetailsPageState extends State<EditRouteDetailsPage> {
     try {
       if (res.statusCode == 200) {
         Navigator.of(context).pop();
-        // Navigator.push(
-        //   context,
-        //   MaterialPageRoute(
-        //       builder: (context) => UserPage()),
-        // );
         EasyLoading.showSuccess('Route Details updated!');
       }
     } catch (e, s) {

@@ -1,18 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:flutter_easyloading/flutter_easyloading.dart';
-import 'package:perfectBeta/constants/controllers.dart';
 import 'package:perfectBeta/constants/enums.dart';
+import 'package:perfectBeta/helpers/handlers.dart';
 import 'package:perfectBeta/helpers/util_functions.dart';
 import 'package:perfectBeta/model/gyms/climbing_gym_dto.dart';
 import 'package:perfectBeta/model/gyms/climbing_gym_with_details_dto.dart';
-import 'package:perfectBeta/model/pages/page_dto.dart';
 import 'package:perfectBeta/model/routes/route_dto.dart';
 import 'package:perfectBeta/pages/gym/widgets/favourite_button.dart';
 import 'package:perfectBeta/pages/gym/widgets/status_switch_button.dart';
-import 'package:perfectBeta/pages/route/add_route/add_route.dart';
 import 'package:perfectBeta/pages/route/route_details.dart';
-import 'package:perfectBeta/routing/routes.dart';
 import 'package:perfectBeta/service.dart';
 import 'package:perfectBeta/constants/style.dart';
 import 'package:perfectBeta/helpers/reponsiveness.dart';
@@ -38,10 +34,9 @@ class _GymDetailsState extends State<GymDetails> {
   bool _added = false;
   bool _isVerified = false;
   int _currentUserId;
+  ClimbingGymWithDetailsDTO _gym;
 
   var _climbingGymEndpoint = new ClimbingGymEndpoint(getIt.get());
-  var _routeEndpoint = new RouteEndpoint(getIt.get());
-  var _userEndpoint = new UserEndpoint(getIt.get());
 
   @override
   void initState() {
@@ -152,6 +147,7 @@ class _GymDetailsState extends State<GymDetails> {
 
   Widget _buildGymDetailsListViewAdmin(AsyncSnapshot<ClimbingGymWithDetailsDTO> snapshot, context) {
     _isVerified = snapshot.data.status == GymStatusEnum.VERIFIED ? true : false;
+    _gym = snapshot.data;
     return ListView(
       children: [
         Column(
@@ -181,6 +177,7 @@ class _GymDetailsState extends State<GymDetails> {
 
   Widget _buildGymDetailsListViewManager(AsyncSnapshot<ClimbingGymWithDetailsDTO> snapshot, context) {
     _isVerified = snapshot.data.status == GymStatusEnum.VERIFIED ? true : false;
+    _gym = snapshot.data;
     return ListView(
       children: [
         Column(
@@ -210,6 +207,7 @@ class _GymDetailsState extends State<GymDetails> {
 
   Widget _buildGymDetailsListView(AsyncSnapshot<ClimbingGymWithDetailsDTO> snapshot, context) {
     _isVerified = snapshot.data.status == GymStatusEnum.VERIFIED ? true : false;
+    _gym = snapshot.data;
     return ListView(
       children: [
         Column(
@@ -238,6 +236,7 @@ class _GymDetailsState extends State<GymDetails> {
 
   Widget _buildGymDetailsListViewClimber(AsyncSnapshot<ClimbingGymWithDetailsDTO> snapshot, context) {
     _isVerified = snapshot.data.status == GymStatusEnum.VERIFIED ? true : false;
+    _gym = snapshot.data;
     return ListView(
       children: [
         Column(
@@ -562,7 +561,7 @@ class _GymDetailsState extends State<GymDetails> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => EditGymDetailsPage(gymId: widget.gymId),
+                          builder: (context) => EditGymDetailsPage(gym: _gym),
                         ),
                       ).then((_) => setState(() {}));
                     },

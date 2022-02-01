@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:perfectBeta/api/providers/user_endpoint.dart';
 import 'package:perfectBeta/constants/style.dart';
+import 'package:perfectBeta/helpers/data_functions.dart';
 import 'package:perfectBeta/model/pages/page_dto.dart';
 import 'package:perfectBeta/model/users/user_with_personal_data_access_level_dto.dart';
 import 'package:perfectBeta/helpers/reponsiveness.dart';
@@ -41,7 +42,7 @@ class _AllUsersTableState extends State<AllUsersTable> {
       //padding: const EdgeInsets.all(16),
       margin: EdgeInsets.only(bottom: 30),
       child: FutureBuilder<List<UserWithPersonalDataAccessLevelDTO>>(
-          future: _loadUsers(),
+          future: loadUsersWithPersonalDataAccessLevel(),
           builder: (BuildContext context, snapshot) {
             if (snapshot.hasError) {
               return Container();
@@ -138,10 +139,6 @@ class _AllUsersTableState extends State<AllUsersTable> {
 
     list.forEach((user) {
       rows.add(DataRow(
-          //NOT WORKING!!!
-          // onLongPress: () {
-          //   _showDetails(context, user);
-          // },
           color: (user.login[0] == '#')
               ? MaterialStateProperty.all<Color>(lightGrey.withOpacity(0.2))
               : null,
@@ -206,20 +203,6 @@ class _AllUsersTableState extends State<AllUsersTable> {
           textValue = 'Deactivated';
         });
       }
-    }
-  }
-
-  Future<List<UserWithPersonalDataAccessLevelDTO>> _loadUsers() async {
-    try {
-      DataPage res = await _userEndpoint.getAllUsers();
-      List<UserWithPersonalDataAccessLevelDTO> users = [];
-      res.content.forEach((user) {
-        users.add(user);
-      });
-      return users;
-    } catch (e, s) {
-      print("Exception $e");
-      print("StackTrace $s");
     }
   }
 

@@ -27,24 +27,17 @@ class _EditGymDetailsAfterRegistration
   var _climbingGymEndpoint = new ClimbingGymEndpoint(getIt.get());
 
   int _gymId;
-  String _country = 'PL';
-  String _city = '';
-  String _street = '';
-  String _number = '';
-  String _description = '';
+  String _country;
   final _cityController = TextEditingController();
   final _streetController = TextEditingController();
   final _numberController = TextEditingController();
   final _descriptionController = TextEditingController();
-
-  String _selectedValue = 'false';
 
   List<DropdownMenuItem<String>> countries = [];
 
   @override
   void initState() {
     super.initState();
-    _loadCountryData();
     _loadGymData();
   }
 
@@ -157,25 +150,30 @@ class _EditGymDetailsAfterRegistration
                   SizedBox(
                     height: 15,
                   ),
-                  DropdownButtonFormField(
-                    isExpanded: true,
-                    validator: (value) =>
-                        value == null ? "Select a country" : null,
-                    hint: Text(
-                      'Select country',
-                    ),
-                    decoration: InputDecoration(
-                        labelText: "Country",
-                        border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(20))),
-                    onChanged: (value) {
-                      setState(() {
-                        _country = value;
-                      });
-                    },
-                    value: _country.isNotEmpty ? _country : null,
-                    items: countries,
-                    //items: countryItems,
+                  FutureBuilder<List<DropdownMenuItem<String>>>(
+                      future: putCountries(),
+                      builder: (context, snapshot) {
+                        countries = snapshot.data;
+                        return DropdownButtonFormField(
+                          isExpanded: true,
+                          validator: (value) =>
+                          value == null ? "Select a country" : null,
+                          hint: Text(
+                            'Select country',
+                          ),
+                          decoration: InputDecoration(
+                              labelText: "Country",
+                              border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(20))),
+                          onChanged: (value) {
+                            setState(() {
+                              _country = value;
+                            });
+                          },
+                          value: _country != null ? _country : null,
+                          items: countries,
+                        );
+                      }
                   ),
                   SizedBox(
                     height: 15,
@@ -243,8 +241,6 @@ class _EditGymDetailsAfterRegistration
     try {
       if (res.statusCode == 200) {
         Navigator.of(context).pop();
-        //menuController.changeActiveItemTo(overviewPageDisplayName);
-
         EasyLoading.showSuccess(
             'Done! You can find your gym in Gyms > Owned gyms');
       }
@@ -255,17 +251,10 @@ class _EditGymDetailsAfterRegistration
   }
 
   //load personal data
-  void _loadGymData() async {
+  void _loadGymData() {
     try {
       if (widget.gymData != null) {
         _gymId = widget.gymData.id;
-        //_city = widget.gymData.gymDetailsDTO.city ?? "";
-        //_street = widget.gymData.gymDetailsDTO.street ?? "";
-        //_number = widget.gymData.gymDetailsDTO.number ?? "";
-        //_description =  widget.gymData.gymDetailsDTO.description ?? "";
-        //_country = widget.gymData.gymDetailsDTO.country ?? "";
-        // print('============================');
-        // print(_country);
       }
     } catch (e, s) {
       print("Exception $e");
@@ -273,14 +262,6 @@ class _EditGymDetailsAfterRegistration
     }
   }
 
-  void _loadCountryData() async {
-    try {
-      countries = await putCountries();
-    } catch (e, s) {
-      print("Exception $e");
-      print("StackTrace $s");
-    }
-  }
 }
 
 extension BoolParsing on String {

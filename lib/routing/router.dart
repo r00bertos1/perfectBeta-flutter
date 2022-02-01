@@ -8,6 +8,7 @@ import 'package:perfectBeta/pages/route/add_route/add_route.dart';
 import 'package:perfectBeta/pages/users/manager_registration.dart';
 import 'package:perfectBeta/pages/users/all_users/all_users.dart';
 import 'package:perfectBeta/pages/users/managers/managers.dart';
+import 'package:perfectBeta/pages/users/user_info/change_email.dart';
 import 'package:perfectBeta/pages/users/user_info/user.dart';
 import 'package:perfectBeta/routing/routes.dart';
 
@@ -37,6 +38,8 @@ Route<dynamic> generateRoute(RouteSettings settings){
       return _getPageRoute(AllUsersPage());
     case managersPageRoute:
       return _getPageRoute(ManagersPage());
+      case changeEmailPageRoute:
+      return _getPageRoute(ChangeEmailPage());
     default:
       return _getPageRoute(OverviewPage());
 

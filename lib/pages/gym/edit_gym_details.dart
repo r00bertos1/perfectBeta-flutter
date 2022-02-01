@@ -11,7 +11,8 @@ import 'package:perfectBeta/widgets/custom_text.dart';
 import '../../main.dart';
 
 class EditGymDetailsPage extends StatefulWidget {
-  const EditGymDetailsPage({Key key, this.gymId}) : super(key: key);
+  const EditGymDetailsPage({Key key, this.gym, this.gymId}) : super(key: key);
+  final ClimbingGymWithDetailsDTO gym;
   final int gymId;
 
   @override
@@ -28,15 +29,13 @@ class _EditGymDetailsPageState extends State<EditGymDetailsPage> {
   final _streetController = TextEditingController();
   final _numberController = TextEditingController();
   final _descriptionController = TextEditingController();
-  String _country = 'PL';
-
+  String _country;
   List<DropdownMenuItem<String>> countries = [];
 
   @override
   void initState() {
-    _loadCountryData();
+    _loadGymData();
     super.initState();
-    _loadGymData(widget.gymId);
   }
 
   @override
@@ -148,25 +147,31 @@ class _EditGymDetailsPageState extends State<EditGymDetailsPage> {
                   SizedBox(
                     height: 15,
                   ),
-                  DropdownButtonFormField(
-                    isExpanded: true,
-                    validator: (value) =>
-                    value == null ? "Select a country" : null,
-                    hint: Text(
-                      'Select country',
-                    ),
-                    decoration: InputDecoration(
-                        labelText: "Country",
-                        border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(20))),
-                    onChanged: (value) {
-                      setState(() {
-                        _country = value;
-                      });
-                    },
-                    value: _country.isNotEmpty ? _country : null,
-                    items: countries,
-                    //items: countryItems,
+                  FutureBuilder<List<DropdownMenuItem<String>>>(
+                    future: putCountries(),
+                    builder: (context, snapshot) {
+                      countries = snapshot.data;
+                      return DropdownButtonFormField(
+                        isExpanded: true,
+                        validator: (value) =>
+                        value == null ? "Select a country" : null,
+                        hint: Text(
+                          'Select country',
+                        ),
+                        decoration: InputDecoration(
+                            labelText: "Country",
+                            border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(20))),
+                        onChanged: (value) {
+                          setState(() {
+                            _country = value;
+                          });
+                        },
+                        value: _country != null ? _country : null,
+                        items: countries,
+                        //items: countryItems,
+                      );
+                    }
                   ),
                   SizedBox(
                     height: 15,
@@ -198,7 +203,7 @@ class _EditGymDetailsPageState extends State<EditGymDetailsPage> {
                   InkWell(
                     onTap: () {
                       if (_editGymDataFormKey.currentState.validate()) {
-                        _handlePersonalDataChange(widget.gymId);
+                        _handlePersonalDataChange(widget.gym.id);
                       }
                     },
                     child: Container(
@@ -245,26 +250,14 @@ class _EditGymDetailsPageState extends State<EditGymDetailsPage> {
     }
   }
 
-
-  void _loadCountryData() async {
+  void _loadGymData() {
     try {
-      countries = await putCountries();
-    } catch (e, s) {
-      print("Exception $e");
-      print("StackTrace $s");
-    }
-  }
-
-  void _loadGymData(gymId) async {
-    try {
-      ClimbingGymWithDetailsDTO res =
-      await _climbingGymEndpoint.getVerifiedGymById(gymId);
-      if (res.id != null) {
-        _cityController.text = res.gymDetailsDTO.city ?? "";
-        _streetController.text = res.gymDetailsDTO.street ?? "";
-        _numberController.text = res.gymDetailsDTO.number ?? "";
-        _descriptionController.text =  res.gymDetailsDTO.description ?? "";
-        _country = res.gymDetailsDTO.country ?? "";
+      if (widget.gym != null) {
+        _country = widget.gym.gymDetailsDTO.country ?? "";
+        _cityController.text = widget.gym.gymDetailsDTO.city ?? "";
+        _streetController.text = widget.gym.gymDetailsDTO.street ?? "";
+        _numberController.text = widget.gym.gymDetailsDTO.number ?? "";
+        _descriptionController.text =  widget.gym.gymDetailsDTO.description ?? "";
       }
     } catch (e, s) {
       print("Exception $e");

@@ -7,6 +7,7 @@ import 'package:perfectBeta/model/users/data/change_password_dto.dart';
 import 'package:perfectBeta/model/users/data/email_dto.dart';
 import 'package:perfectBeta/model/users/data/password_dto.dart';
 import 'package:perfectBeta/model/users/data/personal_data_dto.dart';
+import 'package:perfectBeta/model/users/data/reset_password_dto.dart';
 import 'package:perfectBeta/model/users/user_dto.dart';
 import 'package:perfectBeta/model/users/user_with_access_level_dto.dart';
 import 'package:perfectBeta/model/users/user_with_personal_data_access_level_dto.dart';
@@ -285,9 +286,10 @@ class UserEndpoint {
     }
   }
 
-  Future<Response> confirmResetPassword(String token) async {
+  Future<Response> confirmResetPassword(String token, ResetPasswordDTO body) async {
     try {
       Response<String> response = await _client.put('/users/reset_password',
+          data: body,
           queryParameters: {'token': token},
           options: Options(headers: {"requiresToken" : false}));
 

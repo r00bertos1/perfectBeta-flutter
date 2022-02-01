@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:perfectBeta/api/providers/user_endpoint.dart';
 import 'package:perfectBeta/constants/style.dart';
+import 'package:perfectBeta/helpers/util_functions.dart';
 import 'package:perfectBeta/model/users/data/access_level_dto.dart';
 import 'package:perfectBeta/model/users/user_with_personal_data_access_level_dto.dart';
 import 'package:perfectBeta/helpers/reponsiveness.dart';
@@ -124,17 +125,6 @@ class _UserAllInfoCardState extends State<UserAllInfoCard>{
         ],
       ),
     );
-  }
-
-  String getAccessLevelsString(List<AccessLevelDTO> levels) {
-    String accessLevelsString = '';
-
-    levels.forEach((level) {
-      if (level.isActive == true) {
-        accessLevelsString += level.accessLevel.toCapitalized() + ' ';
-      }
-    });
-    return accessLevelsString.trim();
   }
 
   List<Widget> _onGenerateFields(UserWithPersonalDataAccessLevelDTO data) {

@@ -7,10 +7,8 @@ import 'package:perfectBeta/helpers/reponsiveness.dart';
 import '../../../main.dart';
 import '../gym_details.dart';
 
-/// Example without datasource
 class GymsGrid extends StatelessWidget {
   final numbers = List.generate(16, (index) => '$index');
-  bool _added = false;
 
   var _climbingGymEndpoint = new ClimbingGymEndpoint(getIt.get());
 

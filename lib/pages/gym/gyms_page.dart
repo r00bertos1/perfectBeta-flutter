@@ -32,7 +32,7 @@ class GymsPage extends StatelessWidget {
           ),
           Expanded(
             child: FutureBuilder(
-                future: _checkAccessLevel(),
+                future: secStore.getAccessLevel(),
                 builder: (context, snapshot) {
                   switch (snapshot.connectionState) {
                     case ConnectionState.waiting:
@@ -56,15 +56,5 @@ class GymsPage extends StatelessWidget {
         ],
       ),
     );
-  }
-
-  Future<String> _checkAccessLevel() async {
-    try {
-      String _accessLevel = await secStore.getAccessLevel();
-      return _accessLevel;
-    } catch (e, s) {
-      print("Exception $e");
-      print("StackTrace $s");
-    }
   }
 }

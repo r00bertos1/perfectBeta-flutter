@@ -1,31 +1,25 @@
 import 'package:data_table_2/data_table_2.dart';
-import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
-import 'package:perfectBeta/api/providers/climbing_gym_endpoint.dart';
-import 'package:perfectBeta/api/providers/cloud_endpoint.dart';
-import 'package:perfectBeta/api/providers/python_endpoint.dart';
 import 'package:perfectBeta/api/providers/route_endpoint.dart';
 import 'package:perfectBeta/constants/controllers.dart';
 import 'package:perfectBeta/constants/enums.dart';
 import 'package:perfectBeta/constants/style.dart';
+import 'package:perfectBeta/helpers/data_functions.dart';
+import 'package:perfectBeta/helpers/util_functions.dart';
 import 'package:perfectBeta/model/gyms/climbing_gym_dto.dart';
 import 'package:perfectBeta/model/holds/holds_details_dto.dart';
-import 'package:perfectBeta/model/pages/page_dto.dart';
 import 'package:perfectBeta/model/routes/photo_dto.dart';
 import 'package:perfectBeta/model/routes/route_dto.dart';
 import 'package:perfectBeta/helpers/reponsiveness.dart';
 import 'package:perfectBeta/routing/routes.dart';
 import 'package:perfectBeta/widgets/custom_text.dart';
-import 'dart:convert';
 import 'package:image_picker/image_picker.dart';
 import 'package:perfectBeta/model/holds/hold.dart';
 import 'dart:io';
-
 import '../../../../main.dart';
-
 final uploadImageURL = 'https://perfectbeta-python-tls-pyclimb.apps.okd.cti.p.lodz.pl/upload';
 
 class AddSteps extends StatefulWidget {
@@ -43,8 +37,6 @@ class _AddStepsState extends State<AddSteps> {
 
   //API
   var _routeEndpoint = new RouteEndpoint(getIt.get());
-  var _climbingGymEndpoint = new ClimbingGymEndpoint(getIt.get());
-  var _cloudEndpoint = new CloudEndpoint(getIt.get());
 
   //stepOne
   var _image;
@@ -58,7 +50,6 @@ class _AddStepsState extends State<AddSteps> {
   bool _firstStepCompleted = false;
   bool _isScanned = false;
   String _holdsDetails = 'json';
-  PhotoDTO _mainPhoto;
 
   //stepThree
   final _routeNameController = TextEditingController();
@@ -97,12 +88,6 @@ class _AddStepsState extends State<AddSteps> {
   goTo(int step) {
     setState(() => currentStep = step);
   }
-
-  Future<List<HoldDTO>> _future;
-  // @override
-  // void initState() {
-  //   _future = convertImage(imagePathTest);
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -386,7 +371,7 @@ class _AddStepsState extends State<AddSteps> {
                   height: 15,
                 ),
                 FutureBuilder<List<ClimbingGymDTO>>(
-                    future: _getMaintainedAndOwnedGyms(),
+                    future: getMaintainedAndOwnedGyms(),
                     builder: (context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.done) {
                         if (snapshot.hasError) {
@@ -394,7 +379,7 @@ class _AddStepsState extends State<AddSteps> {
                         }
                         if (snapshot.hasData) {
                           mergedGyms = snapshot.data;
-                          gyms = putGyms(mergedGyms);
+                          gyms = putGymsIntoDropdown(mergedGyms);
                           _gym = widget.gymId != null ? widget.gymId.toString() : snapshot.data[0].id.toString();
                           return DropdownButtonFormField(
                             isExpanded: true,
@@ -484,7 +469,7 @@ class _AddStepsState extends State<AddSteps> {
 
   FutureBuilder<HoldsDetailsDTO> buildFutureBuilder() {
     return FutureBuilder<HoldsDetailsDTO>(
-        future: _getHoldDataFromImage(),
+        future: getHoldDataFromImage(_imageFile),
         builder: (context, snapshot) {
           if (snapshot.hasError) {
             return SizedBox(
@@ -742,24 +727,24 @@ class _AddStepsState extends State<AddSteps> {
           );
   }
 
-  Future<void> retrieveLostData() async {
-    final LostDataResponse response = await _picker.retrieveLostData();
-    if (response.isEmpty) {
-      return;
-    }
-    if (response.file != null) {
-      setState(() {
-        _imageFile = response.file;
-        _imageXFileList = response.files;
-      });
-    } else {
-      String _retrieveDataError = response.exception.code;
-    }
-  }
+  // Future<void> retrieveLostData() async {
+  //   final LostDataResponse response = await _picker.retrieveLostData();
+  //   if (response.isEmpty) {
+  //     return;
+  //   }
+  //   if (response.file != null) {
+  //     setState(() {
+  //       _imageFile = response.file;
+  //       _imageXFileList = response.files;
+  //     });
+  //   } else {
+  //     String _retrieveDataError = response.exception.code;
+  //   }
+  // }
 
   Future<bool> _handleAddRoute() async {
     try {
-      List<String> list = await _getLinksListFromAllImages();
+      List<String> list = await getLinksListFromAllImages(_imageXFileList, _finalImageFileList);
       for (String link in list) {
         PhotoDTO photoDTO = new PhotoDTO(photoUrl: link);
         print('PHOTO:' + photoDTO.photoUrl);
@@ -785,74 +770,6 @@ class _AddStepsState extends State<AddSteps> {
       print("Exception $e");
       print("StackTrace $s");
     }
-  }
-
-  Future<List<String>> _getLinksListFromAllImages() async {
-    //TODO; Add converted image with holds to _finalImageFileList
-
-    for (XFile image in _imageXFileList) {
-      var imagesTemporary = File(image.path);
-      _finalImageFileList.add(imagesTemporary);
-    }
-    var list = await _handleImagesUpload(_finalImageFileList);
-    return list;
-  }
-
-  Future<List<String>> _handleImagesUpload(files) async {
-    try {
-      List<String> linksList = [];
-      var res = await _cloudEndpoint.uploadFile(files);
-      if (res != null) {
-        if (res.statusCode == 200) {
-          linksList = (jsonDecode(res.data) as List<dynamic>).cast<String>();
-        }
-      }
-      return linksList;
-    } catch (e, s) {
-      print("Exception $e");
-      print("StackTrace $s");
-    }
-  }
-
-  Future<List<ClimbingGymDTO>> _getMaintainedAndOwnedGyms() async {
-    try {
-      List<ClimbingGymDTO> mergedList = [];
-      DataPage maintained = await _climbingGymEndpoint.getAllMaintainedGyms();
-      List<ClimbingGymDTO> maintainedList = maintained.content;
-      DataPage owned = await _climbingGymEndpoint.getAllOwnedGyms();
-      List<ClimbingGymDTO> ownedList = owned.content;
-      if (maintainedList != null && ownedList == null) {
-        mergedList.addAll(maintainedList);
-      } else if (maintainedList == null && ownedList != null) {
-        mergedList.addAll(ownedList);
-      } else if (maintainedList != null && ownedList != null) {
-        mergedList.addAll(maintainedList);
-        for (ClimbingGymDTO ownedGym in ownedList) {
-          for (ClimbingGymDTO maintainedGym in maintainedList) {
-            if (ownedGym.id != maintainedGym.id) {
-              mergedList.add(ownedGym);
-            }
-          }
-        }
-      }
-      return mergedList;
-    } catch (e, s) {
-      print("Exception $e");
-      print("StackTrace $s");
-    }
-  }
-
-  List<DropdownMenuItem<String>> putGyms(List<ClimbingGymDTO> mergedGyms) {
-    List<DropdownMenuItem<String>> gymItems = [];
-    mergedGyms.forEach((mergedGym) {
-      gymItems.add(DropdownMenuItem(
-          child: Text(
-            "${mergedGym.gymName}",
-            overflow: TextOverflow.ellipsis,
-          ),
-          value: '${mergedGym.id}'));
-    });
-    return gymItems;
   }
 
   Future _imgFromSource(type) async {
@@ -891,28 +808,6 @@ class _AddStepsState extends State<AddSteps> {
       setState(() {
         _pickImageError = e;
       });
-    }
-  }
-
-  Future<HoldsDetailsDTO> _getHoldDataFromImage() async {
-    BaseOptions dioOptions = BaseOptions(
-      connectTimeout: 100000,
-      receiveTimeout: 100000,
-    );
-    var _pythonEndpoint = new PythonEndpoint(new Dio(dioOptions));
-    try {
-      HoldsDetailsDTO holdsData;
-      var res = await _pythonEndpoint.scanImage(_imageFile);
-      if (res != null) {
-        if (res.statusCode == 200) {
-          final jsonResponse = json.decode(res.data);
-          holdsData = new HoldsDetailsDTO.fromJson(jsonResponse);
-        }
-      }
-      return holdsData;
-    } catch (e, s) {
-      print("Exception $e");
-      print("StackTrace $s");
     }
   }
 }

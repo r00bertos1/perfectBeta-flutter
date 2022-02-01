@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:perfectBeta/api/providers/user_endpoint.dart';
 import 'package:perfectBeta/constants/style.dart';
+import 'package:perfectBeta/model/auth/registration_dto.dart';
+import 'package:perfectBeta/model/users/data/reset_password_dto.dart';
 import 'package:perfectBeta/widgets/custom_text.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../main.dart';
@@ -173,7 +175,8 @@ class _ConfirmForgotPassword extends State<ConfirmForgotPassword> {
   }
 
   Future<void> _handleResetPassword() async {
-    var res = await _userEndpoint.confirmResetPassword(_codeController.text);
+    ResetPasswordDTO resetPasswordDTO = new ResetPasswordDTO(newPassword: _passwordController.text.trim() ,newPasswordConfirmation: _passwordController.text.trim());
+    var res = await _userEndpoint.confirmResetPassword(_codeController.text, resetPasswordDTO);
     try {
       if (res.statusCode == 200) {
         Navigator.of(context).pop();

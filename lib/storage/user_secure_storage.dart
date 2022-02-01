@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class UserSecureStorage {
@@ -32,12 +31,10 @@ class UserSecureStorage {
 
   static Future<bool> getRememberMe() async {
     final value = await _storage.read(key: _keyRememberMe);
-    // return value == null ? null : bool
     return value == null
         ? null
         : value.toLowerCase() == 'true'
             ? true
             : false;
-    //return value == null ? null : List<String>.from(json.decode(value));
   }
 }

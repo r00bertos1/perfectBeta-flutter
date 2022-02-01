@@ -15,6 +15,8 @@ const authenticationPageRoute = "/auth";
 const userPersonalPageDisplayName = "User";
 const userPersonalPageRoute = "/user";
 
+const changeEmailPageRoute = "/user/change_email";
+
 //ANONIM
 const registrationPageDisplayName = "Register account";
 const registrationPageRoute = "/register";

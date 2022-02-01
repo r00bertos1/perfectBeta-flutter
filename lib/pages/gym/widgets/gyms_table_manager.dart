@@ -1,36 +1,26 @@
 import 'package:data_table_2/data_table_2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:perfectBeta/api/providers/climbing_gym_endpoint.dart';
-import 'package:perfectBeta/api/providers/user_endpoint.dart';
 import 'package:perfectBeta/constants/controllers.dart';
 import 'package:perfectBeta/constants/enums.dart';
 import 'package:perfectBeta/constants/style.dart';
 import 'package:perfectBeta/helpers/data_functions.dart';
 import 'package:perfectBeta/helpers/util_functions.dart';
 import 'package:perfectBeta/model/gyms/climbing_gym_dto.dart';
-import 'package:perfectBeta/model/pages/page_dto.dart';
-import 'package:perfectBeta/model/users/user_with_personal_data_access_level_dto.dart';
 import 'package:perfectBeta/helpers/reponsiveness.dart';
 import 'package:perfectBeta/pages/gym/gym_details.dart';
 import 'package:perfectBeta/pages/route/add_route/add_route.dart';
 import 'package:perfectBeta/routing/routes.dart';
 import 'package:perfectBeta/widgets/custom_text.dart';
 
-import '../../../main.dart';
 import '../add_maintainer_to_gym.dart';
-import '../edit_gym_details.dart';
 
-/// Example without datasource
 class GymsTableManager extends StatefulWidget {
   @override
   State<GymsTableManager> createState() => _GymsTableManagerState();
 }
 
 class _GymsTableManagerState extends State<GymsTableManager> {
-  var _userEndpoint = new UserEndpoint(getIt.get());
-  var _climbingGymEndpoint =
-      new ClimbingGymEndpoint(getIt.get());
 
   bool isSwitched = false;
   var textValue = 'Switch is OFF';
@@ -50,8 +40,7 @@ class _GymsTableManagerState extends State<GymsTableManager> {
                 InkWell(
                   onTap: () => _buildOwnedGymsTable(),
                   child: Container(
-                    decoration: BoxDecoration(
-                        color: active, borderRadius: BorderRadius.circular(20)),
+                    decoration: BoxDecoration(color: active, borderRadius: BorderRadius.circular(20)),
                     alignment: Alignment.center,
                     width: 100,
                     padding: EdgeInsets.symmetric(vertical: 16),
@@ -64,8 +53,7 @@ class _GymsTableManagerState extends State<GymsTableManager> {
                 InkWell(
                   onTap: () => _buildMaintainedGymsTable(),
                   child: Container(
-                    decoration: BoxDecoration(
-                        color: active, borderRadius: BorderRadius.circular(20)),
+                    decoration: BoxDecoration(color: active, borderRadius: BorderRadius.circular(20)),
                     alignment: Alignment.center,
                     width: 150,
                     padding: EdgeInsets.symmetric(vertical: 16),
@@ -138,11 +126,9 @@ class _GymsTableManagerState extends State<GymsTableManager> {
           setState(() {
             _currentSortColumn = columnIndex;
             if (_isSortAsc) {
-              list.sort(
-                  (a, b) => b.status.toString().compareTo(a.status.toString()));
+              list.sort((a, b) => b.status.toString().compareTo(a.status.toString()));
             } else {
-              list.sort(
-                  (a, b) => a.status.toString().compareTo(b.status.toString()));
+              list.sort((a, b) => a.status.toString().compareTo(b.status.toString()));
             }
             _isSortAsc = !_isSortAsc;
           });
@@ -151,7 +137,7 @@ class _GymsTableManagerState extends State<GymsTableManager> {
       DataColumn2(
         size: ColumnSize.L,
         label: Text('Actions'),
-        tooltip: 'add maintainer, edit gym details or add wall to gym',
+        tooltip: 'add maintainer, or add wall to gym',
         //size: ColumnSize.L,
       ),
     ];
@@ -171,21 +157,6 @@ class _GymsTableManagerState extends State<GymsTableManager> {
           CustomText(
             text: "${gym.ownerId}",
           ),
-          // FutureBuilder<UserWithPersonalDataAccessLevelDTO>(
-          //     future: _userEndpoint.getUserById(gym.ownerId),
-          //     builder: (context, snapshot) {
-          //       if (snapshot.hasError) {
-          //         return Container();
-          //       } else if (snapshot.hasData) {
-          //         return Container(
-          //             alignment: Alignment.center,
-          //             width: double.maxFinite,
-          //             padding: EdgeInsets.symmetric(vertical: 16),
-          //             child: CustomText(text: "${snapshot.data.login}"));
-          //       } else {
-          //         return CircularProgressIndicator.adaptive();
-          //       }
-          //     }),
         ),
         DataCell(
           parseGymEnum(gym.status),
@@ -209,30 +180,29 @@ class _GymsTableManagerState extends State<GymsTableManager> {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) =>
-                                      AddMaintainerToGymPage(gymId: gym.id),
+                                  builder: (context) => AddMaintainerToGymPage(gymId: gym.id),
                                 ),
                               );
                             },
                             tooltip: 'add maintainer to gym',
                             icon: Icon(Icons.person_add)),
                       ),
-                      Visibility(
-                        visible: (snapshot.data == gym.ownerId) && (gym.status == GymStatusEnum.VERIFIED),
-                        child: IconButton(
-                            padding: EdgeInsets.all(0),
-                            onPressed: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) =>
-                                      EditGymDetailsPage(gymId: gym.id),
-                                ),
-                              );
-                            },
-                            tooltip: 'edit gym details',
-                            icon: Icon(Icons.edit)),
-                      ),
+                      // Visibility(
+                      //   visible: (snapshot.data == gym.ownerId) && (gym.status == GymStatusEnum.VERIFIED),
+                      //   child: IconButton(
+                      //       padding: EdgeInsets.all(0),
+                      //       onPressed: () {
+                      //         Navigator.push(
+                      //           context,
+                      //           MaterialPageRoute(
+                      //             builder: (context) =>
+                      //                 EditGymDetailsPage(gymId: gym.id),
+                      //           ),
+                      //         );
+                      //       },
+                      //       tooltip: 'edit gym details',
+                      //       icon: Icon(Icons.edit)),
+                      // ),
                       IconButton(
                           padding: EdgeInsets.all(0),
                           onPressed: () {
@@ -240,8 +210,7 @@ class _GymsTableManagerState extends State<GymsTableManager> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) =>
-                                    AddRoutePage(gymId: gym.id),
+                                builder: (context) => AddRoutePage(gymId: gym.id),
                               ),
                             );
                           },
@@ -279,18 +248,13 @@ class _GymsTableManagerState extends State<GymsTableManager> {
       decoration: BoxDecoration(
         color: Colors.white,
         border: Border.all(color: active.withOpacity(.4), width: .5),
-        boxShadow: [
-          BoxShadow(
-              offset: Offset(0, 6),
-              color: lightGrey.withOpacity(.1),
-              blurRadius: 12)
-        ],
+        boxShadow: [BoxShadow(offset: Offset(0, 6), color: lightGrey.withOpacity(.1), blurRadius: 12)],
         borderRadius: BorderRadius.circular(8),
       ),
       //padding: const EdgeInsets.all(16),
       margin: EdgeInsets.only(bottom: 30),
       child: FutureBuilder<List<ClimbingGymDTO>>(
-          future: _loadOwnedGyms(),
+          future: loadOwnedGyms(),
           builder: (BuildContext context, snapshot) {
             if (snapshot.hasError) {
               return Container();
@@ -299,8 +263,7 @@ class _GymsTableManagerState extends State<GymsTableManager> {
               List<ClimbingGymDTO> list = snapshot.data;
               return _createDataTable(list);
             } else {
-              return SizedBox(
-                  child: Center(child: CircularProgressIndicator.adaptive()));
+              return SizedBox(child: Center(child: CircularProgressIndicator.adaptive()));
             }
           }),
     );
@@ -315,18 +278,13 @@ class _GymsTableManagerState extends State<GymsTableManager> {
       decoration: BoxDecoration(
         color: Colors.white,
         border: Border.all(color: active.withOpacity(.4), width: .5),
-        boxShadow: [
-          BoxShadow(
-              offset: Offset(0, 6),
-              color: lightGrey.withOpacity(.1),
-              blurRadius: 12)
-        ],
+        boxShadow: [BoxShadow(offset: Offset(0, 6), color: lightGrey.withOpacity(.1), blurRadius: 12)],
         borderRadius: BorderRadius.circular(8),
       ),
       //padding: const EdgeInsets.all(16),
       margin: EdgeInsets.only(bottom: 30),
       child: FutureBuilder<List<ClimbingGymDTO>>(
-          future: _loadMaintainedGyms(),
+          future: loadMaintainedGyms(),
           builder: (BuildContext context, snapshot) {
             if (snapshot.hasError) {
               return Container();
@@ -335,8 +293,7 @@ class _GymsTableManagerState extends State<GymsTableManager> {
               List<ClimbingGymDTO> list = snapshot.data;
               return _createDataTable(list);
             } else {
-              return SizedBox(
-                  child: Center(child: CircularProgressIndicator.adaptive()));
+              return SizedBox(child: Center(child: CircularProgressIndicator.adaptive()));
             }
           }),
     );
@@ -344,37 +301,5 @@ class _GymsTableManagerState extends State<GymsTableManager> {
       tableWidgets.clear();
       tableWidgets.add(table);
     });
-  }
-
-  Future<List<ClimbingGymDTO>> _loadMaintainedGyms() async {
-    try {
-      DataPage res = await _climbingGymEndpoint.getAllMaintainedGyms();
-      List<ClimbingGymDTO> gyms = [];
-      if (res.content != null) {
-        res.content.forEach((gym) {
-          gyms.add(gym);
-        });
-      }
-      return gyms;
-    } catch (e, s) {
-      print("Exception $e");
-      print("StackTrace $s");
-    }
-  }
-
-  Future<List<ClimbingGymDTO>> _loadOwnedGyms() async {
-    try {
-      DataPage res = await _climbingGymEndpoint.getAllOwnedGyms();
-      List<ClimbingGymDTO> gyms = [];
-      if (res.content != null) {
-        res.content.forEach((gym) {
-          gyms.add(gym);
-        });
-      }
-      return gyms;
-    } catch (e, s) {
-      print("Exception $e");
-      print("StackTrace $s");
-    }
   }
 }

@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 SecureStorage secStore = new SecureStorage();
@@ -40,18 +39,6 @@ class SecureStorage {
     await _storage.write(key: key, value: value);
   }
 
-  // void addNewItem(String key, String value) async {
-  //   await _storage.write(
-  //     key: key,
-  //     value: value,
-  //     iOptions: _getIOSOptions(),
-  //   );
-  // }
-  //
-  // IOSOptions _getIOSOptions() => IOSOptions(
-  //   accountName: _getAccountName(),
-  // );
-
   Future<String> getUsername() {
     return _storage.read(key: _keyUsername);
   }
@@ -74,6 +61,5 @@ class SecureStorage {
     final value = json.encode(levels);
     return _storage.write(key: _accessLevels, value: value);
   }
-
 
 }

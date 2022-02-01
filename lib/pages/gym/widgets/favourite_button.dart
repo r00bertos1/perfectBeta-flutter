@@ -1,7 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:perfectBeta/constants/style.dart';
-import 'package:perfectBeta/widgets/custom_text.dart';
 
 class FavouriteButton extends StatefulWidget {
   FavouriteButton({Key key, this.onPressed, this.isAdded}) : super(key: key);

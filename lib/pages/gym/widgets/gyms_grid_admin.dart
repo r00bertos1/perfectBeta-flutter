@@ -29,7 +29,7 @@ class _GymsGridAdminState extends State<GymsGridAdmin> {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<List<ClimbingGymDTO>>(
-        future: _loadGyms(),
+        future: loadGyms(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.done) {
             if (snapshot.hasError) {
@@ -138,22 +138,6 @@ class _GymsGridAdminState extends State<GymsGridAdmin> {
       if (owner.login.isNotEmpty) {
         return owner;
       }
-    } catch (e, s) {
-      print("Exception $e");
-      print("StackTrace $s");
-    }
-  }
-
-  Future<List<ClimbingGymDTO>> _loadGyms() async {
-    try {
-      DataPage res = await _climbingGymEndpoint.getAllGyms();
-      List<ClimbingGymDTO> gyms = [];
-      if (res.content != null) {
-        res.content.forEach((gym) {
-          gyms.add(gym);
-        });
-      }
-      return gyms;
     } catch (e, s) {
       print("Exception $e");
       print("StackTrace $s");

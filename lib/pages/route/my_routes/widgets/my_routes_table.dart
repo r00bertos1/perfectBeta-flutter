@@ -1,14 +1,12 @@
 import 'package:data_table_2/data_table_2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
-import 'package:perfectBeta/api/api_client.dart';
 import 'package:perfectBeta/api/providers/climbing_gym_endpoint.dart';
-import 'package:perfectBeta/api/providers/route_endpoint.dart';
 import 'package:perfectBeta/constants/style.dart';
+import 'package:perfectBeta/helpers/data_functions.dart';
+import 'package:perfectBeta/helpers/handlers.dart';
 import 'package:perfectBeta/model/gyms/climbing_gym_with_details_dto.dart';
-import 'package:perfectBeta/model/pages/page_dto.dart';
 import 'package:perfectBeta/model/routes/route_dto.dart';
 import 'package:perfectBeta/helpers/reponsiveness.dart';
 import 'package:perfectBeta/pages/gym/gym_details.dart';
@@ -22,7 +20,6 @@ class MyRoutesTable extends StatefulWidget {
 }
 
 class _MyRoutesTableState extends State<MyRoutesTable> {
-  var _routeEndpoint = new RouteEndpoint(getIt.get());
   var _climbingGymEndpoint = new ClimbingGymEndpoint(getIt.get());
 
   int _currentSortColumn = 0;
@@ -45,7 +42,7 @@ class _MyRoutesTableState extends State<MyRoutesTable> {
       //padding: const EdgeInsets.all(16),
       margin: EdgeInsets.only(bottom: 30),
       child: FutureBuilder<List<RouteDTO>>(
-          future: _loadFavouriteRoutes(),
+          future: loadFavouriteRoutes(),
           builder: (BuildContext context, snapshot) {
             if (snapshot.hasError) {
               return Container();
@@ -149,14 +146,6 @@ class _MyRoutesTableState extends State<MyRoutesTable> {
 
     list.forEach((route) {
       rows.add(DataRow(
-          //NOT WORKING!!!
-          // onLongPress: () => Navigator.push(
-          //       context,
-          //       MaterialPageRoute(
-          //         builder: (context) =>
-          //             RouteDetails(routeId: route.climbingGymId),
-          //       ),
-          //     ),
           cells: [
             DataCell(
               CustomText(
@@ -236,41 +225,18 @@ class _MyRoutesTableState extends State<MyRoutesTable> {
               IconButton(
                   visualDensity: VisualDensity.compact,
                   padding: EdgeInsets.all(0),
-                  onPressed: () => _handleRouteDelete(context, route.id),
+                  onPressed: () {
+                    handleFavouriteRouteDelete(context, route.id).then((value) {
+                      if (value) {
+                        setState(() {});
+                      }
+                    });
+                  },
                   tooltip: 'delete route from favourites',
                   icon: Icon(Icons.delete)),
             ),
           ]));
     });
     return rows;
-  }
-
-  Future<List<RouteDTO>> _loadFavouriteRoutes() async {
-    try {
-      DataPage res = await _routeEndpoint.getAllFavourites();
-      List<RouteDTO> routes = [];
-      if (res.content != null) {
-        res.content.forEach((route) {
-          routes.add(route);
-        });
-      }
-      return routes;
-    } catch (e, s) {
-      print("Exception $e");
-      print("StackTrace $s");
-    }
-  }
-
-  void _handleRouteDelete(context, routeId) async {
-    try {
-      var res = await _routeEndpoint.removeRouteFromFavourites(routeId);
-      if (res.statusCode == 200) {
-        EasyLoading.showSuccess('Route removed!');
-        setState(() {});
-      }
-    } catch (e, s) {
-      print("Exception $e");
-      print("StackTrace $s");
-    }
   }
 }

@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:perfectBeta/api/providers/user_endpoint.dart';
 import 'package:perfectBeta/constants/style.dart';
-import 'package:perfectBeta/model/users/data/access_level_dto.dart';
+import 'package:perfectBeta/helpers/util_functions.dart';
 import 'package:perfectBeta/model/users/user_with_personal_data_access_level_dto.dart';
 import 'package:perfectBeta/widgets/custom_text.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
@@ -19,11 +19,6 @@ class UserInfoCardSmall extends StatefulWidget {
 class _UserInfoCardSmallState extends State<UserInfoCardSmall> {
   var _userEndpoint = new UserEndpoint(getIt.get());
 
-  String _name = "";
-  String _surname = "";
-  List<AccessLevelDTO> _accessLevels = [];
-  String _email = "";
-  String _phoneNumber = "";
   String _accessLevelString = "";
 
   @override
@@ -129,35 +124,6 @@ class _UserInfoCardSmallState extends State<UserInfoCardSmall> {
       ),
     );
   }
-
-  String getAccessLevelsString(List<AccessLevelDTO> levels) {
-    String accessLevelsString = '';
-
-    levels.forEach((level) {
-      if(level.isActive == true) {
-        accessLevelsString += level.accessLevel.toCapitalized() + ' ';
-      }
-    });
-    return accessLevelsString.trim();
-  }
-
-  // void _loadPersonalData() async {
-  //   try {
-  //     UserWithPersonalDataAccessLevelDTO res =
-  //         await _userEndpoint.getUserPersonalDataAccessLevel();
-  //     if (res.isActive && res.isVerified) {
-  //       _name = res.personalData.name ?? "";
-  //       _surname = res.personalData.surname ?? "";
-  //       _accessLevels = res.accessLevels ?? "";
-  //       _email = res.email ?? "";
-  //       _phoneNumber = res.personalData.phoneNumber ?? "";
-  //       _accessLevelString = getAccessLevelsString(_accessLevels);
-  //     }
-  //   } catch (e, s) {
-  //     print("Exception $e");
-  //     print("StackTrace $s");
-  //   }
-  // }
 }
 
 extension StringCasingExtension on String {

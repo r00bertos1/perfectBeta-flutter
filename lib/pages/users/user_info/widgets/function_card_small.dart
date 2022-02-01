@@ -1,10 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:perfectBeta/constants/controllers.dart';
-import 'package:get/get.dart';
 import 'package:perfectBeta/constants/style.dart';
 import 'package:perfectBeta/widgets/custom_text.dart';
-
-
 
 
 class FunctionCardSmall extends StatefulWidget {

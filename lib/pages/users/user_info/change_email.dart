@@ -1,13 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_easyloading/flutter_easyloading.dart';
-import 'package:perfectBeta/api/providers/user_endpoint.dart';
 import 'package:perfectBeta/constants/style.dart';
-import 'package:perfectBeta/model/users/data/email_dto.dart';
-import 'package:perfectBeta/pages/users/user_info/confirm_change_email.dart';
+import 'package:perfectBeta/helpers/handlers.dart';
 import 'package:perfectBeta/widgets/custom_text.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '../../../main.dart';
 
 class ChangeEmailPage extends StatefulWidget {
   const ChangeEmailPage({Key key}) : super(key: key);
@@ -18,9 +14,6 @@ class ChangeEmailPage extends StatefulWidget {
 
 class _ChangeEmailPage extends State<ChangeEmailPage> {
   final _changeEmailFormKey = GlobalKey<FormState>();
-
-  //API
-  var _userEndpoint = new UserEndpoint(getIt.get());
 
   final _emailController = TextEditingController();
 
@@ -98,7 +91,7 @@ class _ChangeEmailPage extends State<ChangeEmailPage> {
                 InkWell(
                   onTap: () async {
                     if (_changeEmailFormKey.currentState.validate()) {
-                      _handleChangeEmail();
+                      handleChangeEmail(context, _emailController.text.trim());
                     }
                   },
                   child: Container(
@@ -120,25 +113,5 @@ class _ChangeEmailPage extends State<ChangeEmailPage> {
         ),
       ),
     );
-  }
-
-  Future<void> _handleChangeEmail() async {
-    // login
-    EmailDTO email = new EmailDTO(email: _emailController.text.trim());
-    var res = await _userEndpoint.requestChangeEmail(email);
-    try {
-      if (res.statusCode == 200) {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (context) => ConfirmChangeEmail(email: _emailController.text),
-          ),
-        );
-        EasyLoading.showSuccess('Email change instructions have been sent to current email!');
-      }
-    } catch (e, s) {
-      print("Exception $e");
-      print("StackTrace $s");
-    }
   }
 }

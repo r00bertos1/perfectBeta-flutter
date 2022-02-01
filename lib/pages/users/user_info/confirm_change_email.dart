@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_easyloading/flutter_easyloading.dart';
-import 'package:perfectBeta/api/providers/user_endpoint.dart';
 import 'package:perfectBeta/constants/style.dart';
+import 'package:perfectBeta/helpers/handlers.dart';
+import 'package:perfectBeta/model/users/data/email_dto.dart';
 import 'package:perfectBeta/widgets/custom_text.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '../../../main.dart';
 
 class ConfirmChangeEmail extends StatefulWidget {
   const ConfirmChangeEmail({Key key, this.email}) : super(key: key);
-  final String email;
+  final EmailDTO email;
 
   @override
   _ConfirmChangeEmail createState() => _ConfirmChangeEmail();
@@ -16,10 +15,6 @@ class ConfirmChangeEmail extends StatefulWidget {
 
 class _ConfirmChangeEmail extends State<ConfirmChangeEmail> {
   final _confirmChangeEmailFormKey = GlobalKey<FormState>();
-
-  //API
-  var _userEndpoint = new UserEndpoint(getIt.get());
-
   final _codeController = TextEditingController();
 
   @override
@@ -51,9 +46,7 @@ class _ConfirmChangeEmail extends State<ConfirmChangeEmail> {
                   ),
                   Row(
                     children: [
-                      Text("Change Email",
-                          style: GoogleFonts.roboto(
-                              fontSize: 30, fontWeight: FontWeight.bold)),
+                      Text("Change Email", style: GoogleFonts.roboto(fontSize: 30, fontWeight: FontWeight.bold)),
                     ],
                   ),
                   SizedBox(
@@ -76,22 +69,19 @@ class _ConfirmChangeEmail extends State<ConfirmChangeEmail> {
                   ),
                   TextFormField(
                     validator: (value) {
-                    String pattern = r'^[a-zA-Z0-9]+$';
-                    RegExp regExp = new RegExp(pattern);
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter code';
-                    } else if (!regExp.hasMatch(value)) {
-                      return 'Please valid code';
-                    }
-                    return null;
+                      String pattern = r'^[a-zA-Z0-9]+$';
+                      RegExp regExp = new RegExp(pattern);
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter code';
+                      } else if (!regExp.hasMatch(value)) {
+                        return 'Please valid code';
+                      }
+                      return null;
                     },
                     controller: _codeController,
                     maxLines: null,
                     decoration: InputDecoration(
-                        labelText: "Code",
-                        hintText: "Enter your code",
-                        border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(20))),
+                        labelText: "Code", hintText: "Enter your code", border: OutlineInputBorder(borderRadius: BorderRadius.circular(20))),
                   ),
                   SizedBox(
                     height: 15,
@@ -99,13 +89,11 @@ class _ConfirmChangeEmail extends State<ConfirmChangeEmail> {
                   InkWell(
                     onTap: () async {
                       if (_confirmChangeEmailFormKey.currentState.validate()) {
-                        _handleResetPassword();
+                        await handleResetPassword(context, _codeController.text, widget.email.email);
                       }
                     },
                     child: Container(
-                      decoration: BoxDecoration(
-                          color: active,
-                          borderRadius: BorderRadius.circular(20)),
+                      decoration: BoxDecoration(color: active, borderRadius: BorderRadius.circular(20)),
                       alignment: Alignment.center,
                       width: double.maxFinite,
                       padding: EdgeInsets.symmetric(vertical: 16),
@@ -122,18 +110,5 @@ class _ConfirmChangeEmail extends State<ConfirmChangeEmail> {
         ),
       ),
     );
-  }
-
-  Future<void> _handleResetPassword() async {
-    var res = await _userEndpoint.confirmChangeEmail(_codeController.text, widget.email);
-    try {
-      if (res.statusCode == 200) {
-        Navigator.of(context).pop();
-        EasyLoading.showSuccess('Email has been changed!');
-      }
-    } catch (e, s) {
-      print("Exception $e");
-      print("StackTrace $s");
-    }
   }
 }

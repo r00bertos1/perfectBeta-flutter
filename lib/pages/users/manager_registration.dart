@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:perfectBeta/api/providers/manager_endpoint.dart';
 import 'package:perfectBeta/constants/style.dart';
+import 'package:perfectBeta/helpers/handlers.dart';
 import 'package:perfectBeta/model/auth/registration_dto.dart';
 import 'package:perfectBeta/widgets/custom_text.dart';
 import 'package:get/get.dart';
@@ -24,7 +25,6 @@ class _ManagerRegistrationPage extends State<ManagerRegistrationPage> {
   final _usernameController = TextEditingController();
   final _passwordController = TextEditingController();
   final _emailController = TextEditingController();
-  //bool _isChecked = false;
 
   @override
   Widget build(BuildContext context) {
@@ -56,9 +56,7 @@ class _ManagerRegistrationPage extends State<ManagerRegistrationPage> {
                   ),
                   Row(
                     children: [
-                      Text("Register manager",
-                          style: GoogleFonts.roboto(
-                              fontSize: 30, fontWeight: FontWeight.bold)),
+                      Text("Register manager", style: GoogleFonts.roboto(fontSize: 30, fontWeight: FontWeight.bold)),
                     ],
                   ),
                   SizedBox(
@@ -71,8 +69,7 @@ class _ManagerRegistrationPage extends State<ManagerRegistrationPage> {
                       // Underscore and dot can't be next to each other (e.g user_.name).
                       // Underscore or dot can't be used multiple times in a row (e.g user__name / user..name).
                       // Number of characters must be between 4 to 20.
-                      String pattern =
-                          r'(^(?=.{4,20}$)(?![_.])(?!.*[_.]{2})[a-zA-Z0-9._]+(?<![_.])$)';
+                      String pattern = r'(^(?=.{4,20}$)(?![_.])(?!.*[_.]{2})[a-zA-Z0-9._]+(?<![_.])$)';
                       RegExp regExp = new RegExp(pattern);
                       if (value == null || value.isEmpty) {
                         return 'Please enter username';
@@ -90,8 +87,7 @@ class _ManagerRegistrationPage extends State<ManagerRegistrationPage> {
                         errorMaxLines: 4,
                         labelText: "Username",
                         hintText: "Enter your username",
-                        border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(20))),
+                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(20))),
                   ),
                   SizedBox(
                     height: 15,
@@ -108,10 +104,7 @@ class _ManagerRegistrationPage extends State<ManagerRegistrationPage> {
                     keyboardType: TextInputType.emailAddress,
                     controller: _emailController,
                     decoration: InputDecoration(
-                        labelText: "Email",
-                        hintText: "Enter your email",
-                        border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(20))),
+                        labelText: "Email", hintText: "Enter your email", border: OutlineInputBorder(borderRadius: BorderRadius.circular(20))),
                   ),
                   SizedBox(
                     height: 15,
@@ -128,8 +121,7 @@ class _ManagerRegistrationPage extends State<ManagerRegistrationPage> {
                     decoration: InputDecoration(
                         labelText: "Confirm email",
                         hintText: "Enter your email",
-                        border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(20))),
+                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(20))),
                   ),
                   SizedBox(
                     height: 15,
@@ -137,8 +129,7 @@ class _ManagerRegistrationPage extends State<ManagerRegistrationPage> {
                   TextFormField(
                     validator: (value) {
                       // Minimum eight characters, at least one uppercase letter, one lowercase letter, one number and one special character:
-                      String pattern =
-                          r'(^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,32}$)';
+                      String pattern = r'(^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,32}$)';
                       RegExp regExp = new RegExp(pattern);
                       if (value == null || value.isEmpty) {
                         return 'Please enter password';
@@ -157,8 +148,7 @@ class _ManagerRegistrationPage extends State<ManagerRegistrationPage> {
                         errorMaxLines: 4,
                         labelText: "Password",
                         hintText: "Enter your password",
-                        border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(20))),
+                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(20))),
                   ),
                   SizedBox(
                     height: 15,
@@ -176,8 +166,7 @@ class _ManagerRegistrationPage extends State<ManagerRegistrationPage> {
                     decoration: InputDecoration(
                         labelText: "Confirm Password",
                         hintText: "Enter your password",
-                        border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(20))),
+                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(20))),
                   ),
                   SizedBox(
                     height: 15,
@@ -185,13 +174,15 @@ class _ManagerRegistrationPage extends State<ManagerRegistrationPage> {
                   InkWell(
                     onTap: () async {
                       if (_registrationFormKey.currentState.validate()) {
-                        _handleRegistration();
+                        handleRegistration(
+                            context: context,
+                            username: _usernameController.text.trim(),
+                            email: _emailController.text.trim(),
+                            password: _passwordController.text.trim());
                       }
                     },
                     child: Container(
-                      decoration: BoxDecoration(
-                          color: active,
-                          borderRadius: BorderRadius.circular(20)),
+                      decoration: BoxDecoration(color: active, borderRadius: BorderRadius.circular(20)),
                       alignment: Alignment.center,
                       width: double.maxFinite,
                       padding: EdgeInsets.symmetric(vertical: 16),
@@ -208,21 +199,5 @@ class _ManagerRegistrationPage extends State<ManagerRegistrationPage> {
         ),
       ),
     );
-  }
-
-  Future<void> _handleRegistration() async {
-    // login
-    RegistrationDTO registerData = new RegistrationDTO(
-        login: _usernameController.text.trim(), email: _emailController.text.trim(), password: _passwordController.text.trim());
-    var res = await _managerEndpoint.registerManager(registerData);
-    try {
-      if (res.statusCode == 200) {
-        Navigator.of(context).pop();
-        EasyLoading.showSuccess('New manager was successfully created!');
-      }
-    } catch (e, s) {
-      print("Exception $e");
-      print("StackTrace $s");
-    }
   }
 }

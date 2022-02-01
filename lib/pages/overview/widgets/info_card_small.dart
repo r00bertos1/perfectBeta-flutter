@@ -29,7 +29,6 @@ class InfoCardSmall extends StatelessWidget {
             CustomText(text: title, size: 24, weight: FontWeight.w300, color: isActive ? active : lightGrey,),
               value
             //CustomText(text: value, size: 24, weight: FontWeight.bold, color: isActive ? active : dark,)
-
           ],)
         ),
       ),
