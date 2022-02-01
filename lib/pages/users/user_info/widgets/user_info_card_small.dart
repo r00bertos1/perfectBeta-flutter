@@ -1,13 +1,13 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:perfectBeta/api/api_client.dart';
 import 'package:perfectBeta/api/providers/user_endpoint.dart';
 import 'package:perfectBeta/constants/style.dart';
-import 'package:perfectBeta/dto/users/data/access_level_dto.dart';
-import 'package:perfectBeta/dto/users/user_with_personal_data_access_level_dto.dart';
+import 'package:perfectBeta/model/users/data/access_level_dto.dart';
+import 'package:perfectBeta/model/users/user_with_personal_data_access_level_dto.dart';
 import 'package:perfectBeta/widgets/custom_text.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
+import '../../../../main.dart';
 
 class UserInfoCardSmall extends StatefulWidget {
   const UserInfoCardSmall({Key key}) : super(key: key);
@@ -17,8 +17,7 @@ class UserInfoCardSmall extends StatefulWidget {
 }
 
 class _UserInfoCardSmallState extends State<UserInfoCardSmall> {
-  static ApiClient _client = new ApiClient();
-  var _userEndpoint = new UserEndpoint(_client.init());
+  var _userEndpoint = new UserEndpoint(getIt.get());
 
   String _name = "";
   String _surname = "";

@@ -1,17 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:intl_phone_number_input/intl_phone_number_input.dart';
-import 'package:perfectBeta/api/api_client.dart';
 import 'package:perfectBeta/api/providers/user_endpoint.dart';
 import 'package:perfectBeta/constants/lists.dart';
 import 'package:perfectBeta/constants/style.dart';
-import 'package:perfectBeta/dto/users/data/personal_data_dto.dart';
-import 'package:perfectBeta/dto/users/user_with_personal_data_access_level_dto.dart';
-import 'package:perfectBeta/helpers/country_dropdown.dart';
+import 'package:perfectBeta/model/users/data/personal_data_dto.dart';
+import 'package:perfectBeta/model/users/user_with_personal_data_access_level_dto.dart';
+import 'package:perfectBeta/helpers/country_functions.dart';
 import 'package:perfectBeta/pages/users/user_info/user.dart';
 import 'package:perfectBeta/widgets/custom_text.dart';
-import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../../../main.dart';
 
 class ChangePersonalDataPage extends StatefulWidget {
   const ChangePersonalDataPage({Key key}) : super(key: key);
@@ -24,12 +23,7 @@ class _ChangePersonalDataPage extends State<ChangePersonalDataPage> {
   final _personalDataFormKey = GlobalKey<FormState>();
 
   //API
-  static ApiClient _client = new ApiClient();
-  // final ApiClient _client = new ApiClient();
-  var _userEndpoint = new UserEndpoint(_client.init());
-
-  // static final RegExp nameRegExp = RegExp('^[a-zA-Z]{2,20}\$');
-  // static final RegExp surnameRegExp = RegExp('[a-zA-Z]{2,40}');
+  var _userEndpoint = new UserEndpoint(getIt.get());
 
   int _userId;
   final _nameController = TextEditingController();

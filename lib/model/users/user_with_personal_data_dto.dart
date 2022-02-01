@@ -1,4 +1,4 @@
-import 'package:perfectBeta/dto/users/user_dto.dart';
+import 'package:perfectBeta/model/users/user_dto.dart';
 import 'data/personal_data_dto.dart';
 
 class UserWithPersonalDataDTO extends UserDTO {

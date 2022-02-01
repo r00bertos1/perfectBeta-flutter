@@ -2,15 +2,13 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
-import 'package:perfectBeta/dto/auth/credentials_dto.dart';
-import 'package:perfectBeta/dto/auth/token_dto.dart';
+import 'package:perfectBeta/model/auth/credentials_dto.dart';
+import 'package:perfectBeta/model/auth/token_dto.dart';
 import '../../storage/secure_storage.dart';
 
 class AuthenticationEndpoint {
-  Dio _client;
+  final Dio _client;
   AuthenticationEndpoint(this._client);
-
-  String token;
 
   // ANONIM
   // POST

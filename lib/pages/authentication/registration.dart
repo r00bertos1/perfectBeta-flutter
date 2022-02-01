@@ -1,20 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
-import 'package:perfectBeta/api/api_client.dart';
-import 'package:perfectBeta/api/providers/authentication_endpoint.dart';
 import 'package:perfectBeta/api/providers/user_endpoint.dart';
 import 'package:perfectBeta/constants/style.dart';
-import 'package:perfectBeta/dto/auth/credentials_dto.dart';
-import 'package:perfectBeta/dto/auth/registration_dto.dart';
-import 'package:perfectBeta/dto/users/user_with_personal_data_access_level_dto.dart';
-import 'package:perfectBeta/pages/authentication/authentication.dart';
-import 'package:perfectBeta/routing/routes.dart';
-import 'package:perfectBeta/storage/secure_storage.dart';
-import 'package:perfectBeta/storage/user_secure_storage.dart';
+import 'package:perfectBeta/model/auth/registration_dto.dart';
 import 'package:perfectBeta/widgets/custom_text.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
-
+import '../../main.dart';
 import 'confirm_registration_page.dart';
 
 class RegistrationPage extends StatefulWidget {
@@ -28,23 +20,18 @@ class _RegistrationPage extends State<RegistrationPage> {
   final _registrationFormKey = GlobalKey<FormState>();
 
   //API
-  static ApiClient _client = new ApiClient();
-  // final ApiClient _client = new ApiClient();
-  var _userEndpoint = new UserEndpoint(_client.init());
+  var _userEndpoint = new UserEndpoint(getIt.get());
 
   final _usernameController = TextEditingController();
   final _passwordController = TextEditingController();
   final _emailController = TextEditingController();
-  //bool _isChecked = false;
 
   @override
   Widget build(BuildContext context) {
-    final isKeyboard = MediaQuery.of(context).viewInsets.bottom != 0;
     return Scaffold(
       //resizeToAvoidBottomInset: false,
       body: Center(
         child: SingleChildScrollView(
-          //physics: NeverScrollableScrollPhysics(),
           child: Form(
             key: _registrationFormKey,
             child: Container(
@@ -228,7 +215,6 @@ class _RegistrationPage extends State<RegistrationPage> {
     var res = await _userEndpoint.registerUser(registerData);
     try {
       if (res.statusCode == 200) {
-        //Navigator.of(context).pop();
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(

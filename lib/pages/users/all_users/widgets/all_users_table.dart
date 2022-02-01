@@ -1,26 +1,22 @@
 import 'package:data_table_2/data_table_2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:perfectBeta/api/api_client.dart';
 import 'package:perfectBeta/api/providers/user_endpoint.dart';
 import 'package:perfectBeta/constants/style.dart';
-import 'package:perfectBeta/dto/pages/page_dto.dart';
-import 'package:perfectBeta/dto/users/user_with_personal_data_access_level_dto.dart';
+import 'package:perfectBeta/model/pages/page_dto.dart';
+import 'package:perfectBeta/model/users/user_with_personal_data_access_level_dto.dart';
 import 'package:perfectBeta/helpers/reponsiveness.dart';
 import 'package:perfectBeta/pages/users/all_users/widgets/user_all_info_card.dart';
 import 'package:perfectBeta/widgets/custom_text.dart';
+import '../../../../main.dart';
 
-import '../../widgets/custom_dialog.dart';
-
-/// Example without datasource
 class AllUsersTable extends StatefulWidget {
   @override
   State<AllUsersTable> createState() => _AllUsersTableState();
 }
 
 class _AllUsersTableState extends State<AllUsersTable> {
-  static ApiClient _client = new ApiClient();
-  var _userEndpoint = new UserEndpoint(_client.init());
+  var _userEndpoint = new UserEndpoint(getIt.get());
 
   bool isSwitched = false;
   var textValue = 'Switch is OFF';

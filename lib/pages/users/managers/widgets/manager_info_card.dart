@@ -1,12 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:perfectBeta/api/api_client.dart';
-import 'package:perfectBeta/api/providers/manager_endpoint.dart';
-import 'package:perfectBeta/api/providers/user_endpoint.dart';
 import 'package:perfectBeta/constants/style.dart';
-import 'package:perfectBeta/dto/users/data/access_level_dto.dart';
-import 'package:perfectBeta/dto/users/user_with_personal_data_access_level_dto.dart';
+import 'package:perfectBeta/model/users/data/access_level_dto.dart';
+import 'package:perfectBeta/model/users/user_with_personal_data_access_level_dto.dart';
 import 'package:perfectBeta/helpers/reponsiveness.dart';
 import 'package:perfectBeta/widgets/custom_text.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
@@ -23,11 +20,6 @@ class ManagerInfoCard extends StatefulWidget {
 }
 
 class _ManagerInfoCardState extends State<ManagerInfoCard> {
-  static ApiClient _client = new ApiClient();
-  var _userEndpoint = new UserEndpoint(_client.init());
-  var _managerEndpoint = new ManagerEndpoint(_client.init());
-
-  bool _managerValue;
 
   @override
   Widget build(BuildContext context) {

@@ -4,7 +4,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
-import 'package:perfectBeta/api/api_client.dart';
 import 'package:perfectBeta/api/providers/climbing_gym_endpoint.dart';
 import 'package:perfectBeta/api/providers/cloud_endpoint.dart';
 import 'package:perfectBeta/api/providers/python_endpoint.dart';
@@ -12,19 +11,20 @@ import 'package:perfectBeta/api/providers/route_endpoint.dart';
 import 'package:perfectBeta/constants/controllers.dart';
 import 'package:perfectBeta/constants/enums.dart';
 import 'package:perfectBeta/constants/style.dart';
-import 'package:perfectBeta/dto/gyms/climbing_gym_dto.dart';
-import 'package:perfectBeta/dto/holds/holds_details_dto.dart';
-import 'package:perfectBeta/dto/pages/page_dto.dart';
-import 'package:perfectBeta/dto/routes/photo_dto.dart';
-import 'package:perfectBeta/dto/routes/route_dto.dart';
+import 'package:perfectBeta/model/gyms/climbing_gym_dto.dart';
+import 'package:perfectBeta/model/holds/holds_details_dto.dart';
+import 'package:perfectBeta/model/pages/page_dto.dart';
+import 'package:perfectBeta/model/routes/photo_dto.dart';
+import 'package:perfectBeta/model/routes/route_dto.dart';
 import 'package:perfectBeta/helpers/reponsiveness.dart';
 import 'package:perfectBeta/routing/routes.dart';
 import 'package:perfectBeta/widgets/custom_text.dart';
 import 'dart:convert';
 import 'package:image_picker/image_picker.dart';
-import 'package:perfectBeta/dto/holds/hold.dart';
+import 'package:perfectBeta/model/holds/hold.dart';
 import 'dart:io';
-import 'package:http/http.dart' as http;
+
+import '../../../../main.dart';
 
 final uploadImageURL = 'https://perfectbeta-python-tls-pyclimb.apps.okd.cti.p.lodz.pl/upload';
 
@@ -42,10 +42,9 @@ class _AddStepsState extends State<AddSteps> {
   bool complete = false;
 
   //API
-  static ApiClient _client = new ApiClient();
-  var _routeEndpoint = new RouteEndpoint(_client.init());
-  var _climbingGymEndpoint = new ClimbingGymEndpoint(_client.init());
-  var _cloudEndpoint = new CloudEndpoint(_client.init());
+  var _routeEndpoint = new RouteEndpoint(getIt.get());
+  var _climbingGymEndpoint = new ClimbingGymEndpoint(getIt.get());
+  var _cloudEndpoint = new CloudEndpoint(getIt.get());
 
   //stepOne
   var _image;

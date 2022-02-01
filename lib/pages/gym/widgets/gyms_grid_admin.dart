@@ -1,23 +1,20 @@
-import 'package:data_table_2/data_table_2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:perfectBeta/constants/enums.dart';
-import 'package:perfectBeta/dto/pages/page_dto.dart';
-import 'package:perfectBeta/dto/users/user_with_personal_data_access_level_dto.dart';
+import 'package:perfectBeta/helpers/data_functions.dart';
+import 'package:perfectBeta/helpers/util_functions.dart';
+import 'package:perfectBeta/model/pages/page_dto.dart';
+import 'package:perfectBeta/model/users/user_with_personal_data_access_level_dto.dart';
 import 'package:perfectBeta/pages/gym/widgets/status_switch_button.dart';
-import 'package:perfectBeta/pages/route/my_routes/my_routes_page.dart';
 import 'package:perfectBeta/service.dart';
 import 'package:perfectBeta/constants/style.dart';
-import 'package:perfectBeta/dto/gyms/climbing_gym_dto.dart';
+import 'package:perfectBeta/model/gyms/climbing_gym_dto.dart';
 import 'package:perfectBeta/helpers/reponsiveness.dart';
 import 'package:perfectBeta/widgets/custom_text.dart';
-import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import '../../../main.dart';
 import '../gym_details.dart';
 
 class GymsGridAdmin extends StatefulWidget {
-  static ApiClient _client = new ApiClient();
-
   @override
   State<GymsGridAdmin> createState() => _GymsGridAdminState();
 }
@@ -25,17 +22,15 @@ class GymsGridAdmin extends StatefulWidget {
 class _GymsGridAdminState extends State<GymsGridAdmin> {
   UserWithPersonalDataAccessLevelDTO _gymOwner;
   bool _isVerified = false;
-  // final ApiClient _client = new ApiClient();
-  var _climbingGymEndpoint =
-      new ClimbingGymEndpoint(GymsGridAdmin._client.init());
-  var _userEndpoint = new UserEndpoint(GymsGridAdmin._client.init());
+
+  var _climbingGymEndpoint = new ClimbingGymEndpoint(getIt.get());
+  var _userEndpoint = new UserEndpoint(getIt.get());
 
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<List<ClimbingGymDTO>>(
         future: _loadGyms(),
         builder: (context, snapshot) {
-          print('Connection state: ${snapshot.connectionState}');
           if (snapshot.connectionState == ConnectionState.done) {
             if (snapshot.hasError) {
               return Text("Error");
@@ -49,10 +44,8 @@ class _GymsGridAdminState extends State<GymsGridAdmin> {
                   itemCount: snapshot.data.length,
                   padding: const EdgeInsets.only(bottom: 20),
                   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisSpacing:
-                        ResponsiveWidget.isSmallScreen(context) ? 32 : 64,
-                    mainAxisSpacing:
-                        ResponsiveWidget.isSmallScreen(context) ? 32 : 64,
+                    crossAxisSpacing: ResponsiveWidget.isSmallScreen(context) ? 32 : 64,
+                    mainAxisSpacing: ResponsiveWidget.isSmallScreen(context) ? 32 : 64,
                     crossAxisCount: ResponsiveWidget.isSmallScreen(context)
                         ? 1
                         : ResponsiveWidget.isMediumScreen(context)
@@ -86,8 +79,7 @@ class _GymsGridAdminState extends State<GymsGridAdmin> {
         });
   }
 
-
-  Widget buildGymGridFromSnapshot(context,List<ClimbingGymDTO> data,int index) {
+  Widget buildGymGridFromSnapshot(context, List<ClimbingGymDTO> data, int index) {
     _isVerified = data[index].status == GymStatusEnum.VERIFIED ? true : false;
     return ClipRRect(
       borderRadius: BorderRadius.circular(10),
@@ -95,80 +87,53 @@ class _GymsGridAdminState extends State<GymsGridAdmin> {
         decoration: BoxDecoration(
           color: Colors.white,
           border: Border.all(color: active.withOpacity(.4), width: .5),
-          boxShadow: [
-            BoxShadow(
-                offset: Offset(0, 6),
-                color: lightGrey.withOpacity(.1),
-                blurRadius: 12)
-          ],
+          boxShadow: [BoxShadow(offset: Offset(0, 6), color: lightGrey.withOpacity(.1), blurRadius: 12)],
           borderRadius: BorderRadius.circular(10),
         ),
         child: GridTile(
           child: GestureDetector(
             onTap: () => Navigator.push(
               context,
-              MaterialPageRoute(
-                  builder: (context) => GymDetails(gymId: data[index].id)),
+              MaterialPageRoute(builder: (context) => GymDetails(gymId: data[index].id)),
             ),
-            child: Image(
-              fit: BoxFit.cover,
-              image: AssetImage('assets/images/gym-template.jpg')),
+            child: Image(fit: BoxFit.cover, image: AssetImage('assets/images/gym-template.jpg')),
           ),
           footer: GridTileBar(
             backgroundColor: Colors.black38,
-              //contentPadding: const EdgeInsets.symmetric(horizontal: 32),
-              title: Text("${data[index].gymName}"),
-              subtitle: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _parseGymEnum(data[index].status),
-                  FutureBuilder<UserWithPersonalDataAccessLevelDTO>(
-                      future: _getGymOwner(
-                          data[index].ownerId),
-                      builder: (context, ownerData) {
-                        if (ownerData.hasError) {
-                          return Text('Error: ${ownerData.error}');
-                        }
-                        if (ownerData.hasData) {
-                          return CustomText(
-                              text: 'Owner: ' + ownerData.data.login ?? '',
-                              size: 12,
-                              weight: FontWeight.w300,
-                              color: lightGrey);
-                        }
-                        return Container();
-                      }),
-                ],
-              ),
-              trailing: StatusSwitchButton(
-                  textColor: Colors.white,
-                  isVerified: _isVerified,
-                  onPressed: () {
-                    handleGymStatus(data[index].status, data[index].id);
-                  }
-              ),
+            //contentPadding: const EdgeInsets.symmetric(horizontal: 32),
+            title: Text("${data[index].gymName}"),
+            subtitle: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                parseGymEnum(data[index].status),
+                FutureBuilder<UserWithPersonalDataAccessLevelDTO>(
+                    future: _getGymOwner(data[index].ownerId),
+                    builder: (context, ownerData) {
+                      if (ownerData.hasError) {
+                        return Text('Error: ${ownerData.error}');
+                      }
+                      if (ownerData.hasData) {
+                        return CustomText(text: 'Owner: ' + ownerData.data.login ?? '', size: 12, weight: FontWeight.w300, color: lightGrey);
+                      }
+                      return Container();
+                    }),
+              ],
+            ),
+            trailing: StatusSwitchButton(
+                textColor: Colors.white,
+                isVerified: _isVerified,
+                onPressed: () {
+                  handleGymStatus(data[index].status, data[index].id);
+                }),
           ),
         ),
       ),
     );
   }
 
-
-  Widget _parseGymEnum(data) {
-    switch (data) {
-      case GymStatusEnum.UNVERIFIED:
-        return CustomText(text: "Unverified", color: Colors.amberAccent);
-      case GymStatusEnum.VERIFIED:
-        return CustomText(text: "Verified", color: active);
-      case GymStatusEnum.CLOSED:
-        return CustomText(text: "Closed", color: error);
-    }
-  }
-
   Future<UserWithPersonalDataAccessLevelDTO> _getGymOwner(ownerId) async {
     try {
-      UserWithPersonalDataAccessLevelDTO owner =
-          await _userEndpoint.getUserById(ownerId);
+      UserWithPersonalDataAccessLevelDTO owner = await _userEndpoint.getUserById(ownerId);
 
       if (owner.login.isNotEmpty) {
         return owner;

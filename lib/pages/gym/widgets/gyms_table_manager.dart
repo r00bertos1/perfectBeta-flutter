@@ -1,36 +1,36 @@
 import 'package:data_table_2/data_table_2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:perfectBeta/api/api_client.dart';
 import 'package:perfectBeta/api/providers/climbing_gym_endpoint.dart';
 import 'package:perfectBeta/api/providers/user_endpoint.dart';
 import 'package:perfectBeta/constants/controllers.dart';
 import 'package:perfectBeta/constants/enums.dart';
 import 'package:perfectBeta/constants/style.dart';
-import 'package:perfectBeta/dto/gyms/climbing_gym_dto.dart';
-import 'package:perfectBeta/dto/pages/page_dto.dart';
-import 'package:perfectBeta/dto/users/user_with_personal_data_access_level_dto.dart';
+import 'package:perfectBeta/helpers/data_functions.dart';
+import 'package:perfectBeta/helpers/util_functions.dart';
+import 'package:perfectBeta/model/gyms/climbing_gym_dto.dart';
+import 'package:perfectBeta/model/pages/page_dto.dart';
+import 'package:perfectBeta/model/users/user_with_personal_data_access_level_dto.dart';
 import 'package:perfectBeta/helpers/reponsiveness.dart';
 import 'package:perfectBeta/pages/gym/gym_details.dart';
 import 'package:perfectBeta/pages/route/add_route/add_route.dart';
-import 'package:perfectBeta/pages/users/all_users/widgets/user_all_info_card.dart';
 import 'package:perfectBeta/routing/routes.dart';
 import 'package:perfectBeta/widgets/custom_text.dart';
 
+import '../../../main.dart';
 import '../add_maintainer_to_gym.dart';
 import '../edit_gym_details.dart';
 
 /// Example without datasource
 class GymsTableManager extends StatefulWidget {
-  static ApiClient _client = new ApiClient();
   @override
   State<GymsTableManager> createState() => _GymsTableManagerState();
 }
 
 class _GymsTableManagerState extends State<GymsTableManager> {
-  var _userEndpoint = new UserEndpoint(GymsTableManager._client.init());
+  var _userEndpoint = new UserEndpoint(getIt.get());
   var _climbingGymEndpoint =
-      new ClimbingGymEndpoint(GymsTableManager._client.init());
+      new ClimbingGymEndpoint(getIt.get());
 
   bool isSwitched = false;
   var textValue = 'Switch is OFF';
@@ -188,11 +188,11 @@ class _GymsTableManagerState extends State<GymsTableManager> {
           //     }),
         ),
         DataCell(
-          _parseGymEnum(gym.status),
+          parseGymEnum(gym.status),
         ),
         DataCell(
           FutureBuilder<int>(
-              future: _getCurrentUserId(),
+              future: getCurrentUserId(),
               builder: (context, snapshot) {
                 if (snapshot.hasError) {
                   return Container();
@@ -346,17 +346,6 @@ class _GymsTableManagerState extends State<GymsTableManager> {
     });
   }
 
-  Widget _parseGymEnum(data) {
-    switch (data) {
-      case GymStatusEnum.UNVERIFIED:
-        return CustomText(text: "Unverified", color: Colors.amberAccent);
-      case GymStatusEnum.VERIFIED:
-        return CustomText(text: "Verified", color: active);
-      case GymStatusEnum.CLOSED:
-        return CustomText(text: "Closed", color: error);
-    }
-  }
-
   Future<List<ClimbingGymDTO>> _loadMaintainedGyms() async {
     try {
       DataPage res = await _climbingGymEndpoint.getAllMaintainedGyms();
@@ -383,17 +372,6 @@ class _GymsTableManagerState extends State<GymsTableManager> {
         });
       }
       return gyms;
-    } catch (e, s) {
-      print("Exception $e");
-      print("StackTrace $s");
-    }
-  }
-
-  Future<int> _getCurrentUserId() async {
-    try {
-      UserWithPersonalDataAccessLevelDTO res =
-          await _userEndpoint.getUserPersonalDataAccessLevel();
-      return res.id;
     } catch (e, s) {
       print("Exception $e");
       print("StackTrace $s");

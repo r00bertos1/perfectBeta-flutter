@@ -1,4 +1,4 @@
-import 'package:perfectBeta/dto/users/user_with_access_level_dto.dart';
+import 'package:perfectBeta/model/users/user_with_access_level_dto.dart';
 import 'data/access_level_dto.dart';
 import 'data/personal_data_dto.dart';
 
@@ -24,7 +24,6 @@ class UserWithPersonalDataAccessLevelDTO extends UserWithAccessLevelDTO {
   factory UserWithPersonalDataAccessLevelDTO.fromJson(
       Map<String, dynamic> json) {
     var list = json['accessLevels'] as List;
-    //print(list.toString());
     List<AccessLevelDTO> accessLevelsList;
     accessLevelsList = list.map((i) => AccessLevelDTO.fromJson(i)).toList();
 

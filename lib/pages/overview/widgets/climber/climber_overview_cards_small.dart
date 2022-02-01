@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:perfectBeta/constants/style.dart';
 import 'package:perfectBeta/widgets/custom_text.dart';
 import '../info_card_small.dart';
-import 'package:perfectBeta/helpers/helper_data_methods.dart';
+import 'package:perfectBeta/helpers/data_functions.dart';
 
 class ClimberOverviewCardsSmallScreen extends StatelessWidget {
   @override

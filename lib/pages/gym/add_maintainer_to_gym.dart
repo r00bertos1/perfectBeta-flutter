@@ -1,23 +1,12 @@
 import 'package:data_table_2/data_table_2.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_easyloading/flutter_easyloading.dart';
-import 'package:perfectBeta/api/api_client.dart';
-import 'package:perfectBeta/api/providers/authentication_endpoint.dart';
 import 'package:perfectBeta/api/providers/climbing_gym_endpoint.dart';
-import 'package:perfectBeta/api/providers/user_endpoint.dart';
 import 'package:perfectBeta/constants/style.dart';
-import 'package:perfectBeta/dto/auth/credentials_dto.dart';
-import 'package:perfectBeta/dto/auth/registration_dto.dart';
-import 'package:perfectBeta/dto/gyms/climbing_gym_with_maintainers_dto.dart';
-import 'package:perfectBeta/dto/gyms/gym_maintainer_dto.dart';
-import 'package:perfectBeta/dto/users/data/email_dto.dart';
-import 'package:perfectBeta/pages/authentication/authentication.dart';
-import 'package:perfectBeta/routing/routes.dart';
-import 'package:perfectBeta/storage/secure_storage.dart';
-import 'package:perfectBeta/storage/user_secure_storage.dart';
+import 'package:perfectBeta/model/gyms/climbing_gym_with_maintainers_dto.dart';
+import 'package:perfectBeta/model/gyms/gym_maintainer_dto.dart';
 import 'package:perfectBeta/widgets/custom_text.dart';
-import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../../main.dart';
 
 class AddMaintainerToGymPage extends StatefulWidget {
   const AddMaintainerToGymPage({Key key, this.gymId}) : super(key: key);
@@ -31,8 +20,7 @@ class _AddMaintainerToGymPage extends State<AddMaintainerToGymPage> {
   final _maintainterToGymKey = GlobalKey<FormState>();
 
   //API
-  static ApiClient _client = new ApiClient();
-  var _climbingGymEndpoint = new ClimbingGymEndpoint(_client.init());
+  var _climbingGymEndpoint = new ClimbingGymEndpoint(getIt.get());
 
   final _managerUsernameController = TextEditingController();
 

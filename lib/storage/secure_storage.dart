@@ -16,24 +16,6 @@ class SecureStorage {
   static const _isManager = 'isManager';
   static const _isClimber = 'isClimber';
   static const _isAnonymous = 'isAnonymous';
-  //static const _askRefresh = 'askRefresh';
-  // static const _refreshTimeout = 'refreshTimeout';
-  // static const _verifierTimeout = 'verifierTimeout';
-
-  // void init() {
-  //   if (secStore.secureRead(_keyToken) != null) {
-  //     //if (secureRead(_tokenExpiry) > DateTime.now().toString()) {
-  //     //   timeout = secureRead(_tokenExpiry) - DateTime.now();
-  //     //   refreshTimeoutTimeout = timeout - 300_000
-  //
-  //       if (refreshTimeoutTimeout >= 0) {
-  //         state.refreshTimeout = setTimeout(() => {
-  //           eventBus.$emit('ask-refresh-session', newState.token)
-  //         }, refreshTimeoutTimeout)
-  //       }
-  //     //}
-  //   }
-  // }
 
   Future<String> secureRead(String key) async {
     String value = await _storage.read(key: key);

@@ -1,4 +1,4 @@
-import 'package:perfectBeta/dto/routes/photo_dto.dart';
+import 'package:perfectBeta/model/routes/photo_dto.dart';
 
 class RouteDTO {
   final int id;
@@ -20,29 +20,6 @@ class RouteDTO {
     this.climbingGymId,
     this.photos,
   });
-
-  // RouteDTO.withPhotos({
-  //   this.routeName,
-  //   this.difficulty,
-  //   this.description,
-  //   this.holdsDetails,
-  //   this.avgRating,
-  //   this.climbingGymId,
-  //   this.photos,
-  // });
-
-  // Map<String, dynamic> toJson() {
-  //   return {
-  //     "id": this.id,
-  //     "routeName": this.routeName,
-  //     "difficulty": this.difficulty,
-  //     "description": this.description,
-  //     "holdsDetails": this.holdsDetails,
-  //     "avgRating": this.avgRating,
-  //     "climbingGymId": this.climbingGymId,
-  //     //"photos": this.photos,
-  //   };
-  // }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();

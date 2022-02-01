@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:perfectBeta/dto/country/countryDTO.dart';
+import 'package:perfectBeta/model/country/countryDTO.dart';
 
 Future<List<CountryDTO>> getCountries(String jsonFile) async {
   final String response =

@@ -1,20 +1,13 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
-import 'package:perfectBeta/api/api_client.dart';
-import 'package:perfectBeta/api/providers/authentication_endpoint.dart';
 import 'package:perfectBeta/api/providers/user_endpoint.dart';
 import 'package:perfectBeta/constants/style.dart';
-import 'package:perfectBeta/dto/auth/credentials_dto.dart';
-import 'package:perfectBeta/dto/auth/registration_dto.dart';
-import 'package:perfectBeta/dto/users/data/email_dto.dart';
-import 'package:perfectBeta/pages/authentication/authentication.dart';
-import 'package:perfectBeta/routing/routes.dart';
-import 'package:perfectBeta/storage/secure_storage.dart';
-import 'package:perfectBeta/storage/user_secure_storage.dart';
+import 'package:perfectBeta/model/users/data/email_dto.dart';
 import 'package:perfectBeta/widgets/custom_text.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../../main.dart';
+import 'confirm_reset_password.dart';
 
 class ForgotPasswordPage extends StatefulWidget {
   const ForgotPasswordPage({Key key}) : super(key: key);
@@ -27,8 +20,7 @@ class _ForgotPasswordPage extends State<ForgotPasswordPage> {
   final _forgotPasswordFormKey = GlobalKey<FormState>();
 
   //API
-  static ApiClient _client = new ApiClient();
-  var _userEndpoint = new UserEndpoint(_client.init());
+  var _userEndpoint = new UserEndpoint(getIt.get());
 
   final _emailController = TextEditingController();
 
@@ -74,6 +66,7 @@ class _ForgotPasswordPage extends State<ForgotPasswordPage> {
                     children: [
                       CustomText(
                         text: "Put your email below. You will receive a message with link to reset your password.",
+                        overflow: TextOverflow.visible,
                         color: lightGrey,
                       ),
                     ],
@@ -105,7 +98,7 @@ class _ForgotPasswordPage extends State<ForgotPasswordPage> {
                 InkWell(
                   onTap: () async {
                     if (_forgotPasswordFormKey.currentState.validate()) {
-                      _handleResetPassword();
+                      _handleForgotPassword();
                     }
                   },
                   child: Container(
@@ -129,13 +122,18 @@ class _ForgotPasswordPage extends State<ForgotPasswordPage> {
     );
   }
 
-  Future<void> _handleResetPassword() async {
+  Future<void> _handleForgotPassword() async {
     // login
     EmailDTO email = new EmailDTO(email: _emailController.text.trim());
     var res = await _userEndpoint.requestResetPassword(email);
     try {
       if (res.statusCode == 200) {
-        Navigator.of(context).pop();
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => ConfirmForgotPassword(),
+          ),
+        );
         EasyLoading.showSuccess('Password reset instructions have been sent to email!');
       }
     } catch (e, s) {

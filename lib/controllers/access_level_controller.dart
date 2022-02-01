@@ -7,7 +7,6 @@ import 'package:get/get.dart';
 class AccessLevelController extends GetxController {
   static AccessLevelController instance = Get.find();
   var activeItem = overviewPageDisplayName.obs;
-
   var hoverItem = "".obs;
 
   changeActiveItemTo(String itemName) {
@@ -19,7 +18,6 @@ class AccessLevelController extends GetxController {
   }
 
   isHovering(String itemName) => hoverItem.value == itemName;
-
   isActive(String itemName) => activeItem.value == itemName;
 
   Widget returnIconFor(String itemName) {

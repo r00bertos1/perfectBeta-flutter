@@ -6,20 +6,21 @@ import 'package:perfectBeta/widgets/custom_text.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../main.dart';
 
-class ConfirmRegistrationPage extends StatefulWidget {
-  const ConfirmRegistrationPage({Key key}) : super(key: key);
+class ConfirmForgotPassword extends StatefulWidget {
+  const ConfirmForgotPassword({Key key}) : super(key: key);
 
   @override
-  _ConfirmRegistrationPage createState() => _ConfirmRegistrationPage();
+  _ConfirmForgotPassword createState() => _ConfirmForgotPassword();
 }
 
-class _ConfirmRegistrationPage extends State<ConfirmRegistrationPage> {
-  final _codeFormKey = GlobalKey<FormState>();
+class _ConfirmForgotPassword extends State<ConfirmForgotPassword> {
+  final _confirmForgotPasswordFormKey = GlobalKey<FormState>();
 
   //API
   var _userEndpoint = new UserEndpoint(getIt.get());
 
   final _codeController = TextEditingController();
+  final _passwordController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +30,7 @@ class _ConfirmRegistrationPage extends State<ConfirmRegistrationPage> {
       body: Center(
         child: SingleChildScrollView(
           child: Form(
-            key: _codeFormKey,
+            key: _confirmForgotPasswordFormKey,
             child: Container(
               constraints: BoxConstraints(maxWidth: 400),
               padding: EdgeInsets.all(24),
@@ -50,7 +51,7 @@ class _ConfirmRegistrationPage extends State<ConfirmRegistrationPage> {
                   ),
                   Row(
                     children: [
-                      Text("Verify account",
+                      Text("Reset Password",
                           style: GoogleFonts.roboto(
                               fontSize: 30, fontWeight: FontWeight.bold)),
                     ],
@@ -63,12 +64,60 @@ class _ConfirmRegistrationPage extends State<ConfirmRegistrationPage> {
                     child: Wrap(
                       children: [
                         CustomText(
-                          text: "Paste code from email provided during registration into box below to activate your account.",
+                          text: "Paste code from sent to your email address into box below to account reset password.",
                           overflow: TextOverflow.visible,
                           color: lightGrey,
                         ),
                       ],
                     ),
+                  ),
+                  SizedBox(
+                    height: 15,
+                  ),
+                  TextFormField(
+                    validator: (value) {
+                      String pattern =
+                          r'(^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,32}$)';
+                      RegExp regExp = new RegExp(pattern);
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter password';
+                      } else if (!regExp.hasMatch(value)) {
+                        return 'Please enter valid password (minimum eight characters, at least one uppercase letter, one lowercase letter, one number and one special character)';
+                      } else if (value.length < 8) {
+                        return 'Password must be at least 8 characters long';
+                      } else if (value.length > 32) {
+                        return 'Password cannot be longer than 32 characters';
+                      } else if (value == _passwordController.text.trim()) {
+                        return 'Password must be different';
+                      }
+                      return null;
+                    },
+                    controller: _passwordController,
+                    obscureText: true,
+                    decoration: InputDecoration(
+                        labelText: "New password",
+                        hintText: "Enter new password",
+                        border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(20))),
+                  ),
+                  SizedBox(
+                    height: 15,
+                  ),
+                  TextFormField(
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter password';
+                      } else if (value != _passwordController.text.trim()) {
+                        return 'Password must be same as above';
+                      }
+                      return null;
+                    },
+                    obscureText: true,
+                    decoration: InputDecoration(
+                        labelText: "Confirm Password",
+                        hintText: "Enter your password",
+                        border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(20))),
                   ),
                   SizedBox(
                     height: 15,
@@ -97,8 +146,8 @@ class _ConfirmRegistrationPage extends State<ConfirmRegistrationPage> {
                   ),
                   InkWell(
                     onTap: () async {
-                      if (_codeFormKey.currentState.validate()) {
-                        _handleVerifyUser();
+                      if (_confirmForgotPasswordFormKey.currentState.validate()) {
+                        _handleResetPassword();
                       }
                     },
                     child: Container(
@@ -123,12 +172,12 @@ class _ConfirmRegistrationPage extends State<ConfirmRegistrationPage> {
     );
   }
 
-  Future<void> _handleVerifyUser() async {
-    var res = await _userEndpoint.verifyUser(_codeController.text);
+  Future<void> _handleResetPassword() async {
+    var res = await _userEndpoint.confirmResetPassword(_codeController.text);
     try {
       if (res.statusCode == 200) {
         Navigator.of(context).pop();
-        EasyLoading.showSuccess('Account verified!\n You can now log in');
+        EasyLoading.showSuccess('Password has been reset!\n You can now log in');
       }
     } catch (e, s) {
       print("Exception $e");

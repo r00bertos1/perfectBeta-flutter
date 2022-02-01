@@ -1,37 +1,24 @@
-import 'package:data_table_2/data_table_2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:perfectBeta/dto/pages/page_dto.dart';
-import 'package:perfectBeta/pages/route/my_routes/my_routes_page.dart';
+import 'package:perfectBeta/model/pages/page_dto.dart';
 import 'package:perfectBeta/service.dart';
 import 'package:perfectBeta/constants/style.dart';
-import 'package:perfectBeta/dto/gyms/climbing_gym_dto.dart';
 import 'package:perfectBeta/helpers/reponsiveness.dart';
-import 'package:perfectBeta/widgets/custom_text.dart';
-import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import '../../../main.dart';
 import '../gym_details.dart';
 
 /// Example without datasource
 class GymsGrid extends StatelessWidget {
   final numbers = List.generate(16, (index) => '$index');
   bool _added = false;
-  // dynamic initializeApiClient(){
-  //   ApiClient _client = new ApiClient();
-  //   return ClimbingGymEndpoint(_client.init());
-  // }
-  // Dio _client = new Dio();
 
-  static ApiClient _client = new ApiClient();
-  // final ApiClient _client = new ApiClient();
-  var _climbingGymEndpoint = new ClimbingGymEndpoint(_client.init());
+  var _climbingGymEndpoint = new ClimbingGymEndpoint(getIt.get());
 
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<DataPage>(
         future: _climbingGymEndpoint.getVerifiedGyms(),
         builder: (context, snapshot) {
-          print('Connection state: ${snapshot.connectionState}');
           if (snapshot.connectionState == ConnectionState.done) {
             if (snapshot.hasError) {
               return Text("Error");

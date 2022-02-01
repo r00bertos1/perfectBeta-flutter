@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:perfectBeta/api/api_client.dart';
 import 'package:perfectBeta/api/providers/authentication_endpoint.dart';
@@ -18,12 +19,9 @@ import 'package:perfectBeta/pages/overview/widgets/manager/manager_overview_card
 import 'package:perfectBeta/storage/secure_storage.dart';
 import 'package:perfectBeta/widgets/custom_text.dart';
 import 'package:get/get.dart';
+import '../../main.dart';
 
 class OverviewPage extends StatelessWidget {
-  static ApiClient _client = new ApiClient();
-  // final ApiClient _client = new ApiClient();
-  var _authenticationEndpoint = new AuthenticationEndpoint(_client.init());
-
   @override
   Widget build(BuildContext context) {
     return Container(

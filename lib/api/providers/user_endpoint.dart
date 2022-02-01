@@ -1,24 +1,21 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:dio/dio.dart';
-import 'package:perfectBeta/dto/auth/registration_dto.dart';
-import 'package:perfectBeta/dto/pages/page_dto.dart';
-import 'package:perfectBeta/dto/users/data/change_password_dto.dart';
-import 'package:perfectBeta/dto/users/data/email_dto.dart';
-import 'package:perfectBeta/dto/users/data/password_dto.dart';
-import 'package:perfectBeta/dto/users/data/personal_data_dto.dart';
-import 'package:perfectBeta/dto/users/user_dto.dart';
-import 'package:perfectBeta/dto/users/user_with_access_level_dto.dart';
-import 'package:perfectBeta/dto/users/user_with_personal_data_access_level_dto.dart';
-import 'package:perfectBeta/dto/users/user_with_personal_data_dto.dart';
+import 'package:perfectBeta/model/auth/registration_dto.dart';
+import 'package:perfectBeta/model/pages/page_dto.dart';
+import 'package:perfectBeta/model/users/data/change_password_dto.dart';
+import 'package:perfectBeta/model/users/data/email_dto.dart';
+import 'package:perfectBeta/model/users/data/password_dto.dart';
+import 'package:perfectBeta/model/users/data/personal_data_dto.dart';
+import 'package:perfectBeta/model/users/user_dto.dart';
+import 'package:perfectBeta/model/users/user_with_access_level_dto.dart';
+import 'package:perfectBeta/model/users/user_with_personal_data_access_level_dto.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:perfectBeta/storage/secure_storage.dart';
 import 'package:perfectBeta/storage/user_secure_storage.dart';
-import '../api_client.dart';
 
 class UserEndpoint {
-  //Dio _client = new ApiClient().init();
-  Dio _client;
+  final Dio _client;
   UserEndpoint(this._client);
 
   // USER
@@ -82,15 +79,15 @@ class UserEndpoint {
     }
   }
 
-  Future<UserDTO> confirmChangeEmail(String token, String email) async {
+  Future<Response> confirmChangeEmail(String token, String email) async {
     try {
       Response<String> response = await _client.put('/users/change_email',
           queryParameters: {'token': token, 'email': email});
 
-      final jsonResponse = json.decode(response.data);
-      UserDTO page = new UserDTO.fromJson(jsonResponse);
+      // final jsonResponse = json.decode(response.data);
+      // UserDTO page = new UserDTO.fromJson(jsonResponse);
 
-      return page;
+      return response;
     } on DioError catch (ex) {
       if (ex.response != null) {
         print('Dio error!');
@@ -288,16 +285,16 @@ class UserEndpoint {
     }
   }
 
-  Future<UserDTO> confirmResetPassword(String id, String token) async {
+  Future<Response> confirmResetPassword(String token) async {
     try {
       Response<String> response = await _client.put('/users/reset_password',
-          queryParameters: {'id': id, 'token': token},
+          queryParameters: {'token': token},
           options: Options(headers: {"requiresToken" : false}));
 
-      final jsonResponse = json.decode(response.data);
-      UserDTO page = new UserDTO.fromJson(jsonResponse);
+      // final jsonResponse = json.decode(response.data);
+      // UserDTO page = new UserDTO.fromJson(jsonResponse);
 
-      return page;
+      return response;
     } on DioError catch (ex) {
       if (ex.response != null) {
         print('Dio error!');

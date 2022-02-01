@@ -1,45 +1,73 @@
-import 'package:perfectBeta/api/api_client.dart';
 import 'package:perfectBeta/api/providers/climbing_gym_endpoint.dart';
 import 'package:perfectBeta/api/providers/route_endpoint.dart';
 import 'package:perfectBeta/api/providers/user_endpoint.dart';
-import 'package:perfectBeta/dto/gyms/climbing_gym_dto.dart';
-import 'package:perfectBeta/dto/pages/page_dto.dart';
-import 'package:perfectBeta/dto/routes/rating_dto.dart';
-import 'package:perfectBeta/dto/routes/route_dto.dart';
+import 'package:perfectBeta/model/gyms/climbing_gym_dto.dart';
+import 'package:perfectBeta/model/pages/page_dto.dart';
+import 'package:perfectBeta/model/routes/rating_dto.dart';
+import 'package:perfectBeta/model/routes/route_dto.dart';
+import 'package:perfectBeta/model/users/user_with_personal_data_access_level_dto.dart';
 import 'package:perfectBeta/storage/secure_storage.dart';
+import '../main.dart';
 
 //API
-ApiClient _client = new ApiClient();
-var _userEndpoint = new UserEndpoint(_client.init());
-var _climbingGymEndpoint = new ClimbingGymEndpoint(_client.init());
-var _routeEndpoint = new RouteEndpoint(_client.init());
+var _userEndpoint = new UserEndpoint(getIt.get());
+var _climbingGymEndpoint = new ClimbingGymEndpoint(getIt.get());
+var _routeEndpoint = new RouteEndpoint(getIt.get());
+
+Future<int> getCurrentUserId() async {
+  try {
+    UserWithPersonalDataAccessLevelDTO res = await _userEndpoint.getUserPersonalDataAccessLevel();
+    return res.id;
+  } catch (e, s) {
+    print("Exception $e");
+    print("StackTrace $s");
+  }
+}
+
+Future<List<RouteDTO>> loadRoutes(int gymId) async {
+  try {
+    DataPage res = await _routeEndpoint.getAllGymRoutes(gymId);
+    List<RouteDTO> routes = [];
+    if (res.content != null) {
+      res.content.forEach((route) {
+        routes.add(route);
+      });
+    }
+    return routes;
+  } catch (e, s) {
+    print("Exception $e");
+    print("StackTrace $s");
+  }
+}
 
 Future<List<int>> loadUsersData(List<int> values) async {
   try {
     DataPage res = await _userEndpoint.getAllUsers();
-    if (res.content.isNotEmpty) {
-      values[0] = 0;  //registered
-      values[1] = 0;  //admin
-      values[2] = 0;  //manager
-      values[3] = 0;  //climber
-      res.content.forEach((user) {
-        if (user.isActive == true) {
-          values[0] += 1;
+    if (res != null) {
+      if (res.content.isNotEmpty) {
+        values[0] = 0;  //registered
+        values[1] = 0;  //admin
+        values[2] = 0;  //manager
+        values[3] = 0;  //climber
+        res.content.forEach((user) {
+          if (user.isActive == true) {
+            values[0] += 1;
 
-          user.accessLevels.forEach((level) {
-            if (level.accessLevel == "ADMINISTRATOR" &&
-                level.isActive == true) {
-              values[1] += 1;
-            }
-            if (level.accessLevel == "MANAGER" && level.isActive == true) {
-              values[2] += 1;
-            }
-            if (level.accessLevel == "CLIMBER" && level.isActive == true) {
-              values[3] += 1;
-            }
-          });
-        }
-      });
+            user.accessLevels.forEach((level) {
+              if (level.accessLevel == "ADMINISTRATOR" &&
+                  level.isActive == true) {
+                values[1] += 1;
+              }
+              if (level.accessLevel == "MANAGER" && level.isActive == true) {
+                values[2] += 1;
+              }
+              if (level.accessLevel == "CLIMBER" && level.isActive == true) {
+                values[3] += 1;
+              }
+            });
+          }
+        });
+      }
     }
     return values;
   } catch (e, s) {
@@ -51,16 +79,18 @@ Future<List<int>> loadUsersData(List<int> values) async {
 Future<List<int>> loadGymsAndRoutesData(List<int> values) async {
   try {
     DataPage gyms = await _climbingGymEndpoint.getVerifiedGyms();
-    if (gyms.content != null) {
-      if (gyms.content.isNotEmpty) {
-        values[0] = gyms.content.length;  //gyms
-        values[1] = 0;  //routes
-        for(ClimbingGymDTO gym in gyms.content) {
-          values[0] += 1;
-          DataPage routes = await _routeEndpoint.getAllGymRoutes(gym.id);
-          if (routes.content != null) {
-            if (routes.content.isNotEmpty) {
-              values[1] += routes.content.length;
+    if (gyms != null) {
+      if (gyms.content != null) {
+        if (gyms.content.isNotEmpty) {
+          values[0] = gyms.content.length;  //gyms
+          values[1] = 0;  //routes
+          for(ClimbingGymDTO gym in gyms.content) {
+            values[0] += 1;
+            DataPage routes = await _routeEndpoint.getAllGymRoutes(gym.id);
+            if (routes.content != null) {
+              if (routes.content.isNotEmpty) {
+                values[1] += routes.content.length;
+              }
             }
           }
         }

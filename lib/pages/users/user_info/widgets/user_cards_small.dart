@@ -5,24 +5,23 @@ import 'package:perfectBeta/api/providers/authentication_endpoint.dart';
 import 'package:perfectBeta/api/providers/user_endpoint.dart';
 import 'package:perfectBeta/constants/controllers.dart';
 import 'package:perfectBeta/constants/style.dart';
-import 'package:perfectBeta/dto/users/data/password_dto.dart';
-import 'package:perfectBeta/dto/users/user_with_personal_data_access_level_dto.dart';
+import 'package:perfectBeta/model/users/data/password_dto.dart';
+import 'package:perfectBeta/model/users/user_with_personal_data_access_level_dto.dart';
 import 'package:perfectBeta/pages/authentication/registration.dart';
 import 'package:perfectBeta/pages/users/user_info/change_password.dart';
 import 'package:perfectBeta/pages/users/user_info/change_personal_data.dart';
 import 'package:perfectBeta/routing/routes.dart';
 import 'package:perfectBeta/widgets/custom_text.dart';
 import 'package:get/get.dart';
+import '../../../../main.dart';
 import '../change_email.dart';
 import 'function_card_small.dart';
 
 class UserCardsSmallScreen extends StatelessWidget {
   final _passKey = GlobalKey<FormState>();
+
   //API
-  static ApiClient _client = new ApiClient();
-  // final ApiClient _client = new ApiClient();
-  var _userEndpoint = new UserEndpoint(_client.init());
-  var _authenticationEndpoint = new AuthenticationEndpoint(_client.init());
+  var _userEndpoint = UserEndpoint(getIt.get());
 
   final _passwordController = TextEditingController();
 

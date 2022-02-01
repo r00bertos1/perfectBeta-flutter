@@ -2,12 +2,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:perfectBeta/api/api_client.dart';
 import 'package:perfectBeta/api/providers/route_endpoint.dart';
 import 'package:perfectBeta/constants/style.dart';
-import 'package:perfectBeta/dto/routes/route_dto.dart';
-import 'package:perfectBeta/pages/route/route_details.dart';
+import 'package:perfectBeta/model/routes/route_dto.dart';
 import 'package:perfectBeta/widgets/custom_text.dart';
+import '../../main.dart';
 
 class EditRouteDetailsPage extends StatefulWidget {
   const EditRouteDetailsPage({Key key, this.routeData}) : super(key: key);
@@ -22,10 +21,8 @@ class _EditRouteDetailsPageState extends State<EditRouteDetailsPage> {
   final _editRouteDetailsFormKey = GlobalKey<FormState>();
 
   //API
-  static ApiClient _client = new ApiClient();
-  var _routeEndpoint = new RouteEndpoint(_client.init());
+  var _routeEndpoint = new RouteEndpoint(getIt.get());
 
-  int _userId;
   final _routeNameController = TextEditingController();
   final _difficultyController = TextEditingController();
   final _descriptionController = TextEditingController();
@@ -205,7 +202,7 @@ class _EditRouteDetailsPageState extends State<EditRouteDetailsPage> {
         //   MaterialPageRoute(
         //       builder: (context) => UserPage()),
         // );
-        EasyLoading.showSuccess('Personal information updated!');
+        EasyLoading.showSuccess('Route Details updated!');
       }
     } catch (e, s) {
       print("Exception $e");

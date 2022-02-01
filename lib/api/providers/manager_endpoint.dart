@@ -1,14 +1,11 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:dio/dio.dart';
-import 'package:perfectBeta/dto/auth/registration_dto.dart';
-import 'package:perfectBeta/dto/users/user_with_access_level_dto.dart';
-import 'package:perfectBeta/dto/users/user_with_personal_data_access_level_dto.dart';
-import '../api_client.dart';
+import 'package:perfectBeta/model/auth/registration_dto.dart';
+import 'package:perfectBeta/model/users/user_with_access_level_dto.dart';
 
 class ManagerEndpoint {
-  //Dio _client = new ApiClient().init();
-  Dio _client;
+  final Dio _client;
   ManagerEndpoint(this._client);
 
   // ADMIN

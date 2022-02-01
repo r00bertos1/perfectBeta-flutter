@@ -1,11 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:perfectBeta/api/api_client.dart';
 import 'package:perfectBeta/api/providers/authentication_endpoint.dart';
 import 'package:perfectBeta/constants/controllers.dart';
 import 'package:perfectBeta/constants/style.dart';
-import 'package:perfectBeta/dto/auth/credentials_dto.dart';
+import 'package:perfectBeta/model/auth/credentials_dto.dart';
 import 'package:perfectBeta/pages/authentication/registration.dart';
 import 'package:perfectBeta/routing/routes.dart';
 import 'package:perfectBeta/storage/user_secure_storage.dart';
@@ -13,7 +12,7 @@ import 'package:perfectBeta/widgets/custom_text.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
-
+import '../../main.dart';
 import 'forgot_password.dart';
 
 class AuthenticationPage extends StatefulWidget {
@@ -27,9 +26,7 @@ class _AuthenticationPage extends State<AuthenticationPage> {
   final _formKey = GlobalKey<FormState>();
 
   //API
-  static ApiClient _client = new ApiClient();
-  // final ApiClient _client = new ApiClient();
-  var _authenticationEndpoint = new AuthenticationEndpoint(_client.init());
+  var _authenticationEndpoint = AuthenticationEndpoint(getIt.get());
 
   final _loginController = TextEditingController();
   final _passwordController = TextEditingController();
@@ -43,7 +40,6 @@ class _AuthenticationPage extends State<AuthenticationPage> {
 
   @override
   Widget build(BuildContext context) {
-    final isKeyboard = MediaQuery.of(context).viewInsets.bottom != 0;
     return Scaffold(
       //resizeToAvoidBottomInset: false,
       body: Center(
@@ -71,9 +67,7 @@ class _AuthenticationPage extends State<AuthenticationPage> {
                   ),
                   Row(
                     children: [
-                      Text("Login",
-                          style: GoogleFonts.roboto(
-                              fontSize: 30, fontWeight: FontWeight.bold)),
+                      Text("Login", style: GoogleFonts.roboto(fontSize: 30, fontWeight: FontWeight.bold)),
                     ],
                   ),
                   SizedBox(
@@ -100,8 +94,7 @@ class _AuthenticationPage extends State<AuthenticationPage> {
                       // Underscore and dot can't be next to each other (e.g user_.name).
                       // Underscore or dot can't be used multiple times in a row (e.g user__name / user..name).
                       // Number of characters must be between 4 to 20.
-                      String pattern =
-                          r'(^(?=.{4,20}$)(?![_.])(?!.*[_.]{2})[a-zA-Z0-9._]+(?<![_.])$)';
+                      String pattern = r'(^(?=.{4,20}$)(?![_.])(?!.*[_.]{2})[a-zA-Z0-9._]+(?<![_.])$)';
                       RegExp regExp = new RegExp(pattern);
                       if (value == null || value.isEmpty) {
                         return 'Please enter username';
@@ -112,10 +105,7 @@ class _AuthenticationPage extends State<AuthenticationPage> {
                     },
                     controller: _loginController,
                     decoration: InputDecoration(
-                        labelText: "Username",
-                        hintText: "Enter your username",
-                        border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(20))),
+                        labelText: "Username", hintText: "Enter your username", border: OutlineInputBorder(borderRadius: BorderRadius.circular(20))),
                   ),
                   SizedBox(
                     height: 15,
@@ -123,8 +113,7 @@ class _AuthenticationPage extends State<AuthenticationPage> {
                   TextFormField(
                     validator: (value) {
                       // Minimum eight characters, at least one uppercase letter, one lowercase letter, one number and one special character:
-                      String pattern =
-                          r'(^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,32}$)';
+                      String pattern = r'(^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,32}$)';
                       RegExp regExp = new RegExp(pattern);
                       if (value == null || value.isEmpty) {
                         return 'Please enter password';
@@ -136,23 +125,26 @@ class _AuthenticationPage extends State<AuthenticationPage> {
                     controller: _passwordController,
                     obscureText: true,
                     decoration: InputDecoration(
-                        labelText: "Password",
-                        hintText: "Enter your password",
-                        border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(20))),
+                        labelText: "Password", hintText: "Enter your password", border: OutlineInputBorder(borderRadius: BorderRadius.circular(20))),
                   ),
                   SizedBox(
                     height: 15,
                   ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  Wrap(
+                    crossAxisAlignment: WrapCrossAlignment.center,
+                    spacing: 30,
                     children: [
                       Row(
+                        mainAxisSize: MainAxisSize.min,
                         children: [
                           Checkbox(
-                              value: _isChecked, onChanged: (bool value) { setState(() {
-                            _isChecked = value;
-                          }); },),
+                            value: _isChecked,
+                            onChanged: (bool value) {
+                              setState(() {
+                                _isChecked = value;
+                              });
+                            },
+                          ),
                           CustomText(
                             text: "Remember Me",
                           ),
@@ -161,11 +153,9 @@ class _AuthenticationPage extends State<AuthenticationPage> {
                       InkWell(
                           onTap: () => Navigator.push(
                                 context,
-                                MaterialPageRoute(
-                                    builder: (context) => ForgotPasswordPage()),
+                                MaterialPageRoute(builder: (context) => ForgotPasswordPage()),
                               ),
-                          child: CustomText(
-                              text: "Forgot password?", color: active))
+                          child: CustomText(text: "Forgot password?", color: active))
                     ],
                   ),
                   SizedBox(
@@ -181,9 +171,7 @@ class _AuthenticationPage extends State<AuthenticationPage> {
                       }
                     },
                     child: Container(
-                      decoration: BoxDecoration(
-                          color: active,
-                          borderRadius: BorderRadius.circular(20)),
+                      decoration: BoxDecoration(color: active, borderRadius: BorderRadius.circular(20)),
                       alignment: Alignment.center,
                       width: double.maxFinite,
                       padding: EdgeInsets.symmetric(vertical: 16),
@@ -196,8 +184,7 @@ class _AuthenticationPage extends State<AuthenticationPage> {
                   InkWell(
                     onTap: () => Navigator.push(
                       context,
-                      MaterialPageRoute(
-                          builder: (context) => RegistrationPage()),
+                      MaterialPageRoute(builder: (context) => RegistrationPage()),
                     ),
                     child: Container(
                       alignment: Alignment.center,
@@ -215,9 +202,7 @@ class _AuthenticationPage extends State<AuthenticationPage> {
                   RichText(
                       textAlign: TextAlign.center,
                       text: TextSpan(children: [
-                        TextSpan(
-                            text: "Do not want to create an account?\n",
-                            style: TextStyle(color: lightGrey)),
+                        TextSpan(text: "Do not want to create an account?\n", style: TextStyle(color: lightGrey)),
                         TextSpan(
                             recognizer: new TapGestureRecognizer()
                               ..onTap = () async {
@@ -240,13 +225,9 @@ class _AuthenticationPage extends State<AuthenticationPage> {
 
   //handle remember me function
   Future<void> _handleRemeberme(bool value) async {
-    //_isChecked = value;
     await UserSecureStorage.setRememberMe(value);
     await UserSecureStorage.setLogin(_loginController.text.trim());
     await UserSecureStorage.setPassword(_passwordController.text.trim());
-    // setState(() {
-    //   _isChecked = value;
-    // });
   }
 
   //load email and password
@@ -255,9 +236,6 @@ class _AuthenticationPage extends State<AuthenticationPage> {
       var _rememberMe = await UserSecureStorage.getRememberMe() ?? false;
       var _username = await UserSecureStorage.getLogin() ?? "";
       var _password = await UserSecureStorage.getPassword() ?? "";
-      // print(_rememberMe.toString());
-      // print(_username.toString());
-      // print(_password.toString());
       if (_rememberMe) {
         setState(() {
           _isChecked = true;
@@ -272,9 +250,7 @@ class _AuthenticationPage extends State<AuthenticationPage> {
 
   Future<void> _handleAuthentication() async {
     // login
-    CredentialsDTO authData = new CredentialsDTO(
-        username: _loginController.text.trim(),
-        password: _passwordController.text.trim());
+    CredentialsDTO authData = new CredentialsDTO(username: _loginController.text.trim(), password: _passwordController.text.trim());
     var res = await _authenticationEndpoint.authenticate(authData);
     if (res != null) {
       if (res.statusCode == 200) {

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:perfectBeta/helpers/helper_data_methods.dart';
+import 'package:perfectBeta/helpers/data_functions.dart';
 import 'package:perfectBeta/pages/overview/widgets/info_card.dart';
 
 class ClimberOverviewCardsMediumScreen extends StatelessWidget {

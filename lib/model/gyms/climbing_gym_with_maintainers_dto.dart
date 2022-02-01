@@ -19,7 +19,6 @@ class ClimbingGymWithMaintainersDTO extends ClimbingGymDTO {
       "ownerId": this.ownerId,
       "gymName": this.gymName,
       "status": getGymText(this.status),
-      //"gymDetailsDTO": this.gymDetailsDTO,
     };
   }
 

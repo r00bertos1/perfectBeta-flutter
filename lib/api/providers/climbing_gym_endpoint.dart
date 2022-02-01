@@ -1,16 +1,15 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:dio/dio.dart';
-import 'package:perfectBeta/dto/gyms/climbing_gym_dto.dart';
-import 'package:perfectBeta/dto/gyms/climbing_gym_with_details_dto.dart';
-import 'package:perfectBeta/dto/gyms/climbing_gym_with_maintainers_dto.dart';
-import 'package:perfectBeta/dto/gyms/gym_details_dto.dart';
-import 'package:perfectBeta/dto/pages/page_dto.dart';
+import 'package:perfectBeta/model/gyms/climbing_gym_dto.dart';
+import 'package:perfectBeta/model/gyms/climbing_gym_with_details_dto.dart';
+import 'package:perfectBeta/model/gyms/climbing_gym_with_maintainers_dto.dart';
+import 'package:perfectBeta/model/gyms/gym_details_dto.dart';
+import 'package:perfectBeta/model/pages/page_dto.dart';
 import '../api_client.dart';
 
 class ClimbingGymEndpoint {
-  //Dio _client = new ApiClient().init();
-  Dio _client;
+  final Dio _client;
   ClimbingGymEndpoint(this._client);
 
   // ANONIM

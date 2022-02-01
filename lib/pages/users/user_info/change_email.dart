@@ -1,20 +1,13 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
-import 'package:perfectBeta/api/api_client.dart';
-import 'package:perfectBeta/api/providers/authentication_endpoint.dart';
 import 'package:perfectBeta/api/providers/user_endpoint.dart';
 import 'package:perfectBeta/constants/style.dart';
-import 'package:perfectBeta/dto/auth/credentials_dto.dart';
-import 'package:perfectBeta/dto/auth/registration_dto.dart';
-import 'package:perfectBeta/dto/users/data/email_dto.dart';
-import 'package:perfectBeta/pages/authentication/authentication.dart';
-import 'package:perfectBeta/routing/routes.dart';
-import 'package:perfectBeta/storage/secure_storage.dart';
-import 'package:perfectBeta/storage/user_secure_storage.dart';
+import 'package:perfectBeta/model/users/data/email_dto.dart';
+import 'package:perfectBeta/pages/users/user_info/confirm_change_email.dart';
 import 'package:perfectBeta/widgets/custom_text.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../../../main.dart';
 
 class ChangeEmailPage extends StatefulWidget {
   const ChangeEmailPage({Key key}) : super(key: key);
@@ -27,8 +20,7 @@ class _ChangeEmailPage extends State<ChangeEmailPage> {
   final _changeEmailFormKey = GlobalKey<FormState>();
 
   //API
-  static ApiClient _client = new ApiClient();
-  var _userEndpoint = new UserEndpoint(_client.init());
+  var _userEndpoint = new UserEndpoint(getIt.get());
 
   final _emailController = TextEditingController();
 
@@ -136,7 +128,12 @@ class _ChangeEmailPage extends State<ChangeEmailPage> {
     var res = await _userEndpoint.requestChangeEmail(email);
     try {
       if (res.statusCode == 200) {
-        Navigator.of(context).pop();
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => ConfirmChangeEmail(email: _emailController.text),
+          ),
+        );
         EasyLoading.showSuccess('Email change instructions have been sent to current email!');
       }
     } catch (e, s) {

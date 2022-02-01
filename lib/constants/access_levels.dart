@@ -6,7 +6,6 @@ const climberDisplayName = "Climber";
 
 class AccessLevelNameItem {
   final String name;
-
   AccessLevelNameItem(this.name);
 }
 

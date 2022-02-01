@@ -2,13 +2,13 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:perfectBeta/api/api_client.dart';
 import 'package:perfectBeta/api/providers/climbing_gym_endpoint.dart';
 import 'package:perfectBeta/constants/style.dart';
-import 'package:perfectBeta/dto/gyms/climbing_gym_with_details_dto.dart';
-import 'package:perfectBeta/dto/gyms/gym_details_dto.dart';
-import 'package:perfectBeta/helpers/country_dropdown.dart';
+import 'package:perfectBeta/model/gyms/climbing_gym_with_details_dto.dart';
+import 'package:perfectBeta/model/gyms/gym_details_dto.dart';
+import 'package:perfectBeta/helpers/country_functions.dart';
 import 'package:perfectBeta/widgets/custom_text.dart';
+import '../../main.dart';
 
 class EditGymDetailsPage extends StatefulWidget {
   const EditGymDetailsPage({Key key, this.gymId}) : super(key: key);
@@ -22,8 +22,7 @@ class _EditGymDetailsPageState extends State<EditGymDetailsPage> {
   final _editGymDataFormKey = GlobalKey<FormState>();
 
   //API
-  static ApiClient _client = new ApiClient();
-  var _climbingGymEndpoint = new ClimbingGymEndpoint(_client.init());
+  var _climbingGymEndpoint = new ClimbingGymEndpoint(getIt.get());
 
   final _cityController = TextEditingController();
   final _streetController = TextEditingController();

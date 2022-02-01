@@ -6,30 +6,24 @@ import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:perfectBeta/api/api_client.dart';
 import 'package:perfectBeta/api/providers/climbing_gym_endpoint.dart';
 import 'package:perfectBeta/api/providers/route_endpoint.dart';
-import 'package:perfectBeta/api/providers/user_endpoint.dart';
 import 'package:perfectBeta/constants/style.dart';
-import 'package:perfectBeta/dto/gyms/climbing_gym_with_details_dto.dart';
-import 'package:perfectBeta/dto/pages/page_dto.dart';
-import 'package:perfectBeta/dto/routes/route_dto.dart';
-import 'package:perfectBeta/dto/users/user_with_personal_data_access_level_dto.dart';
+import 'package:perfectBeta/model/gyms/climbing_gym_with_details_dto.dart';
+import 'package:perfectBeta/model/pages/page_dto.dart';
+import 'package:perfectBeta/model/routes/route_dto.dart';
 import 'package:perfectBeta/helpers/reponsiveness.dart';
 import 'package:perfectBeta/pages/gym/gym_details.dart';
-import 'package:perfectBeta/pages/users/all_users/widgets/user_all_info_card.dart';
 import 'package:perfectBeta/widgets/custom_text.dart';
-
+import '../../../../main.dart';
 import '../../route_details.dart';
-import 'my_route_details_card.dart';
 
-/// Example without datasource
 class MyRoutesTable extends StatefulWidget {
   @override
   State<MyRoutesTable> createState() => _MyRoutesTableState();
 }
 
 class _MyRoutesTableState extends State<MyRoutesTable> {
-  static ApiClient _client = new ApiClient();
-  var _routeEndpoint = new RouteEndpoint(_client.init());
-  var _climbingGymEndpoint = new ClimbingGymEndpoint(_client.init());
+  var _routeEndpoint = new RouteEndpoint(getIt.get());
+  var _climbingGymEndpoint = new ClimbingGymEndpoint(getIt.get());
 
   int _currentSortColumn = 0;
   bool _isSortAsc = true;

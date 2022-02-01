@@ -1,15 +1,12 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:dio/dio.dart';
-import 'package:perfectBeta/dto/pages/page_dto.dart';
-import 'package:perfectBeta/dto/routes/rating_dto.dart';
-import 'package:perfectBeta/dto/routes/route_dto.dart';
-import 'package:perfectBeta/dto/holds/hold.dart';
-
-import '../api_client.dart';
+import 'package:perfectBeta/model/pages/page_dto.dart';
+import 'package:perfectBeta/model/routes/rating_dto.dart';
+import 'package:perfectBeta/model/routes/route_dto.dart';
 
 class RouteEndpoint {
-  Dio _client;
+  final Dio _client;
   RouteEndpoint(this._client);
 
   // ANONIM

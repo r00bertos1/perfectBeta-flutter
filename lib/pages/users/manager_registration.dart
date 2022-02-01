@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
-import 'package:perfectBeta/api/api_client.dart';
 import 'package:perfectBeta/api/providers/manager_endpoint.dart';
 import 'package:perfectBeta/constants/style.dart';
-import 'package:perfectBeta/dto/auth/registration_dto.dart';
+import 'package:perfectBeta/model/auth/registration_dto.dart';
 import 'package:perfectBeta/widgets/custom_text.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../../main.dart';
 
 class ManagerRegistrationPage extends StatefulWidget {
   const ManagerRegistrationPage({Key key}) : super(key: key);
@@ -19,9 +19,7 @@ class _ManagerRegistrationPage extends State<ManagerRegistrationPage> {
   final _registrationFormKey = GlobalKey<FormState>();
 
   //API
-  static ApiClient _client = new ApiClient();
-  // final ApiClient _client = new ApiClient();
-  var _managerEndpoint = new ManagerEndpoint(_client.init());
+  var _managerEndpoint = new ManagerEndpoint(getIt.get());
 
   final _usernameController = TextEditingController();
   final _passwordController = TextEditingController();

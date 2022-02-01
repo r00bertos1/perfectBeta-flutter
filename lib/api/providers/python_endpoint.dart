@@ -3,7 +3,7 @@ import 'package:dio/dio.dart';
 import 'dart:async';
 
 class PythonEndpoint {
-  Dio _client;
+  final Dio _client;
   PythonEndpoint(this._client);
 
 

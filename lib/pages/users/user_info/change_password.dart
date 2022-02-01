@@ -1,20 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
-import 'package:perfectBeta/api/api_client.dart';
-import 'package:perfectBeta/api/providers/authentication_endpoint.dart';
 import 'package:perfectBeta/api/providers/user_endpoint.dart';
 import 'package:perfectBeta/constants/style.dart';
-import 'package:perfectBeta/dto/auth/credentials_dto.dart';
-import 'package:perfectBeta/dto/auth/registration_dto.dart';
-import 'package:perfectBeta/dto/users/data/change_password_dto.dart';
-import 'package:perfectBeta/dto/users/data/password_dto.dart';
-import 'package:perfectBeta/pages/authentication/authentication.dart';
-import 'package:perfectBeta/routing/routes.dart';
-import 'package:perfectBeta/storage/secure_storage.dart';
+import 'package:perfectBeta/model/users/data/change_password_dto.dart';
 import 'package:perfectBeta/storage/user_secure_storage.dart';
 import 'package:perfectBeta/widgets/custom_text.dart';
-import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../../../main.dart';
 
 class ChangePasswordPage extends StatefulWidget {
   const ChangePasswordPage({Key key}) : super(key: key);
@@ -27,9 +19,7 @@ class _ChangePasswordPage extends State<ChangePasswordPage> {
   final _changePasswordFormKey = GlobalKey<FormState>();
 
   //API
-  static ApiClient _client = new ApiClient();
-  // final ApiClient _client = new ApiClient();
-  var _userEndpoint = new UserEndpoint(_client.init());
+  var _userEndpoint = new UserEndpoint(getIt.get());
 
   final _oldPasswordController = TextEditingController();
   final _newPasswordController = TextEditingController();

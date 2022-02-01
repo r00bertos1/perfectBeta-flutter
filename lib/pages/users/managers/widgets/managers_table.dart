@@ -1,15 +1,15 @@
 import 'package:data_table_2/data_table_2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:perfectBeta/api/api_client.dart';
 import 'package:perfectBeta/api/providers/manager_endpoint.dart';
 import 'package:perfectBeta/api/providers/user_endpoint.dart';
 import 'package:perfectBeta/constants/style.dart';
-import 'package:perfectBeta/dto/pages/page_dto.dart';
-import 'package:perfectBeta/dto/users/user_with_personal_data_access_level_dto.dart';
+import 'package:perfectBeta/model/pages/page_dto.dart';
+import 'package:perfectBeta/model/users/user_with_personal_data_access_level_dto.dart';
 import 'package:perfectBeta/helpers/reponsiveness.dart';
 import 'package:perfectBeta/pages/users/managers/widgets/manager_info_card.dart';
 import 'package:perfectBeta/widgets/custom_text.dart';
+import '../../../../main.dart';
 
 class ManagersTable extends StatefulWidget {
   @override
@@ -17,9 +17,8 @@ class ManagersTable extends StatefulWidget {
 }
 
 class _ManagersTableState extends State<ManagersTable> {
-  static ApiClient _client = new ApiClient();
-  var _userEndpoint = new UserEndpoint(_client.init());
-  var _managerEndpoint = new ManagerEndpoint(_client.init());
+  var _userEndpoint = new UserEndpoint(getIt.get());
+  var _managerEndpoint = new ManagerEndpoint(getIt.get());
 
   bool isSwitched = false;
   var textValue = 'Switch is OFF';

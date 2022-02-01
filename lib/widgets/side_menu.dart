@@ -10,11 +10,12 @@ import 'package:perfectBeta/widgets/custom_text.dart';
 import 'package:perfectBeta/widgets/side_menu_item.dart';
 import 'package:get/get.dart';
 
+import '../main.dart';
+
 class SideMenu extends StatelessWidget {
   SideMenu({Key key}) : super(key: key);
 
-  static ApiClient _client = new ApiClient();
-  var _authenticationEndpoint = new AuthenticationEndpoint(_client.init());
+  var _authenticationEndpoint = AuthenticationEndpoint(getIt.get());
 
   @override
   Widget build(BuildContext context) {

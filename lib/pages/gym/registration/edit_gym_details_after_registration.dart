@@ -1,22 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
-import 'package:intl_phone_number_input/intl_phone_number_input.dart';
-import 'package:perfectBeta/api/api_client.dart';
 import 'package:perfectBeta/api/providers/climbing_gym_endpoint.dart';
-import 'package:perfectBeta/api/providers/user_endpoint.dart';
-import 'package:perfectBeta/constants/controllers.dart';
-import 'package:perfectBeta/constants/lists.dart';
 import 'package:perfectBeta/constants/style.dart';
-import 'package:perfectBeta/dto/gyms/climbing_gym_with_details_dto.dart';
-import 'package:perfectBeta/dto/gyms/gym_details_dto.dart';
-import 'package:perfectBeta/dto/users/data/personal_data_dto.dart';
-import 'package:perfectBeta/dto/users/user_with_personal_data_access_level_dto.dart';
-import 'package:perfectBeta/helpers/country_dropdown.dart';
-import 'package:perfectBeta/pages/users/user_info/user.dart';
-import 'package:perfectBeta/routing/routes.dart';
+import 'package:perfectBeta/model/gyms/climbing_gym_with_details_dto.dart';
+import 'package:perfectBeta/model/gyms/gym_details_dto.dart';
+import 'package:perfectBeta/helpers/country_functions.dart';
 import 'package:perfectBeta/widgets/custom_text.dart';
-import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../../../main.dart';
 
 class EditGymDetailsAfterRegistration extends StatefulWidget {
   final ClimbingGymWithDetailsDTO gymData;
@@ -33,8 +24,7 @@ class _EditGymDetailsAfterRegistration
   final _editGymDataFormKey = GlobalKey<FormState>();
 
   //API
-  static ApiClient _client = new ApiClient();
-  var _climbingGymEndpoint = new ClimbingGymEndpoint(_client.init());
+  var _climbingGymEndpoint = new ClimbingGymEndpoint(getIt.get());
 
   int _gymId;
   String _country = 'PL';

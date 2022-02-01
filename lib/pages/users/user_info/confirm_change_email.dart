@@ -4,17 +4,18 @@ import 'package:perfectBeta/api/providers/user_endpoint.dart';
 import 'package:perfectBeta/constants/style.dart';
 import 'package:perfectBeta/widgets/custom_text.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '../../main.dart';
+import '../../../main.dart';
 
-class ConfirmRegistrationPage extends StatefulWidget {
-  const ConfirmRegistrationPage({Key key}) : super(key: key);
+class ConfirmChangeEmail extends StatefulWidget {
+  const ConfirmChangeEmail({Key key, this.email}) : super(key: key);
+  final String email;
 
   @override
-  _ConfirmRegistrationPage createState() => _ConfirmRegistrationPage();
+  _ConfirmChangeEmail createState() => _ConfirmChangeEmail();
 }
 
-class _ConfirmRegistrationPage extends State<ConfirmRegistrationPage> {
-  final _codeFormKey = GlobalKey<FormState>();
+class _ConfirmChangeEmail extends State<ConfirmChangeEmail> {
+  final _confirmChangeEmailFormKey = GlobalKey<FormState>();
 
   //API
   var _userEndpoint = new UserEndpoint(getIt.get());
@@ -29,7 +30,7 @@ class _ConfirmRegistrationPage extends State<ConfirmRegistrationPage> {
       body: Center(
         child: SingleChildScrollView(
           child: Form(
-            key: _codeFormKey,
+            key: _confirmChangeEmailFormKey,
             child: Container(
               constraints: BoxConstraints(maxWidth: 400),
               padding: EdgeInsets.all(24),
@@ -50,7 +51,7 @@ class _ConfirmRegistrationPage extends State<ConfirmRegistrationPage> {
                   ),
                   Row(
                     children: [
-                      Text("Verify account",
+                      Text("Change Email",
                           style: GoogleFonts.roboto(
                               fontSize: 30, fontWeight: FontWeight.bold)),
                     ],
@@ -63,7 +64,7 @@ class _ConfirmRegistrationPage extends State<ConfirmRegistrationPage> {
                     child: Wrap(
                       children: [
                         CustomText(
-                          text: "Paste code from email provided during registration into box below to activate your account.",
+                          text: "Paste code from sent to your old email address into box below to confirm change email.",
                           overflow: TextOverflow.visible,
                           color: lightGrey,
                         ),
@@ -97,8 +98,8 @@ class _ConfirmRegistrationPage extends State<ConfirmRegistrationPage> {
                   ),
                   InkWell(
                     onTap: () async {
-                      if (_codeFormKey.currentState.validate()) {
-                        _handleVerifyUser();
+                      if (_confirmChangeEmailFormKey.currentState.validate()) {
+                        _handleResetPassword();
                       }
                     },
                     child: Container(
@@ -109,7 +110,7 @@ class _ConfirmRegistrationPage extends State<ConfirmRegistrationPage> {
                       width: double.maxFinite,
                       padding: EdgeInsets.symmetric(vertical: 16),
                       child: CustomText(
-                        text: "Verify account",
+                        text: "Change email",
                         color: Colors.white,
                       ),
                     ),
@@ -123,12 +124,12 @@ class _ConfirmRegistrationPage extends State<ConfirmRegistrationPage> {
     );
   }
 
-  Future<void> _handleVerifyUser() async {
-    var res = await _userEndpoint.verifyUser(_codeController.text);
+  Future<void> _handleResetPassword() async {
+    var res = await _userEndpoint.confirmChangeEmail(_codeController.text, widget.email);
     try {
       if (res.statusCode == 200) {
         Navigator.of(context).pop();
-        EasyLoading.showSuccess('Account verified!\n You can now log in');
+        EasyLoading.showSuccess('Email has been changed!');
       }
     } catch (e, s) {
       print("Exception $e");

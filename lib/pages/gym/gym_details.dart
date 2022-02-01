@@ -3,11 +3,11 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:perfectBeta/constants/controllers.dart';
 import 'package:perfectBeta/constants/enums.dart';
-import 'package:perfectBeta/dto/gyms/climbing_gym_dto.dart';
-import 'package:perfectBeta/dto/gyms/climbing_gym_with_details_dto.dart';
-import 'package:perfectBeta/dto/pages/page_dto.dart';
-import 'package:perfectBeta/dto/routes/route_dto.dart';
-import 'package:perfectBeta/dto/users/user_with_personal_data_access_level_dto.dart';
+import 'package:perfectBeta/helpers/util_functions.dart';
+import 'package:perfectBeta/model/gyms/climbing_gym_dto.dart';
+import 'package:perfectBeta/model/gyms/climbing_gym_with_details_dto.dart';
+import 'package:perfectBeta/model/pages/page_dto.dart';
+import 'package:perfectBeta/model/routes/route_dto.dart';
 import 'package:perfectBeta/pages/gym/widgets/favourite_button.dart';
 import 'package:perfectBeta/pages/gym/widgets/status_switch_button.dart';
 import 'package:perfectBeta/pages/route/add_route/add_route.dart';
@@ -18,15 +18,15 @@ import 'package:perfectBeta/constants/style.dart';
 import 'package:perfectBeta/helpers/reponsiveness.dart';
 import 'package:perfectBeta/storage/secure_storage.dart';
 import 'package:perfectBeta/widgets/custom_text.dart';
+import 'package:perfectBeta/helpers/data_functions.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
-
+import '../../main.dart';
 import 'add_maintainer_to_gym.dart';
 import 'edit_gym_details.dart';
 
 class GymDetails extends StatefulWidget {
   final int gymId;
-  static ApiClient _client = new ApiClient();
 
   GymDetails({Key key, this.gymId}) : super(key: key);
 
@@ -39,9 +39,9 @@ class _GymDetailsState extends State<GymDetails> {
   bool _isVerified = false;
   int _currentUserId;
 
-  var _climbingGymEndpoint = new ClimbingGymEndpoint(GymDetails._client.init());
-  var _routeEndpoint = new RouteEndpoint(GymDetails._client.init());
-  var _userEndpoint = new UserEndpoint(GymDetails._client.init());
+  var _climbingGymEndpoint = new ClimbingGymEndpoint(getIt.get());
+  var _routeEndpoint = new RouteEndpoint(getIt.get());
+  var _userEndpoint = new UserEndpoint(getIt.get());
 
   @override
   void initState() {
@@ -363,7 +363,11 @@ class _GymDetailsState extends State<GymDetails> {
                             ),
                             TextButton(
                               onPressed: () {
-                                _handleRouteDelete(context, routes.data[index].climbingGymId, routes.data[index].id);
+                                handleRouteDelete(context, routes.data[index].climbingGymId, routes.data[index].id).then((value) {
+                                  if (value) {
+                                    setState(() {});
+                                  }
+                                });
                               },
                               child: CustomText(text: 'Yes, delete!', color: error),
                             ),
@@ -416,7 +420,7 @@ class _GymDetailsState extends State<GymDetails> {
               itemSize: 14.0,
             ),
             trailing: FutureBuilder<bool>(
-                future: _isFavourited(routes.data[index].id),
+                future: isFavourited(routes.data[index].id),
                 builder: (context, boolVal) {
                   if (boolVal.connectionState == ConnectionState.done) {
                     if (boolVal.hasError) {
@@ -426,8 +430,14 @@ class _GymDetailsState extends State<GymDetails> {
                       _added = boolVal.data;
                       return FavouriteButton(
                           isAdded: _added,
-                          onPressed: () {
-                            handleAddFavourite(routes.data[index].id, _added);
+                          onPressed: () async {
+                            handleAddFavourite(routes.data[index].id, _added).then((value) {
+                              if (value) {
+                                setState(() {
+                                  _added = !_added;
+                                });
+                              }
+                            });
                           });
                     } else {
                       return SizedBox(width: 1);
@@ -439,51 +449,6 @@ class _GymDetailsState extends State<GymDetails> {
         ),
       ),
     );
-  }
-
-  Future<bool> _isFavourited(int routeId) async {
-    try {
-      DataPage res = await _routeEndpoint.getAllFavourites();
-      bool _isInFavourites = false;
-      if (res.content != null) {
-        res.content.forEach((route) {
-          if (route.id == routeId) {
-            _isInFavourites = true;
-          }
-        });
-      }
-      return _isInFavourites;
-    } catch (e, s) {
-      print("Exception $e");
-      print("StackTrace $s");
-    }
-  }
-
-  Future<int> _getCurrentUserId() async {
-    try {
-      UserWithPersonalDataAccessLevelDTO res = await _userEndpoint.getUserPersonalDataAccessLevel();
-      _currentUserId = res.id;
-      return res.id;
-    } catch (e, s) {
-      print("Exception $e");
-      print("StackTrace $s");
-    }
-  }
-
-  Future<List<RouteDTO>> _loadRoutes(gymId) async {
-    try {
-      DataPage res = await _routeEndpoint.getAllGymRoutes(gymId);
-      List<RouteDTO> routes = [];
-      if (res.content != null) {
-        res.content.forEach((route) {
-          routes.add(route);
-        });
-      }
-      return routes;
-    } catch (e, s) {
-      print("Exception $e");
-      print("StackTrace $s");
-    }
   }
 
   void _onRouteClicked(int gymId, int routeId, int currentUserId, context) {
@@ -498,33 +463,9 @@ class _GymDetailsState extends State<GymDetails> {
     );
   }
 
-  void _handleAddRoute(context, gymId) {
-    menuController.changeActiveItemTo(addRoutePageDisplayName);
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => AddRoutePage(gymId: gymId),
-      ),
-    );
-  }
-
-  void _handleRouteDelete(context, gymId, routeId) async {
-    try {
-      var res = await _routeEndpoint.deleteRoute(gymId, routeId);
-      if (res.statusCode == 200) {
-        EasyLoading.showSuccess('Route removed!');
-        Navigator.pop(context);
-        setState(() {});
-      }
-    } catch (e, s) {
-      print("Exception $e");
-      print("StackTrace $s");
-    }
-  }
-
   Widget _buildAddRouteButton(context) {
     return InkWell(
-      onTap: () => _handleAddRoute(context, widget.gymId),
+      onTap: () => handleAddRoute(context, widget.gymId),
       child: Container(
         decoration: BoxDecoration(color: active, borderRadius: BorderRadius.circular(20)),
         alignment: Alignment.center,
@@ -566,39 +507,6 @@ class _GymDetailsState extends State<GymDetails> {
     }
   }
 
-  void handleAddFavourite(routeId, added) async {
-    if (added) {
-      var res = await _routeEndpoint.removeRouteFromFavourites(routeId);
-      if (res != null) {
-        if (res.statusCode == 200) {
-          setState(() {
-            _added = !_added;
-          });
-        }
-      }
-    } else {
-      var res = await _routeEndpoint.addRouteToFavourites(routeId);
-      if (res != null) {
-        if (res.statusCode == 200) {
-          setState(() {
-            _added = !_added;
-          });
-        }
-      }
-    }
-  }
-
-  Widget _parseGymEnum(data) {
-    switch (data) {
-      case GymStatusEnum.UNVERIFIED:
-        return CustomText(text: "Unverified", color: Colors.amberAccent);
-      case GymStatusEnum.VERIFIED:
-        return CustomText(text: "Verified", color: active);
-      case GymStatusEnum.CLOSED:
-        return CustomText(text: "Closed", color: error);
-    }
-  }
-
   Widget _gymTitleWidget(snapshot) => CustomText(
         text: snapshot.data.gymName,
         size: 24,
@@ -610,7 +518,7 @@ class _GymDetailsState extends State<GymDetails> {
         children: [
           Text(
               "${snapshot.data.gymDetailsDTO.street} ${snapshot.data.gymDetailsDTO.number}, ${snapshot.data.gymDetailsDTO.city}, ${snapshot.data.gymDetailsDTO.country}"),
-          _parseGymEnum(snapshot.data.status),
+          parseGymEnum(snapshot.data.status),
         ],
       );
 
@@ -621,7 +529,7 @@ class _GymDetailsState extends State<GymDetails> {
       });
 
   Widget _gymTrailingWidgetManager(snapshot, context) => FutureBuilder<int>(
-      future: _getCurrentUserId(),
+      future: getCurrentUserId(),
       builder: (context, userId) {
         if (userId.hasError) {
           return Container();
@@ -711,9 +619,8 @@ class _GymDetailsState extends State<GymDetails> {
               weight: FontWeight.bold,
             ),
             FutureBuilder<List<RouteDTO>>(
-                future: _loadRoutes(widget.gymId),
+                future: loadRoutes(widget.gymId),
                 builder: (context, routes) {
-                  //print('Connection state: ${routes.connectionState}');
                   if (routes.connectionState == ConnectionState.done) {
                     if (routes.hasError) {
                       return Text("Error");
@@ -779,9 +686,8 @@ class _GymDetailsState extends State<GymDetails> {
               ],
             ),
             FutureBuilder<List<RouteDTO>>(
-                future: _loadRoutes(widget.gymId),
+                future: loadRoutes(widget.gymId),
                 builder: (context, routes) {
-                  print('Connection state: ${routes.connectionState}');
                   if (routes.connectionState == ConnectionState.done) {
                     if (routes.hasError) {
                       return Text("Error");
@@ -845,9 +751,8 @@ class _GymDetailsState extends State<GymDetails> {
               weight: FontWeight.bold,
             ),
             FutureBuilder<List<RouteDTO>>(
-                future: _loadRoutes(widget.gymId),
+                future: loadRoutes(widget.gymId),
                 builder: (context, routes) {
-                  print('Connection state: ${routes.connectionState}');
                   if (routes.connectionState == ConnectionState.done) {
                     if (routes.hasError) {
                       return Text("Error");

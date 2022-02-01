@@ -3,44 +3,39 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
-import 'package:perfectBeta/api/api_client.dart';
 import 'package:perfectBeta/api/providers/climbing_gym_endpoint.dart';
 import 'package:perfectBeta/api/providers/route_endpoint.dart';
 import 'package:perfectBeta/api/providers/user_endpoint.dart';
 import 'package:perfectBeta/constants/style.dart';
-import 'package:perfectBeta/dto/gyms/climbing_gym_with_details_dto.dart';
-import 'package:perfectBeta/dto/pages/page_dto.dart';
-import 'package:perfectBeta/dto/routes/rating_dto.dart';
-import 'package:perfectBeta/dto/routes/route_dto.dart';
-import 'package:perfectBeta/dto/users/user_with_personal_data_access_level_dto.dart';
+import 'package:perfectBeta/helpers/data_functions.dart';
+import 'package:perfectBeta/helpers/util_functions.dart';
+import 'package:perfectBeta/model/pages/page_dto.dart';
+import 'package:perfectBeta/model/routes/rating_dto.dart';
+import 'package:perfectBeta/model/routes/route_dto.dart';
+import 'package:perfectBeta/model/users/user_with_personal_data_access_level_dto.dart';
 import 'package:perfectBeta/pages/gym/gym_details.dart';
 import 'package:perfectBeta/pages/gym/widgets/favourite_button.dart';
 import 'package:perfectBeta/pages/route/widgets/detail_photo.dart';
 import 'package:perfectBeta/storage/secure_storage.dart';
 import 'package:perfectBeta/widgets/custom_text.dart';
 import 'package:rating_dialog/rating_dialog.dart';
-
+import '../../main.dart';
 import 'edit_route_details.dart';
 
 class RouteDetailsPage extends StatefulWidget {
   final int gymId;
   final int routeId;
   final int currentUserId;
-  static ApiClient _client = new ApiClient();
 
-  const RouteDetailsPage(
-      {Key key, this.gymId, this.routeId, this.currentUserId})
-      : super(key: key);
+  const RouteDetailsPage({Key key, this.gymId, this.routeId, this.currentUserId}) : super(key: key);
 
   @override
   _RouteDetailsPageState createState() => _RouteDetailsPageState();
 }
 
 class _RouteDetailsPageState extends State<RouteDetailsPage> {
-  var _routeEndpoint = new RouteEndpoint(RouteDetailsPage._client.init());
-  var _userEndpoint = new UserEndpoint(RouteDetailsPage._client.init());
-  var _climbingGymEndpoint =
-      new ClimbingGymEndpoint(RouteDetailsPage._client.init());
+  var _routeEndpoint = new RouteEndpoint(getIt.get());
+  var _userEndpoint = new UserEndpoint(getIt.get());
 
   List<String> photoList = [];
   var _tag = 'imageHero';
@@ -61,8 +56,7 @@ class _RouteDetailsPageState extends State<RouteDetailsPage> {
                 return FutureBuilder<RouteDTO>(
                     future: _loadRouteData(widget.gymId, widget.routeId),
                     builder: (context, routeDataSnapshot) {
-                      if (routeDataSnapshot.connectionState ==
-                          ConnectionState.done) {
+                      if (routeDataSnapshot.connectionState == ConnectionState.done) {
                         if (routeDataSnapshot.hasError) {
                           return Text("Error");
                         }
@@ -74,16 +68,14 @@ class _RouteDetailsPageState extends State<RouteDetailsPage> {
                                   onRefresh: () {
                                     setState(() {});
                                   },
-                                  child: _buildRouteDetailsListViewManager(
-                                      routeDataSnapshot, context));
+                                  child: _buildRouteDetailsListViewManager(routeDataSnapshot, context));
                             case 'CLIMBER':
                               return RefreshIndicator(
                                   // ignore: missing_return
                                   onRefresh: () {
                                     setState(() {});
                                   },
-                                  child: _buildRouteDetailsListViewClimber(
-                                      routeDataSnapshot, context));
+                                  child: _buildRouteDetailsListViewClimber(routeDataSnapshot, context));
                             case 'ADMIN':
                             default:
                               return RefreshIndicator(
@@ -91,23 +83,20 @@ class _RouteDetailsPageState extends State<RouteDetailsPage> {
                                   onRefresh: () {
                                     setState(() {});
                                   },
-                                  child: _buildRouteDetailsListView(
-                                      routeDataSnapshot, context));
+                                  child: _buildRouteDetailsListView(routeDataSnapshot, context));
                           }
                         } else {
                           return Text("No data");
                         }
                       } else
-                        return SizedBox(
-                            child: Center(child: CircularProgressIndicator()));
+                        return SizedBox(child: Center(child: CircularProgressIndicator()));
                     });
               }
           }
         });
   }
 
-  Widget _buildRouteDetailsListViewManager(
-      AsyncSnapshot<RouteDTO> snapshot, context) {
+  Widget _buildRouteDetailsListViewManager(AsyncSnapshot<RouteDTO> snapshot, context) {
     return ListView(
       children: [
         Column(
@@ -142,8 +131,7 @@ class _RouteDetailsPageState extends State<RouteDetailsPage> {
     );
   }
 
-  Widget _buildRouteDetailsListViewClimber(
-      AsyncSnapshot<RouteDTO> snapshot, context) {
+  Widget _buildRouteDetailsListViewClimber(AsyncSnapshot<RouteDTO> snapshot, context) {
     return ListView(
       children: [
         Column(
@@ -295,25 +283,6 @@ class _RouteDetailsPageState extends State<RouteDetailsPage> {
     }
   }
 
-
-  Future<bool> _isFavourited(int routeId) async {
-    try {
-      DataPage res = await _routeEndpoint.getAllFavourites();
-      bool _isInFavourites = false;
-      if (res.content != null) {
-        res.content.forEach((route) {
-          if (route.id == routeId) {
-            _isInFavourites = true;
-          }
-        });
-      }
-      return _isInFavourites;
-    } catch (e, s) {
-      print("Exception $e");
-      print("StackTrace $s");
-    }
-  }
-
   void handleAddFavourite(routeId, added) async {
     if (added) {
       var res = await _routeEndpoint.removeRouteFromFavourites(routeId);
@@ -336,23 +305,11 @@ class _RouteDetailsPageState extends State<RouteDetailsPage> {
     }
   }
 
-  Future<int> _getCurrentUserId() async {
-    try {
-      UserWithPersonalDataAccessLevelDTO res =
-      await _userEndpoint.getUserPersonalDataAccessLevel();
-      return res.id;
-    } catch (e, s) {
-      print("Exception $e");
-      print("StackTrace $s");
-    }
-  }
-
   Widget _buildAddRateButton(context) {
     return InkWell(
       onTap: () => _showRatingAppDialog(),
       child: Container(
-        decoration: BoxDecoration(
-            color: active, borderRadius: BorderRadius.circular(20)),
+        decoration: BoxDecoration(color: active, borderRadius: BorderRadius.circular(20)),
         alignment: Alignment.center,
         padding: EdgeInsets.symmetric(vertical: 10, horizontal: 14),
         child: Wrap(
@@ -377,7 +334,8 @@ class _RouteDetailsPageState extends State<RouteDetailsPage> {
   void _showRatingAppDialog() {
     final _ratingDialog = RatingDialog(
       starColor: Colors.amber,
-      title: Text('Rate this route',
+      title: Text(
+        'Rate this route',
         textAlign: TextAlign.center,
         style: const TextStyle(
           fontSize: 24,
@@ -432,9 +390,7 @@ class _RouteDetailsPageState extends State<RouteDetailsPage> {
           width: MediaQuery.of(context).size.width,
           fit: BoxFit.cover,
           loadingBuilder: (context, child, loadingProgress) =>
-              (loadingProgress == null)
-                  ? child
-                  : SizedBox(child: Center(child: CircularProgressIndicator.adaptive())),
+              (loadingProgress == null) ? child : SizedBox(child: Center(child: CircularProgressIndicator.adaptive())),
           errorBuilder: (context, error, stackTrace) => Image(
             image: AssetImage('assets/images/route-template.jpg'),
             height: MediaQuery.of(context).size.height,
@@ -453,9 +409,7 @@ class _RouteDetailsPageState extends State<RouteDetailsPage> {
           width: MediaQuery.of(context).size.width,
           fit: BoxFit.cover,
           loadingBuilder: (context, child, loadingProgress) =>
-              (loadingProgress == null)
-                  ? child
-                  : SizedBox(child: Center(child: CircularProgressIndicator.adaptive())),
+              (loadingProgress == null) ? child : SizedBox(child: Center(child: CircularProgressIndicator.adaptive())),
           errorBuilder: (context, error, stackTrace) => Image(
             image: AssetImage('assets/images/route-template.jpg'),
             height: MediaQuery.of(context).size.height,
@@ -478,8 +432,7 @@ class _RouteDetailsPageState extends State<RouteDetailsPage> {
             maxLines: 2,
           ),
           Container(
-            decoration: BoxDecoration(
-                color: active, borderRadius: BorderRadius.circular(99)),
+            decoration: BoxDecoration(color: active, borderRadius: BorderRadius.circular(99)),
             alignment: Alignment.center,
             width: 40,
             height: 30,
@@ -532,71 +485,57 @@ class _RouteDetailsPageState extends State<RouteDetailsPage> {
         ],
       );
 
-  Widget _routeTrailingWidgetManager(AsyncSnapshot<RouteDTO> snapshot, context) =>
-      Wrap(
-                alignment: WrapAlignment.spaceBetween,
-                direction: Axis.horizontal,
-                children: [
-                  IconButton(
-                      padding: EdgeInsets.all(0),
-                      onPressed: () {
-                        var _routeInfo = snapshot.data;
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => EditRouteDetailsPage(
-                                routeData: _routeInfo),
+  Widget _routeTrailingWidgetManager(AsyncSnapshot<RouteDTO> snapshot, context) => Wrap(
+        alignment: WrapAlignment.spaceBetween,
+        direction: Axis.horizontal,
+        children: [
+          IconButton(
+              padding: EdgeInsets.all(0),
+              onPressed: () {
+                var _routeInfo = snapshot.data;
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => EditRouteDetailsPage(routeData: _routeInfo),
+                  ),
+                ).then((_) => setState(() {}));
+              },
+              tooltip: 'edit route details',
+              icon: Icon(Icons.edit)),
+          IconButton(
+              visualDensity: VisualDensity.compact,
+              padding: EdgeInsets.all(0),
+              onPressed: () => showDialog<String>(
+                  context: context,
+                  builder: (BuildContext context) => AlertDialog(
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                        title: const Text('Delete route'),
+                        content: const Text('Are you sure?'),
+                        actions: <Widget>[
+                          TextButton(
+                            onPressed: () => Navigator.pop(context),
+                            child: CustomText(text: 'No', weight: FontWeight.w300, color: dark),
                           ),
-                        ).then((_) => setState(() {}));
-                      },
-                      tooltip: 'edit route details',
-                      icon: Icon(Icons.edit)),
-                  IconButton(
-                      visualDensity: VisualDensity.compact,
-                      padding: EdgeInsets.all(0),
-                      onPressed: () => showDialog<String>(
-                          context: context,
-                          builder: (BuildContext context) => AlertDialog(
-                                shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(10)),
-                                title: const Text('Delete route'),
-                                content: const Text('Are you sure?'),
-                                actions: <Widget>[
-                                  TextButton(
-                                    onPressed: () => Navigator.pop(context),
-                                    child: CustomText(
-                                        text: 'No',
-                                        weight: FontWeight.w300,
-                                        color: dark),
-                                  ),
-                                  TextButton(
-                                    onPressed: () {
-                                      _handleRouteDelete(
-                                              context,
-                                              snapshot.data.climbingGymId,
-                                              snapshot.data.id)
-                                          .then((_) => Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      GymDetails(
-                                                          gymId: snapshot.data
-                                                              .climbingGymId),
-                                                ),
-                                              ));
-                                    },
-                                    child: CustomText(
-                                        text: 'Yes, delete!', color: error),
-                                  ),
-                                ],
-                              )),
-                      tooltip: 'delete route',
-                      icon: Icon(Icons.delete)),
-                ],
-              );
+                          TextButton(
+                            onPressed: () {
+                              _handleRouteDelete(context, snapshot.data.climbingGymId, snapshot.data.id).then((_) => Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => GymDetails(gymId: snapshot.data.climbingGymId),
+                                    ),
+                                  ));
+                            },
+                            child: CustomText(text: 'Yes, delete!', color: error),
+                          ),
+                        ],
+                      )),
+              tooltip: 'delete route',
+              icon: Icon(Icons.delete)),
+        ],
+      );
 
   Widget _routeTrailingWidgetClimber(snapshot, context) => FutureBuilder<bool>(
-      future: _isFavourited(snapshot.data.id),
+      future: isFavourited(snapshot.data.id),
       builder: (context, boolVal) {
         if (boolVal.connectionState == ConnectionState.done) {
           if (boolVal.hasError) {
@@ -633,22 +572,15 @@ class _RouteDetailsPageState extends State<RouteDetailsPage> {
                         margin: EdgeInsets.symmetric(horizontal: 5.0),
                         decoration: BoxDecoration(
                           color: Colors.white,
-                          border: Border.all(
-                              color: lightGrey.withOpacity(.4), width: .5),
-                          boxShadow: [
-                            BoxShadow(
-                                offset: Offset(0, 6),
-                                color: lightGrey.withOpacity(.1),
-                                blurRadius: 12)
-                          ],
+                          border: Border.all(color: lightGrey.withOpacity(.4), width: .5),
+                          boxShadow: [BoxShadow(offset: Offset(0, 6), color: lightGrey.withOpacity(.1), blurRadius: 12)],
                           borderRadius: BorderRadius.circular(10),
                         ),
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(10),
                           child: GestureDetector(
                             onTap: () {
-                              Navigator.push(context,
-                                  MaterialPageRoute(builder: (_) {
+                              Navigator.push(context, MaterialPageRoute(builder: (_) {
                                 return DetailPhoto(url: photo, tag: _tag);
                               }));
                             },
@@ -664,14 +596,8 @@ class _RouteDetailsPageState extends State<RouteDetailsPage> {
                 height: 300.0,
                 decoration: BoxDecoration(
                   color: Colors.white,
-                  border:
-                      Border.all(color: lightGrey.withOpacity(.4), width: .5),
-                  boxShadow: [
-                    BoxShadow(
-                        offset: Offset(0, 6),
-                        color: lightGrey.withOpacity(.1),
-                        blurRadius: 12)
-                  ],
+                  border: Border.all(color: lightGrey.withOpacity(.4), width: .5),
+                  boxShadow: [BoxShadow(offset: Offset(0, 6), color: lightGrey.withOpacity(.1), blurRadius: 12)],
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: GestureDetector(
@@ -690,12 +616,7 @@ class _RouteDetailsPageState extends State<RouteDetailsPage> {
         decoration: BoxDecoration(
           color: Colors.white,
           border: Border.all(color: lightGrey.withOpacity(.4), width: .5),
-          boxShadow: [
-            BoxShadow(
-                offset: Offset(0, 6),
-                color: lightGrey.withOpacity(.1),
-                blurRadius: 12)
-          ],
+          boxShadow: [BoxShadow(offset: Offset(0, 6), color: lightGrey.withOpacity(.1), blurRadius: 12)],
           borderRadius: BorderRadius.circular(8),
         ),
         padding: const EdgeInsets.all(16),
@@ -713,46 +634,12 @@ class _RouteDetailsPageState extends State<RouteDetailsPage> {
         ),
       );
 
-  Widget _holdsWidget(snapshot) => Container(
-        width: double.maxFinite,
-        decoration: BoxDecoration(
-          color: Colors.white,
-          border: Border.all(color: lightGrey.withOpacity(.4), width: .5),
-          boxShadow: [
-            BoxShadow(
-                offset: Offset(0, 6),
-                color: lightGrey.withOpacity(.1),
-                blurRadius: 12)
-          ],
-          borderRadius: BorderRadius.circular(8),
-        ),
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            CustomText(
-              text: "Holds",
-              size: 20,
-              weight: FontWeight.bold,
-            ),
-            //TODO: table with holds from json data
-            CustomText(text: "${snapshot.data.holdsDetails}"),
-          ],
-        ),
-      );
-
   Widget _ratingsWidgetManager(snapshot, context) => Container(
         width: double.maxFinite,
         decoration: BoxDecoration(
           color: Colors.white,
           border: Border.all(color: lightGrey.withOpacity(.4), width: .5),
-          boxShadow: [
-            BoxShadow(
-                offset: Offset(0, 6),
-                color: lightGrey.withOpacity(.1),
-                blurRadius: 12)
-          ],
+          boxShadow: [BoxShadow(offset: Offset(0, 6), color: lightGrey.withOpacity(.1), blurRadius: 12)],
           borderRadius: BorderRadius.circular(8),
         ),
         padding: const EdgeInsets.all(16),
@@ -786,8 +673,8 @@ class _RouteDetailsPageState extends State<RouteDetailsPage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 ListView.builder(
-                  physics: const NeverScrollableScrollPhysics(),
-                  shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    shrinkWrap: true,
                     itemCount: ratingData.data == null ? 0 : ratingData.data.length,
                     itemBuilder: (context, index) {
                       final item = ratingData.data[index];
@@ -796,12 +683,7 @@ class _RouteDetailsPageState extends State<RouteDetailsPage> {
                         decoration: BoxDecoration(
                           color: Colors.white,
                           border: Border.all(color: lightGrey.withOpacity(.4), width: .5),
-                          boxShadow: [
-                            BoxShadow(
-                                offset: Offset(0, 6),
-                                color: lightGrey.withOpacity(.1),
-                                blurRadius: 12)
-                          ],
+                          boxShadow: [BoxShadow(offset: Offset(0, 6), color: lightGrey.withOpacity(.1), blurRadius: 12)],
                           borderRadius: BorderRadius.circular(8),
                         ),
                         padding: const EdgeInsets.all(16),
@@ -825,11 +707,13 @@ class _RouteDetailsPageState extends State<RouteDetailsPage> {
                                 // itemCount: 5,
                                 itemSize: 16.0,
                               ),
-                              ratingData.data[index].comment != null ? CustomText(
-                                overflow: TextOverflow.visible,
-                                text: ratingData.data[index].comment,
-                                size: 16,
-                              ) : SizedBox.shrink(),
+                              ratingData.data[index].comment != null
+                                  ? CustomText(
+                                      overflow: TextOverflow.visible,
+                                      text: ratingData.data[index].comment,
+                                      size: 16,
+                                    )
+                                  : SizedBox.shrink(),
                             ],
                           ),
                           trailing: IconButton(
@@ -838,30 +722,22 @@ class _RouteDetailsPageState extends State<RouteDetailsPage> {
                               onPressed: () => showDialog<String>(
                                   context: context,
                                   builder: (BuildContext context) => AlertDialog(
-                                    shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(10)),
-                                    title: const Text('Delete rating'),
-                                    content: const Text('Are you sure?'),
-                                    actions: <Widget>[
-                                      TextButton(
-                                        onPressed: () => Navigator.pop(context),
-                                        child: CustomText(
-                                            text: 'No',
-                                            weight: FontWeight.w300,
-                                            color: dark),
-                                      ),
-                                      TextButton(
-                                        onPressed: () {
-                                          _handleRatingDeleteManager(
-                                              context,
-                                              ratingData.data[index].id)
-                                              .then((_) => setState(() {}));
-                                        },
-                                        child: CustomText(
-                                            text: 'Yes, delete!', color: error),
-                                      ),
-                                    ],
-                                  )),
+                                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                                        title: const Text('Delete rating'),
+                                        content: const Text('Are you sure?'),
+                                        actions: <Widget>[
+                                          TextButton(
+                                            onPressed: () => Navigator.pop(context),
+                                            child: CustomText(text: 'No', weight: FontWeight.w300, color: dark),
+                                          ),
+                                          TextButton(
+                                            onPressed: () {
+                                              _handleRatingDeleteManager(context, ratingData.data[index].id).then((_) => setState(() {}));
+                                            },
+                                            child: CustomText(text: 'Yes, delete!', color: error),
+                                          ),
+                                        ],
+                                      )),
                               tooltip: 'delete route',
                               icon: Icon(Icons.delete)),
                         ),
@@ -877,41 +753,36 @@ class _RouteDetailsPageState extends State<RouteDetailsPage> {
       });
 
   Widget _ratingsWidgetClimber(snapshot, context) => Container(
-    width: double.maxFinite,
-    decoration: BoxDecoration(
-      color: Colors.white,
-      border: Border.all(color: lightGrey.withOpacity(.4), width: .5),
-      boxShadow: [
-        BoxShadow(
-            offset: Offset(0, 6),
-            color: lightGrey.withOpacity(.1),
-            blurRadius: 12)
-      ],
-      borderRadius: BorderRadius.circular(8),
-    ),
-    padding: const EdgeInsets.all(16),
-    child: Column(
-      mainAxisAlignment: MainAxisAlignment.start,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        width: double.maxFinite,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          border: Border.all(color: lightGrey.withOpacity(.4), width: .5),
+          boxShadow: [BoxShadow(offset: Offset(0, 6), color: lightGrey.withOpacity(.1), blurRadius: 12)],
+          borderRadius: BorderRadius.circular(8),
+        ),
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            CustomText(
-              text: "Ratings and comments",
-              size: 20,
-              weight: FontWeight.bold,
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                CustomText(
+                  text: "Ratings and comments",
+                  size: 20,
+                  weight: FontWeight.bold,
+                ),
+                _buildAddRateButton(context)
+              ],
             ),
-            _buildAddRateButton(context)
+            SizedBox(
+              height: 10,
+            ),
+            _ratingListWidgetClimber(snapshot, context)
           ],
         ),
-        SizedBox(
-          height: 10,
-        ),
-        _ratingListWidgetClimber(snapshot, context)
-      ],
-    ),
-  );
+      );
 
   Widget _ratingListWidgetClimber(snapshot, context) => FutureBuilder<List<RatingDTO>>(
       future: _routeEndpoint.getRouteRatings(snapshot.data.id),
@@ -935,92 +806,81 @@ class _RouteDetailsPageState extends State<RouteDetailsPage> {
                         decoration: BoxDecoration(
                           color: Colors.white,
                           border: Border.all(color: lightGrey.withOpacity(.4), width: .5),
-                          boxShadow: [
-                            BoxShadow(
-                                offset: Offset(0, 6),
-                                color: lightGrey.withOpacity(.1),
-                                blurRadius: 12)
-                          ],
+                          boxShadow: [BoxShadow(offset: Offset(0, 6), color: lightGrey.withOpacity(.1), blurRadius: 12)],
                           borderRadius: BorderRadius.circular(8),
                         ),
                         padding: const EdgeInsets.all(16),
                         margin: const EdgeInsets.only(bottom: 10),
                         child: ListTile(
-                          contentPadding: EdgeInsets.all(0),
-                          title: CustomText(
-                            text: ratingData.data[index].username,
-                            size: 14,
-                          ),
-                          subtitle: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              RatingBarIndicator(
-                                rating: ratingData.data[index].rate,
-                                itemBuilder: (context, index) => Icon(
-                                  Icons.star,
-                                  color: Colors.amber,
+                            contentPadding: EdgeInsets.all(0),
+                            title: CustomText(
+                              text: ratingData.data[index].username,
+                              size: 14,
+                            ),
+                            subtitle: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                RatingBarIndicator(
+                                  rating: ratingData.data[index].rate,
+                                  itemBuilder: (context, index) => Icon(
+                                    Icons.star,
+                                    color: Colors.amber,
+                                  ),
+                                  // itemCount: 5,
+                                  itemSize: 16.0,
                                 ),
-                                // itemCount: 5,
-                                itemSize: 16.0,
-                              ),
-                              ratingData.data[index].comment != null ? CustomText(
-                                overflow: TextOverflow.visible,
-                                text: ratingData.data[index].comment,
-                                size: 16,
-                              ) : SizedBox.shrink(),
-                            ],
-                          ),
-                          trailing: FutureBuilder(
-                              future: _getCurrentUserId(),
-                              builder: (context, userIdData) {
-                                if (ratingData.connectionState == ConnectionState.done) {
-                                  if (userIdData.hasError) {
-                                    return Text("Error");
-                                  }
-                                  if (userIdData.hasData) {
-                                    return Visibility(
-                                      visible: userIdData.data == ratingData.data[index].userId,
-                                      child: IconButton(
-                                          visualDensity: VisualDensity.compact,
-                                          padding: EdgeInsets.all(0),
-                                          onPressed: () => showDialog<String>(
-                                              context: context,
-                                              builder: (BuildContext context) => AlertDialog(
-                                                shape: RoundedRectangleBorder(
-                                                    borderRadius: BorderRadius.circular(10)),
-                                                title: const Text('Delete rating'),
-                                                content: const Text('Are you sure?'),
-                                                actions: <Widget>[
-                                                  TextButton(
-                                                    onPressed: () => Navigator.pop(context),
-                                                    child: CustomText(
-                                                        text: 'No',
-                                                        weight: FontWeight.w300,
-                                                        color: dark),
-                                                  ),
-                                                  TextButton(
-                                                    onPressed: () {
-                                                      _handleRatingDeleteClimber(
-                                                          context,
-                                                          ratingData.data[index].id)
-                                                          .then((_) => setState(() {}));
-                                                    },
-                                                    child: CustomText(
-                                                        text: 'Yes, delete!', color: error),
-                                                  ),
-                                                ],
-                                              )),
-                                          tooltip: 'delete route',
-                                          icon: Icon(Icons.delete)),
-                                    );
-                                  } else {
+                                ratingData.data[index].comment != null
+                                    ? CustomText(
+                                        overflow: TextOverflow.visible,
+                                        text: ratingData.data[index].comment,
+                                        size: 16,
+                                      )
+                                    : SizedBox.shrink(),
+                              ],
+                            ),
+                            trailing: FutureBuilder(
+                                future: getCurrentUserId(),
+                                builder: (context, userIdData) {
+                                  if (ratingData.connectionState == ConnectionState.done) {
+                                    if (userIdData.hasError) {
+                                      return Text("Error");
+                                    }
+                                    if (userIdData.hasData) {
+                                      return Visibility(
+                                        visible: userIdData.data == ratingData.data[index].userId,
+                                        child: IconButton(
+                                            visualDensity: VisualDensity.compact,
+                                            padding: EdgeInsets.all(0),
+                                            onPressed: () => showDialog<String>(
+                                                context: context,
+                                                builder: (BuildContext context) => AlertDialog(
+                                                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                                                      title: const Text('Delete rating'),
+                                                      content: const Text('Are you sure?'),
+                                                      actions: <Widget>[
+                                                        TextButton(
+                                                          onPressed: () => Navigator.pop(context),
+                                                          child: CustomText(text: 'No', weight: FontWeight.w300, color: dark),
+                                                        ),
+                                                        TextButton(
+                                                          onPressed: () {
+                                                            _handleRatingDeleteClimber(context, ratingData.data[index].id)
+                                                                .then((_) => setState(() {}));
+                                                          },
+                                                          child: CustomText(text: 'Yes, delete!', color: error),
+                                                        ),
+                                                      ],
+                                                    )),
+                                            tooltip: 'delete route',
+                                            icon: Icon(Icons.delete)),
+                                      );
+                                    } else {
+                                      return SizedBox.shrink();
+                                    }
+                                  } else
                                     return SizedBox.shrink();
-                                  }
-                                } else
-                                  return SizedBox.shrink();
-                              })
-                        ),
+                                })),
                       );
                     }),
               ],
@@ -1033,35 +893,30 @@ class _RouteDetailsPageState extends State<RouteDetailsPage> {
       });
 
   Widget _ratingsWidget(snapshot, context) => Container(
-    width: double.maxFinite,
-    decoration: BoxDecoration(
-      color: Colors.white,
-      border: Border.all(color: lightGrey.withOpacity(.4), width: .5),
-      boxShadow: [
-        BoxShadow(
-            offset: Offset(0, 6),
-            color: lightGrey.withOpacity(.1),
-            blurRadius: 12)
-      ],
-      borderRadius: BorderRadius.circular(8),
-    ),
-    padding: const EdgeInsets.all(16),
-    child: Column(
-      mainAxisAlignment: MainAxisAlignment.start,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        CustomText(
-          text: "Ratings and comments",
-          size: 20,
-          weight: FontWeight.bold,
+        width: double.maxFinite,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          border: Border.all(color: lightGrey.withOpacity(.4), width: .5),
+          boxShadow: [BoxShadow(offset: Offset(0, 6), color: lightGrey.withOpacity(.1), blurRadius: 12)],
+          borderRadius: BorderRadius.circular(8),
         ),
-        SizedBox(
-          height: 10,
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            CustomText(
+              text: "Ratings and comments",
+              size: 20,
+              weight: FontWeight.bold,
+            ),
+            SizedBox(
+              height: 10,
+            ),
+            _ratingListWidget(snapshot, context)
+          ],
         ),
-        _ratingListWidget(snapshot, context)
-      ],
-    ),
-  );
+      );
 
   Widget _ratingListWidget(snapshot, context) => FutureBuilder<List<RatingDTO>>(
       future: _routeEndpoint.getRouteRatings(snapshot.data.id),
@@ -1085,12 +940,7 @@ class _RouteDetailsPageState extends State<RouteDetailsPage> {
                         decoration: BoxDecoration(
                           color: Colors.white,
                           border: Border.all(color: lightGrey.withOpacity(.4), width: .5),
-                          boxShadow: [
-                            BoxShadow(
-                                offset: Offset(0, 6),
-                                color: lightGrey.withOpacity(.1),
-                                blurRadius: 12)
-                          ],
+                          boxShadow: [BoxShadow(offset: Offset(0, 6), color: lightGrey.withOpacity(.1), blurRadius: 12)],
                           borderRadius: BorderRadius.circular(8),
                         ),
                         padding: const EdgeInsets.all(16),
@@ -1114,11 +964,13 @@ class _RouteDetailsPageState extends State<RouteDetailsPage> {
                                 // itemCount: 5,
                                 itemSize: 16.0,
                               ),
-                              ratingData.data[index].comment != null ? CustomText(
-                                overflow: TextOverflow.visible,
-                                text: ratingData.data[index].comment,
-                                size: 16,
-                              ) : SizedBox.shrink(),
+                              ratingData.data[index].comment != null
+                                  ? CustomText(
+                                      overflow: TextOverflow.visible,
+                                      text: ratingData.data[index].comment,
+                                      size: 16,
+                                    )
+                                  : SizedBox.shrink(),
                             ],
                           ),
                         ),

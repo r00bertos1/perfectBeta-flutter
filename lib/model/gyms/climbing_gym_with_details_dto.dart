@@ -1,5 +1,4 @@
 import 'package:perfectBeta/constants/enums.dart';
-
 import 'climbing_gym_dto.dart';
 import 'gym_details_dto.dart';
 
