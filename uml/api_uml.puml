@@ -1,0 +1,82 @@
+@startuml
+set namespaceSeparator ::
+
+
+class "perfectBeta::api::providers::ClimbingGymEndpoint" {
+  -Dio* _client
+  +Future<DataPage*>* getVerifiedGyms()
+  +Future<ClimbingGymWithDetailsDTO*>* getVerifiedGymById()
+  +Future<DataPage*>* getAllGyms()
+  +Future<ClimbingGymWithDetailsDTO*>* getGymById()
+  +Future<ClimbingGymDTO*>* verifyGym()
+  +Future<ClimbingGymDTO*>* closeGym()
+  +Future<DataPage*>* getAllOwnedGyms()
+  +Future<DataPage*>* getAllMaintainedGyms()
+  +Future<ClimbingGymWithMaintainersDTO*>* addMaintainerToGym()
+  +Future<Response<dynamic>*>* editGymDetails()
+  +Future<ClimbingGymWithDetailsDTO*>* registerNewGym()
+}
+
+class "perfectBeta::api::providers::RouteEndpoint" {
+  -Dio* _client
+  +Future<DataPage*>* getAllGymRoutes()
+  +Future<List<RatingDTO*>*>* getRouteRatings()
+  +Future<Response<dynamic>*>* editRouteDetails()
+  +Future<Response<dynamic>*>* addWallToGym()
+  +Future<Response<dynamic>*>* deleteRoute()
+  +Future<Response<dynamic>*>* deleteRatingByOwnerOrMaintainer()
+  +Future<DataPage*>* getAllFavourites()
+  +Future<Response<dynamic>*>* addRouteToFavourites()
+  +Future<Response<dynamic>*>* addRatingToRoute()
+  +Future<Response<dynamic>*>* removeRouteFromFavourites()
+  +Future<Response<dynamic>*>* deleteOwnRating()
+}
+
+class "perfectBeta::api::providers::CloudEndpoint" {
+  -Dio* _client
+  +Future<Response<dynamic>*>* uploadFile()
+}
+
+
+class "perfectBeta::api::providers::ManagerEndpoint" {
+  -Dio* _client
+  +Future<UserWithAccessLevelDTO*>* activateManager()
+  +Future<UserWithAccessLevelDTO*>* deactivateManager()
+  +Future<Response<dynamic>*>* registerManager()
+}
+
+
+class "perfectBeta::api::providers::PythonEndpoint" {
+  -Dio* _client
+  +Future<Response<dynamic>*>* scanImage()
+}
+
+class "perfectBeta::api::providers::AuthenticationEndpoint" {
+  -Dio* _client
+  +Future<Response<dynamic>*>* authenticate()
+  +Future<bool*>* authenticateAnonim()
+  +Future<Response<dynamic>*>* login()
+  +Future<void>* logout()
+  +Future<bool*>* refreshToken()
+}
+
+class "perfectBeta::api::providers::UserEndpoint" {
+  -Dio* _client
+  +Future<UserWithPersonalDataAccessLevelDTO*>* getUserPersonalDataAccessLevel()
+  +Future<Response<dynamic>*>* requestChangeEmail()
+  +Future<Response<dynamic>*>* confirmChangeEmail()
+  +Future<Response<dynamic>*>* changePassword()
+  +Future<Response<dynamic>*>* updatePersonalData()
+  +Future<Response<dynamic>*>* deleteUser()
+  +Future<Response<dynamic>*>* registerUser()
+  +Future<Response<dynamic>*>* verifyUser()
+  +Future<Response<dynamic>*>* requestResetPassword()
+  +Future<Response<dynamic>*>* confirmResetPassword()
+  +Future<DataPage*>* getAllUsers()
+  +Future<UserWithPersonalDataAccessLevelDTO*>* getUserById()
+  +Future<UserWithAccessLevelDTO*>* activateUser()
+  +Future<UserWithAccessLevelDTO*>* deactivateUser()
+}
+
+
+@enduml

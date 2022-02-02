@@ -1,0 +1,209 @@
+@startuml
+set namespaceSeparator ::
+
+class "perfectBeta::model::users::UserDTO" {
+  +int* id
+  +String* login
+  +String* email
+  +bool* isActive
+  +bool* isVerified
+}
+
+class "perfectBeta::model::users::UserWithAccessLevelDTO" {
+  +List<AccessLevelDTO*>* accessLevels
+}
+
+"perfectBeta::model::users::UserDTO" <|-- "perfectBeta::model::users::UserWithAccessLevelDTO"
+
+class "perfectBeta::model::users::UserWithPersonalDataAccessLevelDTO" {
+  +PersonalDataDTO* personalData
+}
+
+"perfectBeta::model::users::UserWithPersonalDataAccessLevelDTO" o-- "perfectBeta::model::users::data::PersonalDataDTO"
+"perfectBeta::model::users::UserWithAccessLevelDTO" <|-- "perfectBeta::model::users::UserWithPersonalDataAccessLevelDTO"
+
+class "perfectBeta::model::users::UserWithPersonalDataDTO" {
+  +PersonalDataDTO* personalData
+}
+
+"perfectBeta::model::users::UserWithPersonalDataDTO" o-- "perfectBeta::model::users::data::PersonalDataDTO"
+"perfectBeta::model::users::UserDTO" <|-- "perfectBeta::model::users::UserWithPersonalDataDTO"
+
+'Gyms
+class "perfectBeta::model::gyms::ClimbingGymDTO" {
+  +int* id
+  +int* ownerId
+  +String* gymName
+  +GymStatusEnum* status
+  +Map<String*, dynamic>* toJson()
+}
+
+class "perfectBeta::model::gyms::ClimbingGymWithDetailsDTO" {
+  +GymDetailsDTO* gymDetailsDTO
+  +Map<String*, dynamic>* toJson()
+}
+
+"perfectBeta::model::gyms::ClimbingGymWithDetailsDTO" o-- "perfectBeta::model::gyms::GymDetailsDTO"
+"perfectBeta::model::gyms::ClimbingGymDTO" <|-- "perfectBeta::model::gyms::ClimbingGymWithDetailsDTO"
+
+class "perfectBeta::model::gyms::ClimbingGymWithMaintainersDTO" {
+  +List<GymMaintainerDTO*>* maintainerDTO
+  +Map<String*, dynamic>* toJson()
+}
+
+"perfectBeta::model::gyms::ClimbingGymDTO" <|-- "perfectBeta::model::gyms::ClimbingGymWithMaintainersDTO"
+
+class "perfectBeta::model::gyms::GymDetailsDTO" {
+  +String* country
+  +String* city
+  +String* street
+  +String* number
+  +String* description
+  +Map<String*, dynamic>* toJson()
+}
+
+class "perfectBeta::model::gyms::GymMaintainerDTO" {
+  +int* maintainerId
+  +int* gymId
+  +bool* isActive
+}
+
+'Pages
+class "perfectBeta::model::pages::Pageable" {
+  +Sort* sort
+  +int* offset
+  +int* pageNumber
+  +int* pageSize
+  +bool* paged
+  +bool* unpaged
+}
+
+"perfectBeta::model::pages::Pageable" o-- "perfectBeta::model::pages::Sort"
+
+class "perfectBeta::model::pages::DataPage" {
+  +List<dynamic>* content
+  +Pageable* pageable
+  +bool* last
+  +int* totalPages
+  +int* totalElements
+  +int* size
+  +int* number
+  +Sort* sort
+  +int* numberOfElements
+  +bool* first
+  +bool* empty
+}
+
+"perfectBeta::model::pages::DataPage" o-- "perfectBeta::model::pages::Pageable"
+"perfectBeta::model::pages::DataPage" o-- "perfectBeta::model::pages::Sort"
+
+class "perfectBeta::model::pages::Sort" {
+  +bool* unsorted
+  +bool* sorted
+  +bool* empty
+}
+
+'Routes
+class "perfectBeta::model::routes::PhotoDTO" {
+  +String* photoUrl
+  +int* routeId
+  +Map<String*, dynamic>* toJson()
+}
+
+class "perfectBeta::model::routes::RatingDTO" {
+  +int* id
+  +String* comment
+  +String* username
+  +double* rate
+  +int* routeId
+  +int* userId
+  +Map<String*, dynamic>* toJson()
+}
+
+class "perfectBeta::model::routes::RouteDTO" {
+  +int* id
+  +String* routeName
+  +String* difficulty
+  +String* description
+  +String* holdsDetails
+  +double* avgRating
+  +int* climbingGymId
+  +List<PhotoDTO*>* photos
+  +Map<String*, dynamic>* toJson()
+}
+
+'Users
+class "perfectBeta::model::users::data::AccessLevelDTO" {
+  +String* accessLevel
+  +bool* isActive
+}
+
+class "perfectBeta::model::users::data::ChangePasswordDTO" {
+  +String* newPassword
+  +String* oldPassword
+  +Map<String*, dynamic>* toJson()
+}
+
+class "perfectBeta::model::users::data::EmailDTO" {
+  +String* email
+  +Map<String*, dynamic>* toJson()
+}
+
+class "perfectBeta::model::users::data::PasswordDTO" {
+  +String* password
+  +Map<String*, dynamic>* toJson()
+}
+
+class "perfectBeta::model::users::data::PersonalDataDTO" {
+  +String* name
+  +String* surname
+  +String* phoneNumber
+  +String* language
+  +bool* gender
+  +Map<String*, dynamic>* toJson()
+}
+
+class "perfectBeta::model::users::data::ResetPasswordDTO" {
+  +String* newPassword
+  +String* newPasswordConfirmation
+}
+
+'Auth
+class "perfectBeta::model::auth::TokenDTO" {
+  +String* token
+}
+
+class "perfectBeta::model::auth::CredentialsDTO" {
+  +String* username
+  +String* password
+  +Map<String*, dynamic>* toJson()
+}
+
+class "perfectBeta::model::auth::RegistrationDTO" {
+  +String* login
+  +String* email
+  +String* password
+  +Map<String*, dynamic>* toJson()
+}
+
+'Country
+class "perfectBeta::model::country::CountryDTO" {
+  +String* name
+  +String* code
+}
+
+'Holds
+class "perfectBeta::model::holds::holdsHoldDTO" {
+  +int* holdType
+  +int* x1
+  +int* x2
+  +int* y1
+  +int* y2
+  +Map<String*, dynamic>* toJson()
+}
+
+class "perfectBeta::model::holds::HoldsDetailsDTO" {
+  +List<HoldDTO*>* holdsDetails
+}
+
+@enduml
