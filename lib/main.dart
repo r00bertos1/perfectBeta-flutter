@@ -29,7 +29,6 @@ void main() {
 }
 
 class MyApp extends StatelessWidget {
-  // This widget is the root of application.
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
@@ -69,7 +68,6 @@ class MyApp extends StatelessWidget {
         }),
         primarySwatch: Colors.teal,
       ),
-      // home: AuthenticationPage(),
     );
   }
 }

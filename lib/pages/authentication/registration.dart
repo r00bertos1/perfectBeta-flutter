@@ -7,7 +7,7 @@ import 'package:perfectBeta/widgets/custom_text.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../main.dart';
-import 'confirm_registration_page.dart';
+import 'confirm_registration.dart';
 
 class RegistrationPage extends StatefulWidget {
   const RegistrationPage({Key key}) : super(key: key);

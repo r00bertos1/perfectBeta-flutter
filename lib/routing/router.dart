@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:perfectBeta/pages/authentication/registration.dart';
 import 'package:perfectBeta/pages/gym/registration/gym_registration.dart';
-import 'package:perfectBeta/pages/route/my_routes/my_routes_page.dart';
-import 'package:perfectBeta/pages/gym/gyms_page.dart';
+import 'package:perfectBeta/pages/route/my_routes/my_routes.dart';
+import 'package:perfectBeta/pages/gym/gyms.dart';
 import 'package:perfectBeta/pages/overview/overview.dart';
 import 'package:perfectBeta/pages/route/add_route/add_route.dart';
 import 'package:perfectBeta/pages/users/manager_registration.dart';

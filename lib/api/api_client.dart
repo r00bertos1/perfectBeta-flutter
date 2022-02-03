@@ -25,6 +25,10 @@ class ApiClient {
 class ApiInterceptors extends Interceptor {
 
   var _cache = new Map<Uri, Response>();
+  var _authenticationEndpoint = new AuthenticationEndpoint(new Dio(BaseOptions(
+    headers: globalHeaders,
+    baseUrl: API_URL,
+  )));
 
   bool isTokenExpired(String _token) {
     DateTime expiryDate = JwtDecoder.getExpirationDate(_token);
@@ -34,14 +38,6 @@ class ApiInterceptors extends Interceptor {
 
   @override
   void onRequest(RequestOptions options, RequestInterceptorHandler handler) async {
-    print('REQUEST[${options.method}] => PATH: ${options.path}');
-    // EasyLoading.show(status: 'loading...');
-
-    var _authenticationEndpoint = new AuthenticationEndpoint(new Dio(BaseOptions(
-      headers: globalHeaders,
-      baseUrl: API_URL,
-    )));
-
     if (options.headers.containsKey("requiresToken")) {
       options.headers.remove("requiresToken");
       handler.next(options);
@@ -71,7 +67,6 @@ class ApiInterceptors extends Interceptor {
 
   @override
   void onResponse(Response response, ResponseInterceptorHandler handler) async {
-    print('RESPONSE[${response.statusCode}] => PATH: ${response.requestOptions.path}');
     // EasyLoading.dismiss();
 
     _cache[response.requestOptions.uri] = response;
@@ -90,15 +85,10 @@ class ApiInterceptors extends Interceptor {
           return cachedResponse;
         }
       }
-
       var responseClass = (err.response.statusCode / 100).floor();
       String jsonsDataString = err.response?.data.toString().replaceAll("\n", "");
       final jsonData = jsonDecode(jsonsDataString);
-      //if (err.response.data['key'] != null) {
-      //final jsonResponse = json.decode(err.response.data);
-      // ExceptionDTO ex = new ExceptionDTO.fromJson(jsonResponse);
-      //EasyLoading.showError(ex.message);
-      //} else
+
       if (responseClass == 5) {
         EasyLoading.showError('An unidentified server error has occurred');
       } else if (responseClass == 4) {
@@ -129,47 +119,5 @@ class ApiInterceptors extends Interceptor {
       }
     }
     handler.next(err);
-  }
-}
-
-class LoggingInterceptors extends Interceptor {
-  @override
-  FutureOr<dynamic> onRequest(RequestOptions options, RequestInterceptorHandler handler) async {
-    print("--> ${options.method != null ? options.method.toUpperCase() : 'METHOD'} ${"" + (options.baseUrl ?? "") + (options.path ?? "")}");
-    print("Headers:");
-    options.headers.forEach((k, v) => print('$k: $v'));
-    if (options.queryParameters != null) {
-      print("queryParameters:");
-      options.queryParameters.forEach((k, v) => print('$k: $v'));
-    }
-    if (options.data != null) {
-      print("Body: ${options.data}");
-    }
-    print("--> END ${options.method != null ? options.method.toUpperCase() : 'METHOD'}");
-
-    //return options;
-    return super.onRequest(options, handler);
-  }
-
-  @override
-  FutureOr<dynamic> onResponse(Response response, ResponseInterceptorHandler handler) async {
-    print(
-        "<-- ${response.statusCode} ${(response.requestOptions != null ? (response.requestOptions.baseUrl + response.requestOptions.path) : 'URL')}");
-    print("Headers:");
-    response.headers?.forEach((k, v) => print('$k: $v'));
-    print("Response: ${response.data}");
-    print("<-- END HTTP");
-
-    return super.onResponse(response, handler);
-  }
-
-  @override
-  Future<FutureOr> onError(DioError err, ErrorInterceptorHandler handler) async {
-    print(
-        "<-- ${err.message} ${(err.response?.requestOptions != null ? (err.response.requestOptions.baseUrl + err.response.requestOptions.path) : 'URL')}");
-    print("${err.response != null ? err.response.data : 'Unknown Error'}");
-    print("<-- End error");
-    return err;
-    //return super.onError(err, handler);
   }
 }

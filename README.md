@@ -15,25 +15,27 @@
 ### Packages
 | Package  | Version |
 | ------------- | ------------- |
-| google_fonts  | `2.1.0`  |
-| get  | `4.1.4`  |
-| data_table_2  | `2.0.3`  |
-| http  | `0.13.4`  |
-| dio  | `4.0.4`  |
-| flutter_secure_storage  | `5.0.2`  |
-| jwt_decoder  | `2.0.1`  |
-| flutter_easyloading  | `3.0.3`  |
-| flutter_launcher_icons  | `0.9.2`  |
-| cupertino_icons  | `1.0.2`  |
-| cached_network_image  | `3.1.0`  |
-| flutter_rating_bar  | `4.0.0`  |
-| image_picker  | `0.8.4+4`  |
+| google_fonts  | `^2.1.0`  |
+| get  | `^4.1.4`  |
+| data_table_2  | `^2.0.3`  |
+| http  | `^0.13.4`  |
+| dio  | `^4.0.4`  |
+| flutter_secure_storage  | `^5.0.2`  |
+| jwt_decoder  | `^2.0.1`  |
+| flutter_easyloading  | `^3.0.3`  |
+| flutter_launcher_icons  | `^0.9.2`  |
+| cupertino_icons  | `^1.0.2`  |
+| cached_network_image  | `^3.1.0`  |
+| flutter_rating_bar  | `^4.0.0`  |
+| image_picker  | `^0.8.4+4`  |
 | image_picker_web  | `any`  |
-| dropdown_below  | `1.0.3`  |
-| intl_phone_number_input  | `0.7.0+2`  |
-| carousel_slider  | `4.0.0`  |
-| photo_view  | `0.13.0`  |
-| rating_dialog  | `2.0.3`  |
+| dropdown_below  | `^1.0.3`  |
+| intl_phone_number_input  | `^0.7.0+2`  |
+| carousel_slider  | `^4.0.0`  |
+| photo_view  | `^0.13.0`  |
+| rating_dialog  | `^2.0.3`  |
+| get_it  | `^7.2.0`  |
+| mocktail  | `^0.2.0`  |
 
 ## Installation and run
 

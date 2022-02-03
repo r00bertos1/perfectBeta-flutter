@@ -32,16 +32,11 @@ dependencies:
   jwt_decoder: ^2.0.1
   flutter_easyloading: ^3.0.3
   flutter_launcher_icons: ^0.9.2
-  # The following adds the Cupertino Icons font to your application.
-  # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.2
   cached_network_image: ^3.1.0
   flutter_rating_bar: ^4.0.0
   image_picker: ^0.8.4+4
   image_picker_web: any
-  time_machine: ^0.9.16
-
-  #===NEW===
   dropdown_below: ^1.0.3
   intl_phone_number_input: ^0.7.0+2
   carousel_slider: ^4.0.0

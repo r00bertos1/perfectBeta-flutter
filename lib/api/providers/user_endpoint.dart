@@ -26,9 +26,9 @@ class UserEndpoint {
       Response<String> response = await _client.get('/users/self');
 
       final jsonResponse = json.decode(response.data);
-      UserWithPersonalDataAccessLevelDTO page =
+      UserWithPersonalDataAccessLevelDTO userWithPersonalDataAccessLevelDTO =
       new UserWithPersonalDataAccessLevelDTO.fromJson(jsonResponse);
-      return page;
+      return userWithPersonalDataAccessLevelDTO;
 
     } on DioError catch (ex) {
       if (ex.response != null) {

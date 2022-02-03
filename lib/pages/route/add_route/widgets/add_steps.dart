@@ -746,8 +746,7 @@ class _AddStepsState extends State<AddSteps> {
     try {
       List<String> list = await getLinksListFromAllImages(_imageXFileList, _finalImageFileList);
       for (String link in list) {
-        PhotoDTO photoDTO = new PhotoDTO(photoUrl: link);
-        print('PHOTO:' + photoDTO.photoUrl);
+        PhotoDTO photoDTO = new PhotoDTO(photoUrl: link);;
         _photos.add(photoDTO);
       }
       RouteDTO routeData = new RouteDTO(
