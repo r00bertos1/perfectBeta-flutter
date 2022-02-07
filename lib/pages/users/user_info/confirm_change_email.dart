@@ -89,7 +89,7 @@ class _ConfirmChangeEmail extends State<ConfirmChangeEmail> {
                   InkWell(
                     onTap: () async {
                       if (_confirmChangeEmailFormKey.currentState.validate()) {
-                        await handleResetPassword(context, _codeController.text, widget.email.email);
+                        await handleConfirmChangeEmail(context, _codeController.text, widget.email.email);
                       }
                     },
                     child: Container(

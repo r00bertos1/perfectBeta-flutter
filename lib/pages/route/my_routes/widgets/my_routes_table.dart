@@ -226,7 +226,7 @@ class _MyRoutesTableState extends State<MyRoutesTable> {
                   visualDensity: VisualDensity.compact,
                   padding: EdgeInsets.all(0),
                   onPressed: () {
-                    handleFavouriteRouteDelete(context, route.id).then((value) {
+                    handleDeleteFavouriteRoute(context, route.id).then((value) {
                       if (value) {
                         setState(() {});
                       }

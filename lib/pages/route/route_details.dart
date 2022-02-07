@@ -1,18 +1,14 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
-import 'package:perfectBeta/api/providers/climbing_gym_endpoint.dart';
 import 'package:perfectBeta/api/providers/route_endpoint.dart';
-import 'package:perfectBeta/api/providers/user_endpoint.dart';
 import 'package:perfectBeta/constants/style.dart';
 import 'package:perfectBeta/helpers/data_functions.dart';
+import 'package:perfectBeta/helpers/handlers.dart';
 import 'package:perfectBeta/helpers/util_functions.dart';
-import 'package:perfectBeta/model/pages/page_dto.dart';
 import 'package:perfectBeta/model/routes/rating_dto.dart';
 import 'package:perfectBeta/model/routes/route_dto.dart';
-import 'package:perfectBeta/model/users/user_with_personal_data_access_level_dto.dart';
 import 'package:perfectBeta/pages/gym/gym_details.dart';
 import 'package:perfectBeta/pages/gym/widgets/favourite_button.dart';
 import 'package:perfectBeta/pages/route/widgets/detail_photo.dart';
@@ -26,7 +22,6 @@ class RouteDetailsPage extends StatefulWidget {
   final int gymId;
   final int routeId;
   final int currentUserId;
-
   const RouteDetailsPage({Key key, this.gymId, this.routeId, this.currentUserId}) : super(key: key);
 
   @override
@@ -35,8 +30,6 @@ class RouteDetailsPage extends StatefulWidget {
 
 class _RouteDetailsPageState extends State<RouteDetailsPage> {
   var _routeEndpoint = new RouteEndpoint(getIt.get());
-  var _userEndpoint = new UserEndpoint(getIt.get());
-
   List<String> photoList = [];
   var _tag = 'imageHero';
   bool _added = false;
@@ -54,7 +47,7 @@ class _RouteDetailsPageState extends State<RouteDetailsPage> {
                 return new Text('Error: ${accessLevelSnapshot.error}');
               } else {
                 return FutureBuilder<RouteDTO>(
-                    future: _loadRouteData(widget.gymId, widget.routeId),
+                    future: loadSelectedRoute(widget.gymId, widget.routeId, photoList),
                     builder: (context, routeDataSnapshot) {
                       if (routeDataSnapshot.connectionState == ConnectionState.done) {
                         if (routeDataSnapshot.hasError) {
@@ -120,10 +113,6 @@ class _RouteDetailsPageState extends State<RouteDetailsPage> {
             SizedBox(
               height: 20,
             ),
-            // _holdsWidget(snapshot),
-            // SizedBox(
-            //   height: 20,
-            // ),
             _ratingsWidgetManager(snapshot, context),
           ],
         ),
@@ -155,10 +144,6 @@ class _RouteDetailsPageState extends State<RouteDetailsPage> {
             SizedBox(
               height: 20,
             ),
-            // _holdsWidget(snapshot),
-            // SizedBox(
-            //   height: 20,
-            // ),
             _ratingsWidgetClimber(snapshot, context),
           ],
         ),
@@ -166,7 +151,7 @@ class _RouteDetailsPageState extends State<RouteDetailsPage> {
     );
   }
 
-  Widget _buildRouteDetailsListView(AsyncSnapshot<RouteDTO> snapshot, context) {
+  Widget _buildRouteDetailsListView(AsyncSnapshot<RouteDTO> snapshot, BuildContext context) {
     return ListView(
       children: [
         Column(
@@ -174,135 +159,19 @@ class _RouteDetailsPageState extends State<RouteDetailsPage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             ListTile(
-              contentPadding: const EdgeInsets.symmetric(horizontal: 0),
-              title: _routeTitleWidget(snapshot),
-              subtitle: _routeSubtitleWidget(snapshot),
-            ),
-            SizedBox(
-              height: 10,
-            ),
+                contentPadding: const EdgeInsets.symmetric(horizontal: 0),
+                title: _routeTitleWidget(snapshot),
+                subtitle: _routeSubtitleWidget(snapshot)),
+            SizedBox(height: 10),
             _carouselPhotosWidget(context),
-            SizedBox(
-              height: 20,
-            ),
+            SizedBox(height: 20),
             _descriptionWidget(snapshot),
-            SizedBox(
-              height: 20,
-            ),
-            // _holdsWidget(snapshot),
-            // SizedBox(
-            //   height: 20,
-            // ),
+            SizedBox(height: 20),
             _ratingsWidget(snapshot, context),
           ],
         ),
       ],
     );
-  }
-
-  Future<RouteDTO> _loadRouteData(gymId, routeId) async {
-    try {
-      DataPage res = await _routeEndpoint.getAllGymRoutes(gymId);
-      photoList.clear();
-      RouteDTO _selectedRoute;
-      if (res != null) {
-        if (res.content != null) {
-          res.content.forEach((route) {
-            if (route.id == routeId) {
-              _selectedRoute = route;
-              route.photos.forEach((photo) => photoList.add(photo.photoUrl));
-            }
-          });
-        }
-      }
-      return _selectedRoute;
-    } catch (e, s) {
-      print("Exception $e");
-      print("StackTrace $s");
-    }
-  }
-
-  Future<bool> _handleRouteDelete(context, gymId, routeId) async {
-    try {
-      var res = await _routeEndpoint.deleteRoute(gymId, routeId);
-      if (res.statusCode == 200) {
-        EasyLoading.showSuccess('Route removed!');
-        //int count = 0;
-        //Navigator.of(context).popUntil((_) => count++ >= 2);
-        Navigator.of(context).pop();
-        return true;
-        // Navigator.push(
-        //   context,
-        //   MaterialPageRoute(
-        //     builder: (context) => GymDetails(gymId: gymId),
-        //   ),
-        // );
-        //setState(() {});
-      }
-      return false;
-    } catch (e, s) {
-      print("Exception $e");
-      print("StackTrace $s");
-    }
-  }
-
-  Future<bool> _handleRatingDeleteManager(context, routeId) async {
-    try {
-      var res = await _routeEndpoint.deleteRatingByOwnerOrMaintainer(routeId);
-      if (res.statusCode == 200) {
-        EasyLoading.showSuccess('Rating removed!');
-        Navigator.of(context).pop();
-        return true;
-        // Navigator.push(
-        //   context,
-        //   MaterialPageRoute(
-        //     builder: (context) => GymDetails(gymId: gymId),
-        //   ),
-        // );
-        //setState(() {});
-      }
-      return false;
-    } catch (e, s) {
-      print("Exception $e");
-      print("StackTrace $s");
-    }
-  }
-
-  Future<bool> _handleRatingDeleteClimber(context, routeId) async {
-    try {
-      var res = await _routeEndpoint.deleteOwnRating(routeId);
-      if (res.statusCode == 200) {
-        EasyLoading.showSuccess('Rating removed!');
-        Navigator.of(context).pop();
-        return true;
-      }
-      return false;
-    } catch (e, s) {
-      print("Exception $e");
-      print("StackTrace $s");
-    }
-  }
-
-  void handleAddFavourite(routeId, added) async {
-    if (added) {
-      var res = await _routeEndpoint.removeRouteFromFavourites(routeId);
-      if (res != null) {
-        if (res.statusCode == 200) {
-          setState(() {
-            _added = !_added;
-          });
-        }
-      }
-    } else {
-      var res = await _routeEndpoint.addRouteToFavourites(routeId);
-      if (res != null) {
-        if (res.statusCode == 200) {
-          setState(() {
-            _added = !_added;
-          });
-        }
-      }
-    }
   }
 
   Widget _buildAddRateButton(context) {
@@ -315,16 +184,8 @@ class _RouteDetailsPageState extends State<RouteDetailsPage> {
         child: Wrap(
           crossAxisAlignment: WrapCrossAlignment.center,
           children: [
-            Icon(
-              Icons.add,
-              size: 18,
-              color: Colors.white,
-            ),
-            CustomText(
-              text: "Add",
-              color: Colors.white,
-              size: 14,
-            ),
+            Icon(Icons.add, size: 18, color: Colors.white),
+            CustomText(text: "Add", color: Colors.white, size: 14),
           ],
         ),
       ),
@@ -334,51 +195,16 @@ class _RouteDetailsPageState extends State<RouteDetailsPage> {
   void _showRatingAppDialog() {
     final _ratingDialog = RatingDialog(
       starColor: Colors.amber,
-      title: Text(
-        'Rate this route',
-        textAlign: TextAlign.center,
-        style: const TextStyle(
-          fontSize: 24,
-          fontWeight: FontWeight.bold,
-        ),
-      ),
-      message: Text(
-        'Tap a star to set your rating. You can also add comment if you want.',
-        textAlign: TextAlign.center,
-        style: const TextStyle(fontSize: 15),
-      ),
-      // image: Image.asset("assets/images/devs.jpg",
-      //   height: 100,),
+      title: Text('Rate this route', textAlign: TextAlign.center, style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+      message: Text('Tap a star to set your rating. You can also add comment if you want.',
+          textAlign: TextAlign.center, style: const TextStyle(fontSize: 15)),
       submitButtonText: 'Submit',
       commentHint: 'Your thoughts about this route',
-      //onCancelled: () => print('cancelled'),
       onSubmitted: (response) {
-        _handleRatingAdd(response, widget.routeId);
+        handleRatingAdd(response, widget.routeId).then((_) => setState(() {}));
       },
     );
-
-    showDialog(
-      context: context,
-      barrierDismissible: true,
-      builder: (context) => _ratingDialog,
-    );
-  }
-
-  Future<void> _handleRatingAdd(RatingDialogResponse response, int routeId) async {
-    try {
-      RatingDTO ratingDTO = new RatingDTO(rate: response.rating, comment: response.comment);
-      var res = await _routeEndpoint.addRatingToRoute(routeId, ratingDTO);
-      if (res != null) {
-        if (res.statusCode == 200) {
-          EasyLoading.showSuccess('Rating added!');
-          setState(() {});
-          //Navigator.of(context).pop();
-        }
-      }
-    } catch (e, s) {
-      print("Exception $e");
-      print("StackTrace $s");
-    }
+    showDialog(context: context, barrierDismissible: true, builder: (context) => _ratingDialog);
   }
 
   Widget _buildRouteImageHero(List<String> photoList) => Hero(
@@ -392,11 +218,10 @@ class _RouteDetailsPageState extends State<RouteDetailsPage> {
           loadingBuilder: (context, child, loadingProgress) =>
               (loadingProgress == null) ? child : SizedBox(child: Center(child: CircularProgressIndicator.adaptive())),
           errorBuilder: (context, error, stackTrace) => Image(
-            image: AssetImage('assets/images/route-template.jpg'),
-            height: MediaQuery.of(context).size.height,
-            width: MediaQuery.of(context).size.width,
-            fit: BoxFit.cover,
-          ),
+              image: AssetImage('assets/images/route-template.jpg'),
+              height: MediaQuery.of(context).size.height,
+              width: MediaQuery.of(context).size.width,
+              fit: BoxFit.cover),
         )),
       );
 
@@ -411,11 +236,10 @@ class _RouteDetailsPageState extends State<RouteDetailsPage> {
           loadingBuilder: (context, child, loadingProgress) =>
               (loadingProgress == null) ? child : SizedBox(child: Center(child: CircularProgressIndicator.adaptive())),
           errorBuilder: (context, error, stackTrace) => Image(
-            image: AssetImage('assets/images/route-template.jpg'),
-            height: MediaQuery.of(context).size.height,
-            width: MediaQuery.of(context).size.width,
-            fit: BoxFit.cover,
-          ),
+              image: AssetImage('assets/images/route-template.jpg'),
+              height: MediaQuery.of(context).size.height,
+              width: MediaQuery.of(context).size.width,
+              fit: BoxFit.cover),
         )),
       );
 
@@ -423,24 +247,18 @@ class _RouteDetailsPageState extends State<RouteDetailsPage> {
         spacing: 16,
         crossAxisAlignment: WrapCrossAlignment.center,
         children: [
-          Text(
-            snapshot.data.routeName,
-            style: TextStyle(
-              fontSize: 24,
-              fontWeight: FontWeight.bold,
-            ),
-            maxLines: 2,
-          ),
+          Text(snapshot.data.routeName,
+              style: TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+              ),
+              maxLines: 2),
           Container(
             decoration: BoxDecoration(color: active, borderRadius: BorderRadius.circular(99)),
             alignment: Alignment.center,
             width: 40,
             height: 30,
-            //padding: EdgeInsets.symmetric(vertical: 16),
-            child: CustomText(
-              text: snapshot.data.difficulty,
-              color: Colors.white,
-            ),
+            child: CustomText(text: snapshot.data.difficulty, color: Colors.white),
           ),
         ],
       );
@@ -448,18 +266,13 @@ class _RouteDetailsPageState extends State<RouteDetailsPage> {
   Widget _routeSubtitleWidget(snapshot) => Wrap(
         crossAxisAlignment: WrapCrossAlignment.center,
         children: [
-          // CustomText(
-          //   text: snapshot.data.avgRating.toString(),
-          // ),
           RatingBarIndicator(
-            rating: snapshot.data.avgRating,
-            itemBuilder: (context, index) => Icon(
-              Icons.star,
-              color: Colors.amber,
-            ),
-            // itemCount: 5,
-            itemSize: 16.0,
-          ),
+              rating: snapshot.data.avgRating,
+              itemBuilder: (context, index) => Icon(
+                    Icons.star,
+                    color: Colors.amber,
+                  ),
+              itemSize: 16.0),
           FutureBuilder<List<RatingDTO>>(
               future: _routeEndpoint.getRouteRatings(snapshot.data.id),
               builder: (context, ratingData) {
@@ -467,20 +280,13 @@ class _RouteDetailsPageState extends State<RouteDetailsPage> {
                   if (ratingData.hasError) {
                     return Text("Error");
                   }
-                  if (ratingData.hasData) {
-                    if (ratingData.data.length > 0) {
-                      return CustomText(
-                        size: 14,
-                        text: "(${ratingData.data.length.toString()} reviews)",
-                      );
-                    } else {
-                      return SizedBox(width: 1);
-                    }
+                  if (ratingData.hasData && ratingData.data.length > 0) {
+                    return CustomText(size: 14, text: "(${ratingData.data.length.toString()} reviews)");
                   } else {
-                    return SizedBox(width: 1);
+                    return SizedBox.shrink();
                   }
                 } else
-                  return SizedBox(width: 1);
+                  return SizedBox.shrink();
               }),
         ],
       );
@@ -518,7 +324,7 @@ class _RouteDetailsPageState extends State<RouteDetailsPage> {
                           ),
                           TextButton(
                             onPressed: () {
-                              _handleRouteDelete(context, snapshot.data.climbingGymId, snapshot.data.id).then((_) => Navigator.push(
+                              handleDeleteRoute(context, snapshot.data.climbingGymId, snapshot.data.id).then((_) => Navigator.push(
                                     context,
                                     MaterialPageRoute(
                                       builder: (context) => GymDetails(gymId: snapshot.data.climbingGymId),
@@ -546,13 +352,19 @@ class _RouteDetailsPageState extends State<RouteDetailsPage> {
             return FavouriteButton(
                 isAdded: _added,
                 onPressed: () {
-                  handleAddFavourite(snapshot.data.id, _added);
+                  handleAddFavourite(snapshot.data.id, _added).then((value) {
+                    if (value) {
+                      setState(() {
+                        _added = !_added;
+                      });
+                    }
+                  });
                 });
           } else {
-            return SizedBox(width: 1);
+            return SizedBox.shrink();
           }
         } else
-          return SizedBox(width: 1);
+          return SizedBox.shrink();
       });
 
   Widget _carouselPhotosWidget(context) => Visibility(
@@ -732,7 +544,7 @@ class _RouteDetailsPageState extends State<RouteDetailsPage> {
                                           ),
                                           TextButton(
                                             onPressed: () {
-                                              _handleRatingDeleteManager(context, ratingData.data[index].id).then((_) => setState(() {}));
+                                              handleDeleteRatingManager(context, ratingData.data[index].id).then((_) => setState(() {}));
                                             },
                                             child: CustomText(text: 'Yes, delete!', color: error),
                                           ),
@@ -746,10 +558,10 @@ class _RouteDetailsPageState extends State<RouteDetailsPage> {
               ],
             );
           } else {
-            return SizedBox(width: 1);
+            return SizedBox.shrink();
           }
         } else
-          return SizedBox(width: 1);
+          return SizedBox.shrink();
       });
 
   Widget _ratingsWidgetClimber(snapshot, context) => Container(
@@ -865,7 +677,7 @@ class _RouteDetailsPageState extends State<RouteDetailsPage> {
                                                         ),
                                                         TextButton(
                                                           onPressed: () {
-                                                            _handleRatingDeleteClimber(context, ratingData.data[index].id)
+                                                            handleDeleteRatingClimber(context, ratingData.data[index].id)
                                                                 .then((_) => setState(() {}));
                                                           },
                                                           child: CustomText(text: 'Yes, delete!', color: error),
@@ -886,10 +698,10 @@ class _RouteDetailsPageState extends State<RouteDetailsPage> {
               ],
             );
           } else {
-            return SizedBox(width: 1);
+            return SizedBox.shrink();
           }
         } else
-          return SizedBox(width: 1);
+          return SizedBox.shrink();
       });
 
   Widget _ratingsWidget(snapshot, context) => Container(
@@ -979,9 +791,9 @@ class _RouteDetailsPageState extends State<RouteDetailsPage> {
               ],
             );
           } else {
-            return SizedBox(width: 1);
+            return SizedBox.shrink();
           }
         } else
-          return SizedBox(width: 1);
+          return SizedBox.shrink();
       });
 }

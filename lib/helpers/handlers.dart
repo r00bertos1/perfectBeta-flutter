@@ -1,3 +1,4 @@
+import 'package:perfectBeta/model/routes/rating_dto.dart';
 import 'package:perfectBeta/service.dart';
 import 'dart:convert';
 import 'package:flutter/material.dart';
@@ -14,8 +15,8 @@ import 'package:perfectBeta/pages/route/add_route/add_route.dart';
 import 'package:perfectBeta/pages/users/user_info/confirm_change_email.dart';
 import 'package:perfectBeta/routing/routes.dart';
 import 'package:perfectBeta/storage/user_secure_storage.dart';
+import 'package:rating_dialog/rating_dialog.dart';
 import '../main.dart';
-import 'package:flutter/cupertino.dart';
 
 //API
 var _routeEndpoint = new RouteEndpoint(getIt.get());
@@ -43,6 +44,21 @@ Future<bool> handleAddFavourite(int routeId, bool added) async {
   }
 }
 
+Future<void> handleRatingAdd(RatingDialogResponse response, int routeId) async {
+  try {
+    RatingDTO ratingDTO = new RatingDTO(rate: response.rating, comment: response.comment);
+    var res = await _routeEndpoint.addRatingToRoute(routeId, ratingDTO);
+    if (res != null) {
+      if (res.statusCode == 200) {
+        EasyLoading.showSuccess('Rating added!');
+      }
+    }
+  } catch (e, s) {
+    print("Exception $e");
+    print("StackTrace $s");
+  }
+}
+
 void handleAddRoute(BuildContext context, int gymId) {
   menuController.changeActiveItemTo(addRoutePageDisplayName);
   Navigator.push(
@@ -53,7 +69,7 @@ void handleAddRoute(BuildContext context, int gymId) {
   );
 }
 
-Future<bool> handleRouteDelete(BuildContext context, int gymId, int routeId) async {
+Future<bool> handleDeleteRoute(BuildContext context, int gymId, int routeId) async {
   try {
     var res = await _routeEndpoint.deleteRoute(gymId, routeId);
     if (res.statusCode == 200) {
@@ -68,7 +84,7 @@ Future<bool> handleRouteDelete(BuildContext context, int gymId, int routeId) asy
   }
 }
 
-Future<bool> handleFavouriteRouteDelete(BuildContext context, int routeId) async {
+Future<bool> handleDeleteFavouriteRoute(BuildContext context, int routeId) async {
   try {
     var res = await _routeEndpoint.removeRouteFromFavourites(routeId);
     if (res.statusCode == 200) {
@@ -82,7 +98,37 @@ Future<bool> handleFavouriteRouteDelete(BuildContext context, int routeId) async
   }
 }
 
-Future<List<String>> handleImagesUpload(files) async {
+Future<bool> handleDeleteRatingManager(context, routeId) async {
+  try {
+    var res = await _routeEndpoint.deleteRatingByOwnerOrMaintainer(routeId);
+    if (res.statusCode == 200) {
+      EasyLoading.showSuccess('Rating removed!');
+      Navigator.of(context).pop();
+      return true;
+    }
+    return false;
+  } catch (e, s) {
+    print("Exception $e");
+    print("StackTrace $s");
+  }
+}
+
+Future<bool> handleDeleteRatingClimber(context, routeId) async {
+  try {
+    var res = await _routeEndpoint.deleteOwnRating(routeId);
+    if (res.statusCode == 200) {
+      EasyLoading.showSuccess('Rating removed!');
+      Navigator.of(context).pop();
+      return true;
+    }
+    return false;
+  } catch (e, s) {
+    print("Exception $e");
+    print("StackTrace $s");
+  }
+}
+
+Future<List<String>> handleUploadImages(files) async {
   try {
     List<String> linksList = [];
     var res = await _cloudEndpoint.uploadFile(files);
@@ -98,7 +144,7 @@ Future<List<String>> handleImagesUpload(files) async {
   }
 }
 
-Future<void> handleResetPassword(BuildContext context, String code, String email) async {
+Future<void> handleConfirmChangeEmail(BuildContext context, String code, String email) async {
   var res = await _userEndpoint.confirmChangeEmail(code, email);
   try {
     if (res.statusCode == 200) {
@@ -111,7 +157,7 @@ Future<void> handleResetPassword(BuildContext context, String code, String email
   }
 }
 
-Future<void> handlePasswordChange(BuildContext context, String oldPassword, String newPassword) async {
+Future<void> handleChangePassword(BuildContext context, String oldPassword, String newPassword) async {
   ChangePasswordDTO passwordData = new ChangePasswordDTO(oldPassword: oldPassword, newPassword: newPassword);
   var res = await _userEndpoint.changePassword(passwordData);
   try {
@@ -129,7 +175,7 @@ Future<void> handlePasswordChange(BuildContext context, String oldPassword, Stri
   }
 }
 
-Future<void> handlePersonalDataChange(int userId, String name, String surname, String phoneNumber, String country, bool gender) async {
+Future<void> handleChangePersonalData(int userId, String name, String surname, String phoneNumber, String country, bool gender) async {
   PersonalDataDTO personalData = new PersonalDataDTO(name: name, surname: surname, phoneNumber: phoneNumber, language: country, gender: gender);
   var res = await _userEndpoint.updatePersonalData(userId, personalData);
   try {
@@ -147,7 +193,6 @@ Future<void> handleChangeEmail(BuildContext context, String emailString) async {
   var res = await _userEndpoint.requestChangeEmail(email);
   try {
     if (res.statusCode == 200) {
-      //Get.off(ConfirmChangeEmail(email: email), routeName: changeEmailPageRoute);
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
@@ -162,7 +207,7 @@ Future<void> handleChangeEmail(BuildContext context, String emailString) async {
   }
 }
 
-Future<void> handleUserDelete(TextEditingController passwordController) async {
+Future<void> handleDeleteUser(TextEditingController passwordController) async {
   UserWithPersonalDataAccessLevelDTO userData = await _userEndpoint.getUserPersonalDataAccessLevel();
   PasswordDTO password = new PasswordDTO(password: passwordController.text.trim());
   passwordController.clear();
@@ -170,8 +215,6 @@ Future<void> handleUserDelete(TextEditingController passwordController) async {
   if (res != null) {
     if (res.statusCode == 200) {
       Get.offAllNamed(authenticationPageRoute);
-      // menuController.changeActiveItemTo(
-      //     overviewPageDisplayName);
     }
   } else {
     EasyLoading.showError('Error' + res.statusMessage);

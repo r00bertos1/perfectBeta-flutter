@@ -160,7 +160,7 @@ class _ConfirmForgotPassword extends State<ConfirmForgotPassword> {
                       width: double.maxFinite,
                       padding: EdgeInsets.symmetric(vertical: 16),
                       child: CustomText(
-                        text: "Verify account",
+                        text: "Reset password",
                         color: Colors.white,
                       ),
                     ),

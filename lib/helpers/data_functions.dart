@@ -38,6 +38,28 @@ Future<List<RouteDTO>> loadRoutes(int gymId) async {
   }
 }
 
+Future<RouteDTO> loadSelectedRoute(gymId, routeId, photoList) async {
+  try {
+    DataPage res = await _routeEndpoint.getAllGymRoutes(gymId);
+    photoList.clear();
+    RouteDTO _selectedRoute;
+    if (res != null) {
+      if (res.content != null) {
+        res.content.forEach((route) {
+          if (route.id == routeId) {
+            _selectedRoute = route;
+            route.photos.forEach((photo) => photoList.add(photo.photoUrl));
+          }
+        });
+      }
+    }
+    return _selectedRoute;
+  } catch (e, s) {
+    print("Exception $e");
+    print("StackTrace $s");
+  }
+}
+
 Future<List<int>> loadUsersData(List<int> values) async {
   try {
     DataPage res = await _userEndpoint.getAllUsers();

@@ -109,7 +109,7 @@ class UserCardsSmallScreen extends StatelessWidget {
                     onPressed: () {
                       if (_passKey.currentState.validate()) {
                         Navigator.pop(context);
-                        handleUserDelete(_passwordController);
+                        handleDeleteUser(_passwordController);
                       }
                     },
                     child: CustomText(text: 'Yes, delete!', color: error),

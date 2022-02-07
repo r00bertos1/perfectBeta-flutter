@@ -362,7 +362,7 @@ class _GymDetailsState extends State<GymDetails> {
                             ),
                             TextButton(
                               onPressed: () {
-                                handleRouteDelete(context, routes.data[index].climbingGymId, routes.data[index].id).then((value) {
+                                handleDeleteRoute(context, routes.data[index].climbingGymId, routes.data[index].id).then((value) {
                                   if (value) {
                                     setState(() {});
                                   }
@@ -427,17 +427,17 @@ class _GymDetailsState extends State<GymDetails> {
                     }
                     if (boolVal.hasData) {
                       _added = boolVal.data;
-                      return FavouriteButton(
-                          isAdded: _added,
-                          onPressed: () async {
-                            handleAddFavourite(routes.data[index].id, _added).then((value) {
-                              if (value) {
-                                setState(() {
-                                  _added = !_added;
-                                });
-                              }
-                            });
+                    return FavouriteButton(
+                        isAdded: _added,
+                        onPressed: () async {
+                          handleAddFavourite(routes.data[index].id, _added).then((value) {
+                            if (value) {
+                              setState(() {
+                                _added = !_added;
+                              });
+                            }
                           });
+                        });
                     } else {
                       return SizedBox(width: 1);
                     }

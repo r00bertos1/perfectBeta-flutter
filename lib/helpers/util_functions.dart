@@ -32,7 +32,7 @@ Widget parseGymEnum(GymStatusEnum data) {
 
 Future<bool> isFavourited(int routeId) async {
   try {
-    DataPage res = await _routeEndpoint.getAllFavourites();
+    var res = await _routeEndpoint.getAllFavourites();
     bool _isInFavourites = false;
     if (res.content != null) {
       res.content.forEach((route) {
@@ -89,7 +89,7 @@ Future<List<String>> getLinksListFromAllImages(imageList, fileList) async {
     var imagesTemporary = File(image.path);
     fileList.add(imagesTemporary);
   }
-  var list = await handleImagesUpload(fileList);
+  var list = await handleUploadImages(fileList);
   return list;
 }
 

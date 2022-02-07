@@ -197,7 +197,7 @@ class _ChangePersonalDataPage extends State<ChangePersonalDataPage> {
                   InkWell(
                     onTap: () async {
                       if (_personalDataFormKey.currentState.validate()) {
-                        handlePersonalDataChange(
+                        handleChangePersonalData(
                                 _userId, _nameController.text.trim(), _surnameController.text.trim(), _phoneNumberString, _country, _isMan)
                             .then((value) => Navigator.pushReplacement(
                                   context,

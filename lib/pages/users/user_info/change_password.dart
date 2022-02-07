@@ -115,7 +115,7 @@ class _ChangePasswordPage extends State<ChangePasswordPage> {
                   InkWell(
                     onTap: () async {
                       if (_changePasswordFormKey.currentState.validate()) {
-                        handlePasswordChange(context, _oldPasswordController.text.trim(), _newPasswordController.text.trim());
+                        handleChangePassword(context, _oldPasswordController.text.trim(), _newPasswordController.text.trim());
                       }
                     },
                     child: Container(
