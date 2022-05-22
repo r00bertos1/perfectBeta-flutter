@@ -21,7 +21,7 @@ class SideMenu extends StatelessWidget {
   Widget build(BuildContext context) {
     double _width = MediaQuery.of(context).size.width;
 
-    List<MenuItem> sideMenuItems = [];
+    List<MyMenuItem> sideMenuItems = [];
 
     return Container(
       color: light,
@@ -88,7 +88,7 @@ class SideMenu extends StatelessWidget {
           Column(
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
-              FutureBuilder<List<MenuItem>>(
+              FutureBuilder<List<MyMenuItem>>(
                   future: getsideMenuItemRoutes(),
                   builder: (BuildContext context, menuItems) {
                     if (menuItems.hasData) {

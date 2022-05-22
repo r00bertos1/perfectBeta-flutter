@@ -50,46 +50,46 @@ const managersPageDisplayName = "Managers";
 const managersPageRoute = "/managers";
 
 
-class MenuItem {
+class MyMenuItem {
   final String name;
   final String route;
 
-  MenuItem(this.name, this.route);
+  MyMenuItem(this.name, this.route);
 }
 
-Future<List<MenuItem>> getsideMenuItemRoutes() async {
-  List<MenuItem> sideMenuItemRoutes = [];
+Future<List<MyMenuItem>> getsideMenuItemRoutes() async {
+  List<MyMenuItem> sideMenuItemRoutes = [];
   final accessLevel = await secStore.getAccessLevel();
   if (accessLevel == 'CLIMBER') {
     sideMenuItemRoutes = [
-      MenuItem(overviewPageDisplayName, overviewPageRoute),
-      MenuItem(gymsPageDisplayName, gymsPageRoute),
-      MenuItem(myRoutesPageDisplayName, myRoutesPageRoute),
-      MenuItem(authenticationPageDisplayName, authenticationPageRoute),
+      MyMenuItem(overviewPageDisplayName, overviewPageRoute),
+      MyMenuItem(gymsPageDisplayName, gymsPageRoute),
+      MyMenuItem(myRoutesPageDisplayName, myRoutesPageRoute),
+      MyMenuItem(authenticationPageDisplayName, authenticationPageRoute),
     ];
   } else if (accessLevel == 'MANAGER') {
     sideMenuItemRoutes = [
-      MenuItem(overviewPageDisplayName, overviewPageRoute),
-      MenuItem(gymsPageDisplayName, managerGymsPageRoute),
-      MenuItem(addRoutePageDisplayName, addRoutePageRoute),
-      MenuItem(registerGymPageDisplayName, registerGymPageRoute),
-      MenuItem(authenticationPageDisplayName, authenticationPageRoute),
+      MyMenuItem(overviewPageDisplayName, overviewPageRoute),
+      MyMenuItem(gymsPageDisplayName, managerGymsPageRoute),
+      MyMenuItem(addRoutePageDisplayName, addRoutePageRoute),
+      MyMenuItem(registerGymPageDisplayName, registerGymPageRoute),
+      MyMenuItem(authenticationPageDisplayName, authenticationPageRoute),
     ];
   } else if (accessLevel == 'ADMIN') {
     sideMenuItemRoutes = [
-      MenuItem(overviewPageDisplayName, overviewPageRoute),
-      MenuItem(allGymsPageDisplayName, allGymsPageRoute),
-      MenuItem(usersPageDisplayName, usersPageRoute),
-      MenuItem(managersPageDisplayName, managersPageRoute),
-      MenuItem(registerManagerPageDisplayName, registerManagerPageRoute),
-      MenuItem(authenticationPageDisplayName, authenticationPageRoute),
+      MyMenuItem(overviewPageDisplayName, overviewPageRoute),
+      MyMenuItem(allGymsPageDisplayName, allGymsPageRoute),
+      MyMenuItem(usersPageDisplayName, usersPageRoute),
+      MyMenuItem(managersPageDisplayName, managersPageRoute),
+      MyMenuItem(registerManagerPageDisplayName, registerManagerPageRoute),
+      MyMenuItem(authenticationPageDisplayName, authenticationPageRoute),
     ];
   } else {
     sideMenuItemRoutes = [
-      MenuItem(overviewPageDisplayName, overviewPageRoute),
-      MenuItem(gymsPageDisplayName, gymsPageRoute),
-      MenuItem(registrationPageDisplayName, registrationPageRoute),
-      MenuItem(authenticationPageAnonimDisplayName, authenticationPageRoute),
+      MyMenuItem(overviewPageDisplayName, overviewPageRoute),
+      MyMenuItem(gymsPageDisplayName, gymsPageRoute),
+      MyMenuItem(registrationPageDisplayName, registrationPageRoute),
+      MyMenuItem(authenticationPageAnonimDisplayName, authenticationPageRoute),
     ];
   }
 
